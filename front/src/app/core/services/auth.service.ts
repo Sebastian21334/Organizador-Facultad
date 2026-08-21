@@ -3,8 +3,32 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 
-interface AuthResponse {
+export interface AuthResponse {
   access_token: string;
+}
+
+export interface MessageResponse {
+  mensaje: string;
+}
+
+export interface RegisterRequest {
+  email: string;
+  password: string;
+  nombre: string;
+}
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface TokenRequest {
+  token: string;
+}
+
+export interface ResetPasswordRequest {
+  token: string;
+  nuevaPassword: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -22,11 +46,20 @@ export class AuthService {
     );
   }
 
-  register(email: string, password: string, nombre?: string): Observable<AuthResponse> {
-    const body = nombre ? { email, password, nombre } : { email, password };
-    return this.http.post<AuthResponse>('/auth/register', body).pipe(
-      tap(({ access_token }) => this.setToken(access_token)),
-    );
+  register(request: RegisterRequest): Observable<MessageResponse> {
+    return this.http.post<MessageResponse>('/auth/register', request);
+  }
+
+  verifyEmail(request: TokenRequest): Observable<MessageResponse> {
+    return this.http.post<MessageResponse>('/auth/verify-email', request);
+  }
+
+  forgotPassword(email: string): Observable<MessageResponse> {
+    return this.http.post<MessageResponse>('/auth/forgot-password', { email });
+  }
+
+  resetPassword(request: ResetPasswordRequest): Observable<MessageResponse> {
+    return this.http.post<MessageResponse>('/auth/reset-password', request);
   }
 
   logout(): void {

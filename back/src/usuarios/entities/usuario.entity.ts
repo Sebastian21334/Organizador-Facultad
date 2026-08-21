@@ -24,4 +24,7 @@ export class Usuario {
 
   @OneToMany(() => Tarea, (tarea) => tarea.usuario)
   tareas!: Tarea[];
+
+  @Column({ default: false })
+  emailVerificado!: boolean;
 }

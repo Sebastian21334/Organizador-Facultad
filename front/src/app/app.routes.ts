@@ -50,5 +50,20 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/register.component').then((m) => m.RegisterComponent),
     title: 'Crear cuenta',
   },
+  {
+    path: 'verificar-email',
+    loadComponent: () => import('./features/auth/verify-email.component').then((m) => m.VerifyEmailComponent),
+    title: 'Verificar email',
+  },
+  {
+    path: 'olvide-password',
+    loadComponent: () => import('./features/auth/forgot-password.component').then((m) => m.ForgotPasswordComponent),
+    title: 'Recuperar contraseña',
+  },
+  {
+    path: 'resetear-password',
+    loadComponent: () => import('./features/auth/reset-password.component').then((m) => m.ResetPasswordComponent),
+    title: 'Restablecer contraseña',
+  },
   { path: '**', redirectTo: '' },
 ];

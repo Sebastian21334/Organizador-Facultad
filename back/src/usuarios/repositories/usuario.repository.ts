@@ -22,4 +22,9 @@ export class UsuariosRepository {
   async buscarPorId(id: string): Promise<Usuario | null> {
     return this.repo.findOne({ where: { id } });
   }
+
+  async actualizar(id: string, data: Partial<Usuario>): Promise<Usuario | null> {
+    await this.repo.update(id, data);
+    return this.buscarPorId(id);
+  }
 }
