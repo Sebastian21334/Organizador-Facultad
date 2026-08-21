@@ -1,0 +1,27 @@
+@if (auth.isAuthenticated()) {
+  <nav class="bg-slate-900 text-white shadow-lg">
+    <div class="max-w-6xl mx-auto px-4">
+      <div class="flex items-center justify-between h-14">
+        <span class="font-semibold text-sm tracking-tight">Organizador</span>
+        <div class="flex items-center gap-2">
+          <ul class="flex items-center gap-1 text-sm">
+            @for (item of navItems; track item.path) {
+              <li>
+                <a [routerLink]="item.path" routerLinkActive="bg-slate-700" [routerLinkActiveOptions]="{ exact: item.path === '/' }" class="px-3 py-2 rounded-md transition-colors hover:bg-slate-700/70 flex items-center gap-1.5">
+                  <span aria-hidden="true">{{ item.icon }}</span><span>{{ item.label }}</span>
+                </a>
+              </li>
+            }
+          </ul>
+          <button type="button" (click)="cerrarSesion()" class="px-3 py-2 text-sm rounded-md hover:bg-slate-700">Salir</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+}
+
+<main class="max-w-6xl mx-auto px-4 py-6">
+  <router-outlet />
+</main>
+
+<app-confirm-dialog />

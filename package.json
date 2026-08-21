@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@nestjs/mapped-types": "^2.1.1"
+  }
+}
