@@ -1,9 +1,141 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500;600;700&family=Sora:wght@400;500&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --bg: #ede4d3;
+  --card: #faf6ee;
+  --card-strong: #fffdf9;
+  --border: #d8cbae;
+  --ink: #3a2a22;
+  --muted: #7a6b57;
+  --label: #a69577;
+  --accent: #6e1f2b;
+  --accent-dark: #4f1620;
+  --accent-soft: #f1dee1;
+  --success-text: #3f6b4a;
+  --success-bg: #e7eee1;
+  --success-border: #c3d4b4;
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'Sora', sans-serif;
+}
+
+html.dark {
+  --bg: #0f0e0d;
+  --card: #1c1a18;
+  --card-strong: #24211f;
+  --border: #3a3430;
+  --ink: #f2f0eb;
+  --muted: #c8c1b8;
+  --label: #a69577;
+  --accent-soft: #4a222b;
+}
+
 html, body {
   height: 100%;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--ink);
+}
+
+body {
+  background-image:
+    linear-gradient(rgba(110, 31, 43, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(110, 31, 43, 0.03) 1px, transparent 1px),
+    radial-gradient(circle at 1px 1px, rgba(110, 31, 43, 0.05) 1px, transparent 0);
+  background-size: 30px 30px, 30px 30px, 14px 14px;
+  background-position: center center, center center, 0 0;
+}
+
+html.dark body {
+  background-image: linear-gradient(rgba(242, 240, 235, 0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(242, 240, 235, 0.02) 1px, transparent 1px);
+  background-size: 30px 30px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0;
+}
+
+p, span, label, button, input, select, textarea, a {
+  font-family: var(--font-body);
+}
+
+button, input, select, textarea {
+  font: inherit;
+}
+
+img,
+svg {
+  display: block;
+}
+
+input, select, textarea {
+  background-color: var(--card);
+  color: var(--ink);
+}
+
+.text-serif-display {
+  font-family: var(--font-display);
+}
+
+.font-display { font-family: var(--font-display); }
+.font-body { font-family: var(--font-body); }
+
+.title-bar {
+  width: 100vw;
+  margin: 0 0 0 -154px;
+  padding: 1.35rem 1rem;
+  background: var(--accent);
+  color: var(--card);
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 1.65rem;
+  font-weight: 800;
+}
+
+/* Las páginas full-bleed (data: { fullBleed: true } en las rutas) ya arrancan
+   sin padding en .app-content, así que el title-bar solo necesita cancelar el
+   margin-left del sidebar (regla de arriba). Las páginas que TODAVÍA usan el
+   padding viejo de .app-content (2rem arriba, 1.25rem a los costados) necesitan
+   además cancelar ese padding para que el header llegue al borde. */
+.app-content:not(.app-content--full-bleed) .title-bar {
+  margin: -2rem 0 0 calc(-154px - 1.25rem);
+}
+
+@media (max-width: 768px) {
+  /* En mobile el sidebar deja de ser fixed y .app-content pierde el
+     margin-left, así que el header full-bleed no necesita corregir nada. */
+  .title-bar { margin-left: 0; }
+
+  .app-content:not(.app-content--full-bleed) .title-bar {
+    margin: -1.25rem 0 0 -1rem;
+  }
+}
+
+html.dark .app-content input,
+html.dark .app-content select,
+html.dark .app-content textarea,
+html.dark .app-content [class*="bg-[#FFFEFA]"],
+html.dark .app-content [class*="bg-[#FAF6EE]"] {
+  background-color: #1c1a18;
+  color: #f2f0eb;
+  border-color: #3a3430;
+}
+
+html.dark .app-content [class*="text-[#3A2A22]"] { color: #f2f0eb; }
+
+.text-mono-label {
+  font-family: 'JetBrains Mono', 'SFMono-Regular', monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }

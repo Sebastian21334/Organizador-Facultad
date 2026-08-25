@@ -1,27 +1,56 @@
-@if (auth.isAuthenticated()) {
-  <nav class="bg-slate-900 text-white shadow-lg">
-    <div class="max-w-6xl mx-auto px-4">
-      <div class="flex items-center justify-between h-14">
-        <span class="font-semibold text-sm tracking-tight">Organizador</span>
-        <div class="flex items-center gap-2">
-          <ul class="flex items-center gap-1 text-sm">
-            @for (item of navItems; track item.path) {
-              <li>
-                <a [routerLink]="item.path" routerLinkActive="bg-slate-700" [routerLinkActiveOptions]="{ exact: item.path === '/' }" class="px-3 py-2 rounded-md transition-colors hover:bg-slate-700/70 flex items-center gap-1.5">
-                  <span aria-hidden="true">{{ item.icon }}</span><span>{{ item.label }}</span>
-                </a>
-              </li>
-            }
-          </ul>
-          <button type="button" (click)="cerrarSesion()" class="px-3 py-2 text-sm rounded-md hover:bg-slate-700">Salir</button>
-        </div>
-      </div>
-    </div>
-  </nav>
-}
+<div class="app-shell">
+  @if (auth.isAuthenticated()) {
+    <aside class="app-sidebar" aria-label="Navegación principal">
+      <a class="brand-block" routerLink="/" aria-label="Tempo, ir a Inicio">
+        <span class="brand-mark">T</span>
+        <span class="brand-name">Tempo</span>
+        <span class="brand-slogan">Organizá tu vida universitaria.</span>
+      </a>
 
-<main class="max-w-6xl mx-auto px-4 py-6">
-  <router-outlet />
-</main>
+      <nav class="sidebar-nav" aria-label="Navegación principal">
+        @for (item of navItems; track item.path) {
+          <a
+            [routerLink]="item.path"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: item.path === '/' }"
+            class="nav-item"
+            [attr.aria-label]="item.label"
+            [title]="item.label"
+          >
+            <lucide-icon [img]="item.icon" [size]="18" aria-hidden="true"></lucide-icon>
+          </a>
+        }
+
+        <button
+          type="button"
+          class="nav-item"
+          (click)="alternarModoOscuro()"
+          [attr.aria-label]="modoOscuro() ? 'Activar modo claro' : 'Activar modo oscuro'"
+          [title]="modoOscuro() ? 'Modo claro' : 'Modo oscuro'"
+        >
+          @if (modoOscuro()) {
+            <lucide-icon [img]="sunIcon" [size]="18" aria-hidden="true"></lucide-icon>
+          } @else {
+            <lucide-icon [img]="moonIcon" [size]="18" aria-hidden="true"></lucide-icon>
+          }
+        </button>
+
+        <button
+          type="button"
+          class="nav-item nav-item--logout"
+          (click)="cerrarSesion()"
+          aria-label="Cerrar sesión"
+          title="Cerrar sesión"
+        >
+          <lucide-icon [img]="logOutIcon" [size]="18" aria-hidden="true"></lucide-icon>
+        </button>
+      </nav>
+    </aside>
+  }
+
+  <main class="app-content" [class.app-content--full-bleed]="fullBleed()">
+    <router-outlet />
+  </main>
+</div>
 
 <app-confirm-dialog />

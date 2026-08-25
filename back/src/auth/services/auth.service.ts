@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException, ConflictException, BadRequestException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ConflictException, BadRequestException, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UsuariosService } from '../../usuarios/services/usuarios.service';
@@ -7,6 +7,8 @@ import { RegisterDto } from '../dto/register.dto';
 import { LoginDto } from '../dto/login.dto';
 import { ForgotPasswordDto } from '../dto/forgot-password.dto';
 import { ResetPasswordDto } from '../dto/reset-password.dto';
+import { ActualizarPerfilDto } from '../dto/actualizar-perfil.dto';
+import { CambiarPasswordDto } from '../dto/cambiar-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -82,7 +84,7 @@ export class AuthService {
       throw new UnauthorizedException('Confirmá tu email antes de iniciar sesión');
     }
 
-    return this.generarToken(usuario.id, usuario.email);
+    return this.generarToken(usuario.id, usuario.email, usuario.nombre);
   }
 
   async forgotPassword(dto: ForgotPasswordDto) {
@@ -124,8 +126,49 @@ export class AuthService {
     return { mensaje: 'Contraseña actualizada con éxito' };
   }
 
-  private generarToken(userId: string, email: string) {
-    const payload = { sub: userId, email };
+  async getPerfil(userId: string) {
+    const usuario = await this.usuariosService.buscarPorId(userId);
+    if (!usuario) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+
+    return { nombre: usuario.nombre ?? null };
+  }
+
+  async actualizarPerfil(userId: string, dto: ActualizarPerfilDto) {
+    const usuario = await this.usuariosService.buscarPorId(userId);
+    if (!usuario) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+
+    const nombre = dto.nombre.trim();
+    if (!nombre) {
+      throw new BadRequestException('El nombre no puede estar vacío');
+    }
+
+    await this.usuariosService.actualizar(userId, { nombre });
+    return { mensaje: 'Nombre actualizado con éxito' };
+  }
+
+  async cambiarPassword(userId: string, dto: CambiarPasswordDto) {
+    const usuario = await this.usuariosService.buscarPorId(userId);
+    if (!usuario) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+
+    const passwordActualValida = await bcrypt.compare(dto.contraseñaActual, usuario.password);
+    if (!passwordActualValida) {
+      throw new UnauthorizedException('La contraseña actual es incorrecta');
+    }
+
+    const nuevaPasswordHash = await bcrypt.hash(dto.nuevaPassword, 10);
+    await this.usuariosService.actualizar(userId, { password: nuevaPasswordHash });
+
+    return { mensaje: 'Contraseña actualizada con éxito' };
+  }
+
+  private generarToken(userId: string, email: string, nombre?: string) {
+    const payload = { sub: userId, email, nombre: nombre ?? email.split('@')[0] };
     return {
       access_token: this.jwtService.sign(payload),
     };

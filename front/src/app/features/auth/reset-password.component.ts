@@ -7,31 +7,32 @@ import { AuthService } from '../../core/services/auth.service';
   selector: 'app-reset-password',
   imports: [ReactiveFormsModule, RouterLink],
   template: `
-    <section class="max-w-md mx-auto mt-10 bg-white rounded-lg border border-slate-200 shadow-sm p-6">
-      <h1 class="text-2xl font-semibold text-slate-800">Restablecer contraseña</h1>
-      <p class="text-sm text-slate-500 mt-1 mb-6">Elegí una nueva contraseña para tu cuenta.</p>
+    <section class="max-w-md mx-auto mt-10 bg-[#FFFEFA] rounded-lg border border-[#D9D3C2] shadow-sm p-6">
+      <h1 class="text-2xl font-display font-bold text-[#3A2A22]">Restablecer contraseña</h1>
+      <p class="text-sm text-[#8C8570] mt-1 mb-6">Elegí una nueva contraseña para tu cuenta.</p>
       @if (success()) {
-        <p class="rounded-md bg-emerald-50 px-3 py-2 text-sm text-emerald-700" role="status">{{ success() }}</p>
+        <p class="rounded-md bg-[#E7EEE1] px-3 py-2 text-sm text-[#3F6B4A]" role="status">{{ success() }}</p>
       } @else {
         <form (ngSubmit)="submit()" [formGroup]="form" class="space-y-4">
-          <label class="block text-sm text-slate-600">Nueva contraseña
+          <label class="block text-sm text-[#5B5748]">Nueva contraseña
             <input type="password" formControlName="nuevaPassword" class="field" autocomplete="new-password" />
           </label>
-          <label class="block text-sm text-slate-600">Confirmar contraseña
+          <label class="block text-sm text-[#5B5748]">Confirmar contraseña
             <input type="password" formControlName="confirmarPassword" class="field" autocomplete="new-password" />
           </label>
-          @if (form.controls.nuevaPassword.hasError('minlength') && form.controls.nuevaPassword.touched) { <p class="text-sm text-red-600">La contraseña debe tener al menos 6 caracteres.</p> }
-          @if (form.hasError('passwordMismatch') && form.controls.confirmarPassword.touched) { <p class="text-sm text-red-600">Las contraseñas no coinciden.</p> }
-          @if (error()) { <p class="text-sm text-red-600" role="alert">{{ error() }}</p> }
+          @if (form.controls.nuevaPassword.hasError('minlength') && form.controls.nuevaPassword.touched) { <p class="text-sm text-[#B3401A]">La contraseña debe tener al menos 6 caracteres.</p> }
+          @if (form.hasError('passwordMismatch') && form.controls.confirmarPassword.touched) { <p class="text-sm text-[#B3401A]">Las contraseñas no coinciden.</p> }
+          @if (error()) { <p class="text-sm text-[#B3401A]" role="alert">{{ error() }}</p> }
           <button type="submit" [disabled]="loading()" class="button-primary w-full">{{ loading() ? 'Guardando...' : 'Cambiar contraseña' }}</button>
         </form>
       }
-      <a routerLink="/login" class="block text-sm text-slate-600 mt-5 text-center hover:underline">Volver a iniciar sesión</a>
+      <a routerLink="/login" class="auth-link block text-sm mt-5 text-center hover:underline">Volver a iniciar sesión</a>
     </section>
   `,
   styles: `
-    .field { @apply mt-1 w-full border border-slate-200 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-300; }
-    .button-primary { @apply rounded-md bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:opacity-50; }
+    .field { @apply mt-1 w-full border border-[#D9D3C2] rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#C9C2AC]; }
+    .button-primary { @apply rounded-md bg-[#6E1F2B] px-4 py-2 text-sm font-medium text-white hover:bg-[#4F1620] disabled:opacity-50; }
+    .auth-link { color: #6E1F2B; }
   `,
 })
 export class ResetPasswordComponent implements OnInit {

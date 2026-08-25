@@ -2,17 +2,17 @@ import { Component, Input } from '@angular/core';
 import { TipoTarea, EstadoTarea } from '../../core/models';
 
 const tipoColor: Record<TipoTarea, string> = {
-  [TipoTarea.TAREA]: 'bg-blue-100 text-blue-700 border-blue-200',
-  [TipoTarea.EXAMEN]: 'bg-red-100 text-red-700 border-red-200',
-  [TipoTarea.ENTREGA]: 'bg-amber-100 text-amber-700 border-amber-200',
-  [TipoTarea.TP]: 'bg-purple-100 text-purple-700 border-purple-200',
-  [TipoTarea.OTRO]: 'bg-slate-100 text-slate-700 border-slate-200',
+  [TipoTarea.TAREA]: 'badge-tarea',
+  [TipoTarea.EXAMEN]: 'badge-examen',
+  [TipoTarea.ENTREGA]: 'badge-entrega',
+  [TipoTarea.TP]: 'badge-tp',
+  [TipoTarea.OTRO]: 'badge-otro',
 };
 
 const estadoColor: Record<EstadoTarea, string> = {
-  [EstadoTarea.PENDIENTE]: 'bg-slate-100 text-slate-600',
-  [EstadoTarea.EN_PROGRESO]: 'bg-yellow-100 text-yellow-700',
-  [EstadoTarea.HECHA]: 'bg-green-100 text-green-700',
+  [EstadoTarea.PENDIENTE]: 'badge-pendiente',
+  [EstadoTarea.EN_PROGRESO]: 'badge-progreso',
+  [EstadoTarea.HECHA]: 'badge-hecha',
 };
 
 @Component({
@@ -29,6 +29,16 @@ const estadoColor: Record<EstadoTarea, string> = {
         {{ estado }}
       </span>
     }
+  `,
+  styles: `
+    .badge-tarea { background: #F1DEE1; color: #6E1F2B; border-color: #D8CBAE; }
+    .badge-examen { background: #F6E2DA; color: #6E1F2B; border-color: #E8C9B8; }
+    .badge-entrega { background: #F2EFE8; color: #7A6B57; border-color: #D8CBAE; }
+    .badge-tp { background: #E7EEE1; color: #3F6B4A; border-color: #C3D4B4; }
+    .badge-otro { background: #EFEBDF; color: #7A6B57; border-color: #D8CBAE; }
+    .badge-pendiente { background: #EFEBDF; color: #7A6B57; }
+    .badge-progreso { background: #F1DEE1; color: #6E1F2B; }
+    .badge-hecha { background: #E7EEE1; color: #3F6B4A; }
   `,
 })
 export class TareaBadgeComponent {

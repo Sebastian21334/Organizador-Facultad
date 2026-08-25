@@ -31,6 +31,17 @@ export interface ResetPasswordRequest {
   nuevaPassword: string;
 }
 
+export interface PerfilResponse {
+  nombre: string | null;
+}
+
+export interface JwtPayload {
+  sub?: string;
+  email?: string;
+  nombre?: string;
+  exp?: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly http = inject(HttpClient);
@@ -62,6 +73,18 @@ export class AuthService {
     return this.http.post<MessageResponse>('/auth/reset-password', request);
   }
 
+  getPerfil(): Observable<PerfilResponse> {
+    return this.http.get<PerfilResponse>('/auth/perfil');
+  }
+
+  actualizarPerfil(nombre: string): Observable<MessageResponse> {
+    return this.http.patch<MessageResponse>('/auth/perfil', { nombre });
+  }
+
+  cambiarPassword(contraseñaActual: string, nuevaPassword: string): Observable<MessageResponse> {
+    return this.http.patch<MessageResponse>('/auth/cambiar-password', { contraseñaActual, nuevaPassword });
+  }
+
   logout(): void {
     localStorage.removeItem(this.tokenKey);
     this.authenticated.set(false);
@@ -70,6 +93,21 @@ export class AuthService {
 
   token(): string | null {
     return this.hasValidToken() ? localStorage.getItem(this.tokenKey) : null;
+  }
+
+  currentUserName(): string | null {
+    const token = this.token();
+    if (!token) return null;
+
+    try {
+      const payload = this.decodeToken<JwtPayload>(token);
+      const nombre = payload.nombre?.trim();
+      if (nombre) return nombre.split(/\s+/)[0];
+      const email = payload.email?.split('@')[0]?.trim();
+      return email || null;
+    } catch {
+      return null;
+    }
   }
 
   private setToken(token: string): void {
@@ -91,6 +129,22 @@ export class AuthService {
       localStorage.removeItem(this.tokenKey);
       return false;
     }
+  }
+
+  private decodeToken<T>(token: string): T {
+    const payload = token.split('.')[1];
+    if (!payload) return {} as T;
+
+    const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+    const normalized = atob(base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), '='));
+    return JSON.parse(
+      decodeURIComponent(
+        normalized
+          .split('')
+          .map((character) => `%${(`00${character.charCodeAt(0).toString(16)}`).slice(-2)}`)
+          .join(''),
+      ),
+    ) as T;
   }
 
   private decodeBase64Url(value: string): string {

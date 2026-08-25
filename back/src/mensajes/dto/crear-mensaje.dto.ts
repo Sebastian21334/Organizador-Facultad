@@ -3,7 +3,7 @@ import { FuenteMensaje } from '../entities/mensaje-entrante.entity';
 
 export class CrearMensajeDto {
   @IsString()
-  texto!: string;
+  texto!: string; 
 
   @IsEnum(FuenteMensaje)
   fuente!: FuenteMensaje;

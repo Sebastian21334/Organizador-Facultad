@@ -3,7 +3,16 @@ import { inject } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  if (req.url.includes('/auth/')) {
+  const publicAuthRoutes = [
+    '/auth/login',
+    '/auth/register',
+    '/auth/verify-email',
+    '/auth/forgot-password',
+    '/auth/reset-password',
+  ];
+
+  const isPublicAuthRoute = publicAuthRoutes.some((route) => req.url.includes(route));
+  if (isPublicAuthRoute) {
     return next(req);
   }
 

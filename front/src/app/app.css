@@ -1,5 +1,176 @@
 :host {
   display: block;
   min-height: 100vh;
-  background-color: #f1f5f9;
+}
+
+.app-shell {
+  min-height: 100vh;
+}
+
+.app-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 154px;
+  background: rgba(250, 246, 238, 0.96);
+  border-right: 1px solid #d8cbae;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem 0.7rem;
+  box-shadow: 4px 0 18px rgba(58, 42, 34, 0.05);
+  backdrop-filter: blur(8px);
+}
+
+.brand-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid rgba(216, 203, 174, 0.9);
+  width: 100%;
+  text-decoration: none;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.brand-block:hover { opacity: 0.78; }
+
+.brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 0.8rem;
+  background: linear-gradient(135deg, #6e1f2b 0%, #4f1620 100%);
+  color: #faf6ee;
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  box-shadow: 0 10px 20px rgba(110, 31, 43, 0.15);
+}
+
+.brand-name {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #3a2a22;
+}
+
+.brand-slogan {
+  color: #a69577;
+  font-size: 0.58rem;
+  line-height: 1.25;
+  text-align: center;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.7rem;
+  width: 100%;
+}
+
+.nav-item {
+  width: 2.9rem;
+  height: 2.9rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.9rem;
+  color: #7a6b57;
+  background: transparent;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.nav-item:hover {
+  background: rgba(110, 31, 43, 0.08);
+  color: #6e1f2b;
+  border-color: rgba(110, 31, 43, 0.12);
+}
+
+.nav-item.active {
+  background: #6e1f2b;
+  color: #faf6ee;
+  box-shadow: 0 10px 18px rgba(110, 31, 43, 0.18);
+}
+
+.nav-item--logout {
+  margin-top: auto;
+  border-color: rgba(216, 203, 174, 0.8);
+}
+
+.app-content {
+  margin-left: 154px;
+  min-height: 100vh;
+  padding: 2rem 1.25rem 2.5rem;
+}
+
+/* Variante sin padding para páginas "a sangre" (Inicio, Tareas, Mensajes, etc).
+   Se activa marcando la ruta con data: { fullBleed: true } en el routing. */
+.app-content--full-bleed {
+  padding: 0;
+}
+
+:host-context(.dark) .app-sidebar {
+  background: rgba(28, 26, 24, 0.97);
+  border-color: #3a3430;
+}
+
+:host-context(.dark) .brand-name { color: #f2f0eb; }
+:host-context(.dark) .brand-slogan { color: #a69577; }
+:host-context(.dark) .brand-block { border-color: #3a3430; }
+:host-context(.dark) .nav-item { color: #c8c1b8; }
+:host-context(.dark) .nav-item:hover { background: rgba(110, 31, 43, 0.28); color: #f2f0eb; }
+:host-context(.dark) .nav-item--logout { border-color: #3a3430; }
+
+@media (max-width: 768px) {
+  .app-shell {
+    display: block;
+  }
+
+  .app-sidebar {
+    position: static;
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid #d8cbae;
+    padding: 0.8rem 1rem;
+  }
+
+  .sidebar-nav {
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .brand-block {
+    flex-direction: row;
+    justify-content: center;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.6rem;
+    width: 100%;
+  }
+
+  .app-content {
+    margin-left: 0;
+    padding: 1.25rem 1rem 2rem;
+  }
+
+  .dias-semana-header {
+  background: #EFEBDF;
+  border: 1px solid #D9D3C2;
+  border-radius: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+
 }

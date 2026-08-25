@@ -6,6 +6,16 @@ export const routes: Routes = [
     path: '',
     canActivate: [authGuard],
     loadComponent: () =>
+      import('./features/inicio/inicio.component').then(
+        (m) => m.InicioComponent,
+      ),
+    title: 'Inicio',
+    data: { fullBleed: true },
+  },
+  {
+    path: 'calendario',
+    canActivate: [authGuard],
+    loadComponent: () =>
       import('./features/calendario/calendario.component').then(
         (m) => m.CalendarioComponent,
       ),
@@ -19,6 +29,7 @@ export const routes: Routes = [
         (m) => m.TareasComponent,
       ),
     title: 'Tareas',
+    data: { fullBleed: true },
   },
   {
     path: 'materias',
@@ -28,6 +39,7 @@ export const routes: Routes = [
         (m) => m.MateriasComponent,
       ),
     title: 'Materias',
+    data: { fullBleed: true },
   },
   {
     path: 'mensajes',
@@ -37,6 +49,13 @@ export const routes: Routes = [
         (m) => m.MensajesComponent,
       ),
     title: 'Mensajes',
+    data: { fullBleed: true },
+  },
+  {
+    path: 'perfil',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/perfil/perfil.component').then((m) => m.PerfilComponent),
+    title: 'Perfil',
   },
   {
     path: 'login',

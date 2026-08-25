@@ -7,27 +7,28 @@ import { AuthService } from '../../core/services/auth.service';
   selector: 'app-login',
   imports: [ReactiveFormsModule, RouterLink],
   template: `
-    <section class="max-w-md mx-auto mt-10 bg-white rounded-lg border border-slate-200 shadow-sm p-6">
-      <h1 class="text-2xl font-semibold text-slate-800">Iniciar sesión</h1>
-      <p class="text-sm text-slate-500 mt-1 mb-6">Accedé a tu organizador universitario.</p>
+    <section class="max-w-md mx-auto mt-10 bg-[#FFFEFA] rounded-lg border border-[#D9D3C2] shadow-sm p-6">
+      <h1 class="text-2xl font-display font-bold text-[#3A2A22]">Iniciar sesión</h1>
+      <p class="text-sm text-[#8C8570] mt-1 mb-6">Accedé a tu organizador universitario.</p>
       <form (ngSubmit)="submit()" [formGroup]="form" class="space-y-4">
-        <label class="block text-sm text-slate-600">Email
+        <label class="block text-sm text-[#5B5748]">Email
           <input type="email" formControlName="email" class="field" autocomplete="email" />
         </label>
-        <label class="block text-sm text-slate-600">Contraseña
+        <label class="block text-sm text-[#5B5748]">Contraseña
           <input type="password" formControlName="password" class="field" autocomplete="current-password" />
         </label>
-        @if (form.controls.email.invalid && form.controls.email.touched) { <p class="text-sm text-red-600">Ingresá un email válido.</p> }
-        @if (error()) { <p class="text-sm text-red-600" role="alert">{{ error() }}</p> }
+        @if (form.controls.email.invalid && form.controls.email.touched) { <p class="text-sm text-[#B3401A]">Ingresá un email válido.</p> }
+        @if (error()) { <p class="text-sm text-[#B3401A]" role="alert">{{ error() }}</p> }
         <button type="submit" [disabled]="loading()" class="button-primary w-full">{{ loading() ? 'Ingresando...' : 'Ingresar' }}</button>
       </form>
-      <a routerLink="/olvide-password" class="block text-sm text-slate-600 mt-4 text-center hover:underline">¿Olvidaste tu contraseña?</a>
-      <p class="text-sm text-slate-500 mt-5 text-center">¿Todavía no tenés cuenta? <a routerLink="/register" class="text-slate-800 font-medium hover:underline">Registrate</a></p>
+      <a routerLink="/olvide-password" class="auth-link block text-sm mt-4 text-center hover:underline">¿Olvidaste tu contraseña?</a>
+      <p class="text-sm text-[#8C8570] mt-5 text-center">¿Todavía no tenés cuenta? <a routerLink="/register" class="auth-link font-medium hover:underline">Registrate</a></p>
     </section>
   `,
   styles: `
-    .field { @apply mt-1 w-full border border-slate-200 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-300; }
-    .button-primary { @apply rounded-md bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:opacity-50; }
+    .field { @apply mt-1 w-full border border-[#D9D3C2] rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#C9C2AC]; }
+    .button-primary { @apply rounded-md bg-[#6E1F2B] px-4 py-2 text-sm font-medium text-white hover:bg-[#4F1620] disabled:opacity-50; }
+    .auth-link { color: #6E1F2B; }
   `,
 })
 export class LoginComponent {

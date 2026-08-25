@@ -13,125 +13,208 @@ import { ConfirmDialogService } from '../../shared/components/confirm-dialog.ser
   selector: 'app-tareas',
   imports: [CommonModule, FormsModule, LoaderComponent, ErrorComponent, TareaBadgeComponent],
   template: `
-    <div class="space-y-4">
-      <h1 class="text-xl font-semibold text-slate-800">Tareas</h1>
+    <div class="tareas-page">
+      <h1 class="title-bar">Tareas</h1>
 
-      <div class="flex flex-wrap gap-3 items-end">
-        <label class="text-sm flex flex-col gap-1">
-          <span class="text-slate-500">Estado</span>
-          <select [(ngModel)]="filtroEstado" (ngModelChange)="aplicarFiltros()" class="border border-slate-200 rounded-md px-2 py-1.5 text-sm bg-white">
-            <option value="">Todos</option>
-            @for (e of estados; track e) {
-              <option [value]="e">{{ e }}</option>
-            }
-          </select>
-        </label>
-        <label class="text-sm flex flex-col gap-1">
-          <span class="text-slate-500">Materia</span>
-          <select [(ngModel)]="filtroMateria" (ngModelChange)="aplicarFiltros()" class="border border-slate-200 rounded-md px-2 py-1.5 text-sm bg-white">
-            <option value="">Todas</option>
-            @for (m of materias(); track m.id) {
-              <option [value]="m.id">{{ m.nombre }}</option>
-            }
-          </select>
-        </label>
-      </div>
-
-      @if (cargando()) {
-        <app-loader mensaje="Cargando tareas..." />
-      } @else if (error()) {
-        <app-error [mensaje]="error()" />
-      } @else if (tareasFiltradas().length === 0) {
-        <p class="text-sm text-slate-500 py-6">No hay tareas que coincidan con los filtros.</p>
-      } @else {
-        <ul class="divide-y divide-slate-100 bg-white rounded-md border border-slate-200">
-          @for (t of tareasFiltradas(); track t.id) {
-            <li class="px-4 py-3">
-              @if (tareaEnEdicion() === t.id) {
-                <!-- Fila en modo edición -->
-                <div class="flex flex-col gap-2">
-                  <input
-                    [(ngModel)]="edicion.titulo"
-                    class="border border-slate-200 rounded-md px-2 py-1.5 text-sm"
-                    placeholder="Título"
-                  />
-                  <div class="flex flex-wrap gap-2">
-                    <select [(ngModel)]="edicion.materiaId" class="border border-slate-200 rounded-md px-2 py-1.5 text-sm bg-white">
-                      <option [ngValue]="undefined">Sin materia</option>
-                      @for (m of materias(); track m.id) {
-                        <option [ngValue]="m.id">{{ m.nombre }}</option>
-                      }
-                    </select>
-                    <input
-                      type="date"
-                      [(ngModel)]="edicion.fechaLimite"
-                      class="border border-slate-200 rounded-md px-2 py-1.5 text-sm"
-                    />
-                    <select [(ngModel)]="edicion.tipo" class="border border-slate-200 rounded-md px-2 py-1.5 text-sm bg-white">
-                      @for (tp of tipos; track tp) {
-                        <option [value]="tp">{{ tp }}</option>
-                      }
-                    </select>
-                  </div>
-                  <div class="flex gap-2 justify-end">
-                    <button
-                      (click)="cancelarEdicion()"
-                      class="text-xs px-2.5 py-1 rounded-md border border-slate-200 text-slate-600 hover:bg-slate-100"
-                    >
-                      Cancelar
-                    </button>
-                    <button
-                      (click)="guardarEdicion(t)"
-                      class="text-xs px-2.5 py-1 rounded-md border border-blue-200 text-blue-600 hover:bg-blue-50"
-                    >
-                      Guardar
-                    </button>
-                  </div>
-                </div>
-              } @else {
-                <!-- Fila normal -->
-                <div class="flex items-center justify-between gap-3">
-                  <div class="min-w-0">
-                    <p class="text-sm font-medium text-slate-800 truncate">{{ t.titulo }}</p>
-                    <p class="text-xs text-slate-500 truncate">
-                      {{ t.materia?.nombre ?? 'Sin materia' }}
-                      @if (t.fechaLimite) {
-                        · {{ t.fechaLimite | date: 'dd/MM/yyyy' }}
-                      }
-                    </p>
-                  </div>
-                  <div class="flex items-center gap-2 shrink-0">
-                    <app-tarea-badge [tipo]="t.tipo" [estado]="t.estado" />
-                    <button
-                      (click)="marcarHecha(t)"
-                      [disabled]="t.estado === estadoHecha"
-                      class="text-xs px-2.5 py-1 rounded-md border transition-colors"
-                      [class]="t.estado === estadoHecha
-                        ? 'border-green-200 text-green-600 cursor-default'
-                        : 'border-slate-200 text-slate-600 hover:bg-slate-100'"
-                    >
-                      {{ t.estado === estadoHecha ? 'Hecha' : 'Marcar hecha' }}
-                    </button>
-                    <button
-                      (click)="iniciarEdicion(t)"
-                      class="text-xs px-2.5 py-1 rounded-md border border-slate-200 text-slate-600 hover:bg-slate-100"
-                    >
-                      Editar
-                    </button>
-                    <button
-                      (click)="eliminar(t)"
-                      class="text-xs px-2.5 py-1 rounded-md border border-red-200 text-red-600 hover:bg-red-50"
-                    >
-                      Eliminar
-                    </button>
-                  </div>
-                </div>
+      <div class="max-w-6xl mx-auto space-y-5 px-3 md:px-5 py-6">
+        <div class="filtros-bar">
+          <label class="filtro-campo">
+            <span class="filtro-label">Estado</span>
+            <select [(ngModel)]="filtroEstado" (ngModelChange)="aplicarFiltros()" class="filtro-select">
+              <option value="">Todos</option>
+              @for (e of estados; track e) {
+                <option [value]="e">{{ e }}</option>
               }
-            </li>
-          }
-        </ul>
-      }
+            </select>
+          </label>
+          <label class="filtro-campo">
+            <span class="filtro-label">Materia</span>
+            <select [(ngModel)]="filtroMateria" (ngModelChange)="aplicarFiltros()" class="filtro-select">
+              <option value="">Todas</option>
+              @for (m of materias(); track m.id) {
+                <option [value]="m.id">{{ m.nombre }}</option>
+              }
+            </select>
+          </label>
+          <span class="filtro-contador">
+            {{ tareasFiltradas().length }} {{ tareasFiltradas().length === 1 ? 'tarea' : 'tareas' }}
+          </span>
+        </div>
+
+        @if (cargando()) {
+          <app-loader mensaje="Cargando tareas..." />
+        } @else if (error()) {
+          <app-error [mensaje]="error()" />
+        } @else if (tareasFiltradas().length === 0) {
+          <div class="tareas-vacio">
+            <p>No hay tareas que coincidan con los filtros.</p>
+          </div>
+        } @else {
+          <ul class="tareas-lista">
+            @for (t of tareasFiltradas(); track t.id) {
+              <li class="tareas-item">
+                @if (tareaEnEdicion() === t.id) {
+                  <!-- Fila en modo edición -->
+                  <div class="flex flex-col gap-2">
+                    <input
+                      [(ngModel)]="edicion.titulo"
+                      class="filtro-select"
+                      placeholder="Título"
+                    />
+                    <div class="flex flex-wrap gap-2">
+                      <select [(ngModel)]="edicion.materiaId" class="filtro-select">
+                        <option [ngValue]="undefined">Sin materia</option>
+                        @for (m of materias(); track m.id) {
+                          <option [ngValue]="m.id">{{ m.nombre }}</option>
+                        }
+                      </select>
+                      <input
+                        type="date"
+                        [(ngModel)]="edicion.fechaLimite"
+                        class="filtro-select"
+                      />
+                      <select [(ngModel)]="edicion.tipo" class="filtro-select">
+                        @for (tp of tipos; track tp) {
+                          <option [value]="tp">{{ tp }}</option>
+                        }
+                      </select>
+                    </div>
+                    <div class="flex gap-2 justify-end">
+                      <button (click)="cancelarEdicion()" class="btn-secundario">
+                        Cancelar
+                      </button>
+                      <button (click)="guardarEdicion(t)" class="btn-primario">
+                        Guardar
+                      </button>
+                    </div>
+                  </div>
+                } @else {
+                  <!-- Fila normal -->
+                  <div class="flex items-center justify-between gap-3">
+                    <div class="min-w-0">
+                      <p class="tareas-item-titulo">{{ t.titulo }}</p>
+                      <p class="tareas-item-meta">
+                        {{ t.materia?.nombre ?? 'Sin materia' }}
+                        @if (t.fechaLimite) {
+                          · {{ t.fechaLimite | date: 'dd/MM/yyyy' }}
+                        }
+                      </p>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                      <app-tarea-badge [tipo]="t.tipo" [estado]="t.estado" />
+                      <button
+                        (click)="marcarHecha(t)"
+                        [disabled]="t.estado === estadoHecha"
+                        class="btn-secundario"
+                        [class.btn-hecha]="t.estado === estadoHecha"
+                      >
+                        {{ t.estado === estadoHecha ? 'Hecha' : 'Marcar hecha' }}
+                      </button>
+                      <button (click)="iniciarEdicion(t)" class="btn-secundario">
+                        Editar
+                      </button>
+                      <button (click)="eliminar(t)" class="btn-peligro">
+                        Eliminar
+                      </button>
+                    </div>
+                  </div>
+                }
+              </li>
+            }
+          </ul>
+        }
+      </div>
     </div>
+  `,
+  styles: `
+    .filtros-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      gap: 1.25rem;
+      background: #EFEBDF;
+      border: 1px solid #D9D3C2;
+      border-radius: 0.65rem;
+      padding: 1rem 1.25rem;
+    }
+    .filtro-campo { display: flex; flex-direction: column; gap: 0.35rem; }
+    .filtro-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #8C8570;
+    }
+    .filtro-select {
+      appearance: none;
+      -webkit-appearance: none;
+      background-color: #FFFEFA;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' stroke='%235B5748' stroke-width='1.5' fill='none' fill-rule='evenodd'/></svg>");
+      background-repeat: no-repeat;
+      background-position: right 0.75rem center;
+      border: 1px solid #D9D3C2;
+      border-radius: 0.5rem;
+      padding: 0.5rem 2rem 0.5rem 0.75rem;
+      font-size: 0.85rem;
+      color: #3A2A22;
+      min-width: 10rem;
+    }
+    .filtro-select:focus { outline: none; border-color: #6E1F2B; }
+    .filtro-contador {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: #8C8570;
+      margin-left: auto;
+      align-self: center;
+    }
+
+    .tareas-lista {
+      background: #FFFEFA;
+      border: 1px solid #D9D3C2;
+      border-radius: 0.65rem;
+      overflow: hidden;
+    }
+    .tareas-item {
+      padding: 1.1rem 1.25rem;
+      border-bottom: 1px solid #EFEBDF;
+      transition: background-color 0.15s ease;
+    }
+    .tareas-item:last-child { border-bottom: none; }
+    .tareas-item:hover { background-color: #FAF6EE; }
+    .tareas-item-titulo { font-family: 'Fraunces', serif; font-weight: 700; font-size: 1rem; color: #3A2A22; }
+    .tareas-item-meta { font-size: 0.85rem; color: #8C8570; margin-top: 0.15rem; }
+
+    .tareas-vacio {
+      background: #FAF6EE;
+      border: 1px dashed #D8CBAE;
+      border-radius: 0.65rem;
+      padding: 2.5rem 1rem;
+      text-align: center;
+      color: #8C8570;
+      font-size: 0.9rem;
+    }
+
+    .btn-secundario, .btn-primario, .btn-peligro {
+      font-size: 0.75rem;
+      padding: 0.4rem 0.75rem;
+      border-radius: 0.5rem;
+      border: 1px solid transparent;
+      transition: background-color 0.15s ease;
+      white-space: nowrap;
+    }
+    .btn-secundario { border-color: #D9D3C2; color: #5B5748; }
+    .btn-secundario:hover { background-color: #EFEBDF; }
+    .btn-secundario:disabled { cursor: default; opacity: 0.7; }
+    .btn-hecha { border-color: #C3D4B4; color: #3F6B4A; }
+    .btn-primario { border-color: #D8CBAE; color: #6E1F2B; }
+    .btn-primario:hover { background-color: #F1DEE1; }
+    .btn-peligro { border-color: #E8C9B8; color: #B3401A; }
+    .btn-peligro:hover { background-color: #F6E2DA; }
+
+    @media (max-width: 640px) {
+      .filtros-bar { gap: 0.85rem; }
+      .filtro-contador { margin-left: 0; }
+    }
   `,
 })
 export class TareasComponent implements OnInit {
