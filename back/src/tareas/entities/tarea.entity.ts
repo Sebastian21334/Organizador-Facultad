@@ -7,7 +7,7 @@ import {
   CreateDateColumn,
 } from 'typeorm';
 import { Materia } from '../../materias/entities/materia.entity';
-import { Usuario } from 'src/usuarios/entities/usuario.entity';
+import { Usuario } from '../../usuarios/entities/usuario.entity';
 
 export enum TipoTarea {
   TAREA = 'tarea',

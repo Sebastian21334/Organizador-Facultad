@@ -24,7 +24,7 @@ import { UsuariosModule } from './usuarios/usuarios.module';
         password: config.get('DB_PASSWORD'),
         database: config.get('DB_NAME'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: true,
+        synchronize: false,
         ssl: {
           rejectUnauthorized: false,
         },
