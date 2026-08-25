@@ -120,18 +120,6 @@
   padding: 0;
 }
 
-:host-context(.dark) .app-sidebar {
-  background: rgba(28, 26, 24, 0.97);
-  border-color: #3a3430;
-}
-
-:host-context(.dark) .brand-name { color: #f2f0eb; }
-:host-context(.dark) .brand-slogan { color: #a69577; }
-:host-context(.dark) .brand-block { border-color: #3a3430; }
-:host-context(.dark) .nav-item { color: #c8c1b8; }
-:host-context(.dark) .nav-item:hover { background: rgba(110, 31, 43, 0.28); color: #f2f0eb; }
-:host-context(.dark) .nav-item--logout { border-color: #3a3430; }
-
 @media (max-width: 768px) {
   .app-shell {
     display: block;

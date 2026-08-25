@@ -22,17 +22,6 @@
   --font-body: 'Sora', sans-serif;
 }
 
-html.dark {
-  --bg: #0f0e0d;
-  --card: #1c1a18;
-  --card-strong: #24211f;
-  --border: #3a3430;
-  --ink: #f2f0eb;
-  --muted: #c8c1b8;
-  --label: #a69577;
-  --accent-soft: #4a222b;
-}
-
 html, body {
   height: 100%;
   margin: 0;
@@ -48,11 +37,6 @@ body {
     radial-gradient(circle at 1px 1px, rgba(110, 31, 43, 0.05) 1px, transparent 0);
   background-size: 30px 30px, 30px 30px, 14px 14px;
   background-position: center center, center center, 0 0;
-}
-
-html.dark body {
-  background-image: linear-gradient(rgba(242, 240, 235, 0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(242, 240, 235, 0.02) 1px, transparent 1px);
-  background-size: 30px 30px;
 }
 
 * {
@@ -121,18 +105,6 @@ input, select, textarea {
     margin: -1.25rem 0 0 -1rem;
   }
 }
-
-html.dark .app-content input,
-html.dark .app-content select,
-html.dark .app-content textarea,
-html.dark .app-content [class*="bg-[#FFFEFA]"],
-html.dark .app-content [class*="bg-[#FAF6EE]"] {
-  background-color: #1c1a18;
-  color: #f2f0eb;
-  border-color: #3a3430;
-}
-
-html.dark .app-content [class*="text-[#3A2A22]"] { color: #f2f0eb; }
 
 .text-mono-label {
   font-family: 'JetBrains Mono', 'SFMono-Regular', monospace;

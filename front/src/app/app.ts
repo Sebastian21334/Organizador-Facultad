@@ -1,9 +1,8 @@
-import { DOCUMENT } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, NavigationEnd, Router, RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { filter, map } from 'rxjs';
-import { BookOpen, Calendar, CheckSquare, Compass, LogOut, MessageCircle, Moon, Sun, UserCircle, LucideAngularModule } from 'lucide-angular';
+import { BookOpen, Calendar, CheckSquare, Compass, LogOut, MessageCircle, UserCircle, LucideAngularModule } from 'lucide-angular';
 import { AuthService } from './core/services/auth.service';
 import { ConfirmDialogComponent } from './shared/components/confirm-dialog.component';
 import { ConfirmDialogService } from './shared/components/confirm-dialog.service';
@@ -16,12 +15,9 @@ import { ConfirmDialogService } from './shared/components/confirm-dialog.service
 })
 export class App {
   protected readonly auth = inject(AuthService);
-  private readonly document = inject(DOCUMENT);
   private readonly confirmDialog = inject(ConfirmDialogService);
   private readonly router = inject(Router);
   private readonly activatedRoute = inject(ActivatedRoute);
-
-  protected readonly modoOscuro = signal(this.cargarModoOscuro());
 
   // Se activa cuando la ruta actual (o alguna de sus rutas hijas) tiene
   // `data: { fullBleed: true }` en la configuración de rutas. Sirve para que
@@ -38,8 +34,6 @@ export class App {
     { path: '/perfil', label: 'Perfil', icon: UserCircle },
   ];
   protected readonly logOutIcon = LogOut;
-  protected readonly moonIcon = Moon;
-  protected readonly sunIcon = Sun;
 
   constructor() {
     this.router.events
@@ -51,13 +45,6 @@ export class App {
       .subscribe((valor) => this.fullBleed.set(valor));
   }
 
-  protected alternarModoOscuro(): void {
-    const nuevoEstado = !this.modoOscuro();
-    this.modoOscuro.set(nuevoEstado);
-    this.document.documentElement.classList.toggle('dark', nuevoEstado);
-    localStorage.setItem('tempo-dark-mode', String(nuevoEstado));
-  }
-
   protected async cerrarSesion(): Promise<void> {
     const confirmado = await this.confirmDialog.confirm({
       titulo: 'Cerrar sesión',
@@ -65,12 +52,6 @@ export class App {
       textoConfirmar: 'Salir',
     });
     if (confirmado) this.auth.logout();
-  }
-
-  private cargarModoOscuro(): boolean {
-    const activado = localStorage.getItem('tempo-dark-mode') === 'true';
-    this.document.documentElement.classList.toggle('dark', activado);
-    return activado;
   }
 
   // Recorre la cadena de rutas activas (la ruta puede tener hijos, ej. layouts

@@ -23,20 +23,6 @@
 
         <button
           type="button"
-          class="nav-item"
-          (click)="alternarModoOscuro()"
-          [attr.aria-label]="modoOscuro() ? 'Activar modo claro' : 'Activar modo oscuro'"
-          [title]="modoOscuro() ? 'Modo claro' : 'Modo oscuro'"
-        >
-          @if (modoOscuro()) {
-            <lucide-icon [img]="sunIcon" [size]="18" aria-hidden="true"></lucide-icon>
-          } @else {
-            <lucide-icon [img]="moonIcon" [size]="18" aria-hidden="true"></lucide-icon>
-          }
-        </button>
-
-        <button
-          type="button"
           class="nav-item nav-item--logout"
           (click)="cerrarSesion()"
           aria-label="Cerrar sesión"
