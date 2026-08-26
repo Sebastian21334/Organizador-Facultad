@@ -2,14 +2,23 @@ import { Component, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, NavigationEnd, Router, RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { filter, map } from 'rxjs';
-import { BookOpen, Calendar, CheckSquare, Compass, LogOut, MessageCircle, UserCircle, LucideAngularModule } from 'lucide-angular';
+import {
+  LucideDynamicIcon,
+  LucideBookOpen,
+  LucideCalendar,
+  LucideCheckSquare,
+  LucideCompass,
+  LucideLogOut,
+  LucideMessageCircle,
+  LucideUserCircle,
+} from '@lucide/angular';
 import { AuthService } from './core/services/auth.service';
 import { ConfirmDialogComponent } from './shared/components/confirm-dialog.component';
 import { ConfirmDialogService } from './shared/components/confirm-dialog.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, ConfirmDialogComponent, LucideAngularModule],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, ConfirmDialogComponent, LucideDynamicIcon],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
@@ -19,21 +28,17 @@ export class App {
   private readonly router = inject(Router);
   private readonly activatedRoute = inject(ActivatedRoute);
 
-  // Se activa cuando la ruta actual (o alguna de sus rutas hijas) tiene
-  // `data: { fullBleed: true }` en la configuración de rutas. Sirve para que
-  // páginas como Inicio, Tareas o Mensajes puedan ocupar todo el ancho del
-  // área de contenido, sin el padding que .app-content le da al resto.
   protected readonly fullBleed = signal(this.calcularFullBleed());
 
   protected readonly navItems = [
-    { path: '/', label: 'Inicio', icon: Compass },
-    { path: '/calendario', label: 'Calendario', icon: Calendar },
-    { path: '/tareas', label: 'Tareas', icon: CheckSquare },
-    { path: '/materias', label: 'Materias', icon: BookOpen },
-    { path: '/mensajes', label: 'Mensajes', icon: MessageCircle },
-    { path: '/perfil', label: 'Perfil', icon: UserCircle },
+    { path: '/', label: 'Inicio', icon: LucideCompass },
+    { path: '/calendario', label: 'Calendario', icon: LucideCalendar },
+    { path: '/tareas', label: 'Tareas', icon: LucideCheckSquare },
+    { path: '/materias', label: 'Materias', icon: LucideBookOpen },
+    { path: '/mensajes', label: 'Mensajes', icon: LucideMessageCircle },
+    { path: '/perfil', label: 'Perfil', icon: LucideUserCircle },
   ];
-  protected readonly logOutIcon = LogOut;
+  protected readonly logOutIcon = LucideLogOut;
 
   constructor() {
     this.router.events
@@ -54,8 +59,6 @@ export class App {
     if (confirmado) this.auth.logout();
   }
 
-  // Recorre la cadena de rutas activas (la ruta puede tener hijos, ej. layouts
-  // anidados) buscando data.fullBleed en alguna de ellas.
   private calcularFullBleed(): boolean {
     let ruta: ActivatedRoute | null = this.activatedRoute.firstChild;
     while (ruta) {
