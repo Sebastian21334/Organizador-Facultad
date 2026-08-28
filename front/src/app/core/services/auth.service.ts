@@ -48,12 +48,23 @@ export class AuthService {
   private readonly router = inject(Router);
   private readonly tokenKey = 'access_token';
   private readonly authenticated = signal(this.hasValidToken());
+  private readonly nombreUsuario = signal<string | null>(null);
 
   readonly isAuthenticated = this.authenticated.asReadonly();
+  readonly currentUserName = this.nombreUsuario.asReadonly();
+
+  constructor() {
+    if (this.hasValidToken()) {
+      this.cargarPerfil();
+    }
+  }
 
   login(email: string, password: string): Observable<AuthResponse> {
     return this.http.post<AuthResponse>('/auth/login', { email, password }).pipe(
-      tap(({ access_token }) => this.setToken(access_token)),
+      tap(({ access_token }) => {
+        this.setToken(access_token);
+        this.cargarPerfil();
+      }),
     );
   }
 
@@ -78,7 +89,9 @@ export class AuthService {
   }
 
   actualizarPerfil(nombre: string): Observable<MessageResponse> {
-    return this.http.patch<MessageResponse>('/auth/perfil', { nombre });
+    return this.http.patch<MessageResponse>('/auth/perfil', { nombre }).pipe(
+      tap(() => this.nombreUsuario.set(nombre?.trim().split(/\s+/)[0] ?? null)),
+    );
   }
 
   cambiarPassword(contraseñaActual: string, nuevaPassword: string): Observable<MessageResponse> {
@@ -88,6 +101,7 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem(this.tokenKey);
     this.authenticated.set(false);
+    this.nombreUsuario.set(null);
     void this.router.navigate(['/login']);
   }
 
@@ -95,19 +109,11 @@ export class AuthService {
     return this.hasValidToken() ? localStorage.getItem(this.tokenKey) : null;
   }
 
-  currentUserName(): string | null {
-    const token = this.token();
-    if (!token) return null;
-
-    try {
-      const payload = this.decodeToken<JwtPayload>(token);
-      const nombre = payload.nombre?.trim();
-      if (nombre) return nombre.split(/\s+/)[0];
-      const email = payload.email?.split('@')[0]?.trim();
-      return email || null;
-    } catch {
-      return null;
-    }
+  private cargarPerfil(): void {
+    this.getPerfil().subscribe({
+      next: (perfil) => this.nombreUsuario.set(perfil.nombre?.trim().split(/\s+/)[0] ?? null),
+      error: () => this.nombreUsuario.set(null),
+    });
   }
 
   private setToken(token: string): void {
