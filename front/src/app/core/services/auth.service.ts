@@ -54,7 +54,9 @@ export class AuthService {
   readonly currentUserName = this.nombreUsuario.asReadonly();
 
   constructor() {
+    console.log('[AuthService] constructor, hasValidToken:', this.hasValidToken());
     if (this.hasValidToken()) {
+      console.log('[AuthService] Llamando a cargarPerfil desde constructor');
       this.cargarPerfil();
     }
   }
@@ -110,9 +112,16 @@ export class AuthService {
   }
 
   private cargarPerfil(): void {
+    console.log('[AuthService] cargarPerfil ejecutándose, haciendo GET /auth/perfil');
     this.getPerfil().subscribe({
-      next: (perfil) => this.nombreUsuario.set(perfil.nombre?.trim().split(/\s+/)[0] ?? null),
-      error: () => this.nombreUsuario.set(null),
+      next: (perfil) => {
+        console.log('[AuthService] Perfil recibido:', perfil);
+        this.nombreUsuario.set(perfil.nombre?.trim().split(/\s+/)[0] ?? null);
+      },
+      error: (err) => {
+        console.error('[AuthService] Error cargando perfil:', err);
+        this.nombreUsuario.set(null);
+      },
     });
   }
 
