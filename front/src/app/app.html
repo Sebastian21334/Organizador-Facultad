@@ -1,7 +1,36 @@
 <div class="app-shell">
   @if (auth.isAuthenticated()) {
-    <aside class="app-sidebar" aria-label="Navegación principal">
-      <a class="brand-block" routerLink="/" aria-label="Tempo, ir a Inicio">
+    <!-- Barra superior compacta, visible solo en mobile -->
+    <header class="mobile-topbar">
+      <button
+        type="button"
+        class="menu-toggle"
+        (click)="toggleMenu()"
+        [attr.aria-expanded]="menuAbierto()"
+        aria-label="Abrir menú de navegación"
+        aria-controls="app-sidebar-drawer"
+      >
+        <svg [lucideIcon]="menuIcon" [size]="22" aria-hidden="true"></svg>
+      </button>
+
+      <a class="brand-block brand-block--compact" routerLink="/" aria-label="Tempo, ir a Inicio">
+        <span class="brand-mark">T</span>
+        <span class="brand-name">Tempo</span>
+      </a>
+    </header>
+
+    <!-- Overlay para cerrar el drawer tocando afuera -->
+    @if (menuAbierto()) {
+      <div class="sidebar-overlay" (click)="cerrarMenu()" aria-hidden="true"></div>
+    }
+
+    <aside
+      id="app-sidebar-drawer"
+      class="app-sidebar"
+      [class.app-sidebar--open]="menuAbierto()"
+      aria-label="Navegación principal"
+    >
+      <a class="brand-block" routerLink="/" (click)="cerrarMenu()" aria-label="Tempo, ir a Inicio">
         <span class="brand-mark">T</span>
         <span class="brand-name">Tempo</span>
         <span class="brand-slogan">Organizá tu vida universitaria.</span>
@@ -16,8 +45,10 @@
             class="nav-item"
             [attr.aria-label]="item.label"
             [title]="item.label"
+            (click)="cerrarMenu()"
           >
             <svg [lucideIcon]="item.icon" [size]="18" aria-hidden="true"></svg>
+            <span class="nav-item-label">{{ item.label }}</span>
           </a>
         }
 
@@ -29,6 +60,7 @@
           title="Cerrar sesión"
         >
           <svg [lucideIcon]="logOutIcon" [size]="18" aria-hidden="true"></svg>
+          <span class="nav-item-label">Cerrar sesión</span>
         </button>
       </nav>
     </aside>

@@ -9,6 +9,7 @@ import {
   LucideCheckSquare,
   LucideCompass,
   LucideLogOut,
+  LucideMenu,
   LucideMessageCircle,
   LucideUserCircle,
 } from '@lucide/angular';
@@ -30,6 +31,9 @@ export class App {
 
   protected readonly fullBleed = signal(this.calcularFullBleed());
 
+  // Estado del drawer de navegación en mobile.
+  protected readonly menuAbierto = signal(false);
+
   protected readonly navItems = [
     { path: '/', label: 'Inicio', icon: LucideCompass },
     { path: '/calendario', label: 'Calendario', icon: LucideCalendar },
@@ -39,6 +43,7 @@ export class App {
     { path: '/perfil', label: 'Perfil', icon: LucideUserCircle },
   ];
   protected readonly logOutIcon = LucideLogOut;
+  protected readonly menuIcon = LucideMenu;
 
   constructor() {
     this.router.events
@@ -47,7 +52,19 @@ export class App {
         map(() => this.calcularFullBleed()),
         takeUntilDestroyed(),
       )
-      .subscribe((valor) => this.fullBleed.set(valor));
+      .subscribe((valor) => {
+        this.fullBleed.set(valor);
+        // Al navegar a otra sección, el drawer se cierra solo.
+        this.menuAbierto.set(false);
+      });
+  }
+
+  protected toggleMenu(): void {
+    this.menuAbierto.update((v) => !v);
+  }
+
+  protected cerrarMenu(): void {
+    this.menuAbierto.set(false);
   }
 
   protected async cerrarSesion(): Promise<void> {
@@ -56,7 +73,10 @@ export class App {
       mensaje: '¿Seguro que querés salir?',
       textoConfirmar: 'Salir',
     });
-    if (confirmado) this.auth.logout();
+    if (confirmado) {
+      this.cerrarMenu();
+      this.auth.logout();
+    }
   }
 
   private calcularFullBleed(): boolean {

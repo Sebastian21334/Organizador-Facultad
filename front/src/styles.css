@@ -145,6 +145,17 @@ input, select, textarea {
   }
 }
 
+/* En el breakpoint más chico, .app-content reduce su padding
+   (pasa de 1.25rem arriba / 1rem a los costados, a 1rem arriba /
+   0.75rem a los costados), así que el title-bar necesita compensar
+   esos valores nuevos en vez de seguir restando los de 768px —
+   si no, queda un resto de fondo visible en el borde izquierdo. */
+@media (max-width: 480px) {
+  .app-content:not(.app-content--full-bleed) .title-bar {
+    margin: -1rem 0 0 -0.75rem;
+  }
+}
+
 .text-mono-label {
   font-family: 'JetBrains Mono', 'SFMono-Regular', monospace;
   letter-spacing: 0.08em;

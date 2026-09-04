@@ -10,7 +10,7 @@ import { ErrorComponent } from '../../shared/components/error.component';
   selector: 'app-mensajes',
   imports: [CommonModule, FormsModule, LoaderComponent, ErrorComponent],
   template: `
-    <div class="mensajes-page flex flex-col h-[100dvh] max-h-[100dvh] overflow-hidden">
+    <div class="mensajes-page flex flex-col h-full overflow-hidden">
       <!-- Header Superior Moderno tipo Mensajería -->
       <header class="shrink-0 z-20 bg-[#FAF6EE]/90 backdrop-blur-md border-b border-[#D8CBAE] px-4 py-2.5 sm:px-6 shadow-xs">
         <div class="max-w-4xl mx-auto flex items-center justify-between">
