@@ -298,12 +298,13 @@ import { ErrorComponent } from '../../shared/components/error.component';
     </div>
   `,
   styles: `
+    .mensajes-page { height: 100dvh; }
     .msg-ok-fondo { background-color: #E7EEE1; }
     .msg-ok-borde { border-color: #C3D4B4; }
     .msg-default-fondo { background-color: #FFFEFA; }
     .msg-default-borde { border-color: #D9D3C2; }
     @media (max-width: 768px) {
-      .mensajes-page { height: calc(100dvh - 124px); }
+      .mensajes-page { height: 100%; }
     }
   `,
 })
