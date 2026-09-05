@@ -1,10 +1,62 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException, ForbiddenException, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { TareasRepository } from '../repositories/tareas.repository';
 import { Tarea, EstadoTarea } from '../entities/tarea.entity';
+import { MailService } from '../../mail/services/mail.service';
 
 @Injectable()
-export class TareasService {
-  constructor(private readonly tareasRepository: TareasRepository) {}
+export class TareasService implements OnModuleInit, OnModuleDestroy {
+  private readonly logger = new Logger(TareasService.name);
+  private recordatoriosInterval?: NodeJS.Timeout;
+
+  constructor(
+    private readonly tareasRepository: TareasRepository,
+    private readonly mailService: MailService,
+  ) {}
+
+  onModuleInit(): void {
+    void this.enviarRecordatorios();
+    this.recordatoriosInterval = setInterval(() => void this.enviarRecordatorios(), 60_000);
+  }
+
+  onModuleDestroy(): void {
+    if (this.recordatoriosInterval) {
+      clearInterval(this.recordatoriosInterval);
+    }
+  }
+
+  private async enviarRecordatorios(): Promise<void> {
+    const ahora = new Date();
+    const limiteBusqueda = new Date(ahora.getTime() + 43200 * 60_000);
+    const tareas = await this.tareasRepository.findRecordatoriosVencidos(limiteBusqueda);
+
+    for (const tarea of tareas) {
+      const minutos = tarea.usuario?.recordatorioEmailHabilitado
+        ? tarea.usuario.recordatorioMinutos
+        : null;
+      if (!tarea.fechaLimite || !tarea.usuario?.email || !minutos) {
+        continue;
+      }
+
+      const momentoAviso = new Date(
+        tarea.fechaLimite.getTime() - minutos * 60_000,
+      );
+      if (momentoAviso > ahora) {
+        continue;
+      }
+
+      try {
+        await this.mailService.enviarMail(
+          tarea.usuario.email,
+          `Recordatorio: ${tarea.titulo}`,
+          `Tu tarea "${tarea.titulo}" vence el ${tarea.fechaLimite.toLocaleString('es-AR')}.`,
+          `<p>Recordatorio de tarea</p><p><strong>${tarea.titulo}</strong> vence el ${tarea.fechaLimite.toLocaleString('es-AR')}.</p>`,
+        );
+        await this.tareasRepository.marcarRecordatorioEnviado(tarea.id!);
+      } catch (error) {
+        this.logger.error(`No se pudo enviar el recordatorio de la tarea ${tarea.id}`, error);
+      }
+    }
+  }
 
   async obtenerTodas(usuarioId: string): Promise<Tarea[]> {
     return this.tareasRepository.findAll(usuarioId);

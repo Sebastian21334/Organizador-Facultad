@@ -132,7 +132,11 @@ export class AuthService {
       throw new NotFoundException('Usuario no encontrado');
     }
 
-    return { nombre: usuario.nombre ?? null };
+    return {
+      nombre: usuario.nombre ?? null,
+      recordatorioEmailHabilitado: usuario.recordatorioEmailHabilitado,
+      recordatorioMinutos: usuario.recordatorioMinutos,
+    };
   }
 
   async actualizarPerfil(userId: string, dto: ActualizarPerfilDto) {
@@ -146,7 +150,12 @@ export class AuthService {
       throw new BadRequestException('El nombre no puede estar vacío');
     }
 
-    await this.usuariosService.actualizar(userId, { nombre });
+    const { recordatorioEmailHabilitado, recordatorioMinutos } = dto;
+    await this.usuariosService.actualizar(userId, {
+      nombre,
+      ...(recordatorioEmailHabilitado !== undefined ? { recordatorioEmailHabilitado } : {}),
+      ...(recordatorioMinutos !== undefined ? { recordatorioMinutos } : {}),
+    });
     return { mensaje: 'Nombre actualizado con éxito' };
   }
 

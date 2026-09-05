@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Between } from 'typeorm';
+import { Repository, Between, IsNull, LessThanOrEqual, Not } from 'typeorm';
 import { Tarea } from '../entities/tarea.entity';
+import { EstadoTarea } from '../entities/tarea.entity';
 
 @Injectable()
 export class TareasRepository {
@@ -24,6 +25,23 @@ export class TareasRepository {
       relations: { materia: true },
       order: { fechaLimite: 'ASC' },
     });
+  }
+
+  async findRecordatoriosVencidos(hasta: Date): Promise<Tarea[]> {
+    return this.repo
+      .createQueryBuilder('tarea')
+      .leftJoinAndSelect('tarea.usuario', 'usuario')
+      .where('tarea.fechaLimite <= :hasta', { hasta })
+      .andWhere('tarea.recordatorioEnviadoEn IS NULL')
+      .andWhere('tarea.estado != :hecha', { hecha: EstadoTarea.HECHA })
+      .andWhere(
+        '(usuario.recordatorioMinutos IS NOT NULL OR tarea.recordatorioMinutos IS NOT NULL)',
+      )
+      .getMany();
+  }
+
+  async marcarRecordatorioEnviado(id: string): Promise<void> {
+    await this.repo.update(id, { recordatorioEnviadoEn: new Date() });
   }
 
   async create(data: Partial<Tarea>): Promise<Tarea> {

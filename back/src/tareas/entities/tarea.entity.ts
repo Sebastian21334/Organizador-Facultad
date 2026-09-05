@@ -53,6 +53,12 @@ export class Tarea {
   @Column({ type: 'timestamptz', nullable: true })
   fechaLimite?: Date;
 
+  @Column({ type: 'integer', nullable: true })
+  recordatorioMinutos?: number | null;
+
+  @Column({ type: 'timestamptz', nullable: true })
+  recordatorioEnviadoEn?: Date | null;
+
   @Column({ type: 'enum', enum: OrigenTarea, default: OrigenTarea.MANUAL })
   origen?: OrigenTarea;
 

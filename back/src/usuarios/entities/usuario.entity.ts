@@ -27,4 +27,10 @@ export class Usuario {
 
   @Column({ default: false })
   emailVerificado!: boolean;
+
+  @Column({ default: false })
+  recordatorioEmailHabilitado!: boolean;
+
+  @Column({ type: 'integer', nullable: true })
+  recordatorioMinutos!: number | null;
 }

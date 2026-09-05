@@ -59,13 +59,16 @@ export class TareasController {
 
   @Patch(':id')
   async actualizar(@Param('id') id: string, @Body() dto: Partial<CrearTareaDto>, @Req() req) {
-    const { materiaId, fechaLimite, ...resto } = dto;
+    const { materiaId, fechaLimite, recordatorioMinutos, ...resto } = dto;
     return this.tareasService.actualizar(
       id,
       {
         ...resto,
-        ...(fechaLimite ? { fechaLimite: new Date(fechaLimite) } : {}),
+        ...(fechaLimite ? { fechaLimite: new Date(fechaLimite), recordatorioEnviadoEn: null } : {}),
         ...(materiaId ? { materia: { id: materiaId } as Materia } : {}),
+        ...(recordatorioMinutos !== undefined
+          ? { recordatorioMinutos, recordatorioEnviadoEn: null }
+          : {}),
       },
       req.user.userId,
     );

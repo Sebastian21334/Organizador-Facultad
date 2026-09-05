@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsEnum, IsDateString, IsUUID, MaxLength } from 'class-validator';
+import { IsString, IsOptional, IsEnum, IsDateString, IsUUID, MaxLength, IsInt, Min, Max } from 'class-validator';
 import { TipoTarea, OrigenTarea } from '../entities/tarea.entity';
 
 export class CrearTareaDto {
@@ -21,6 +21,12 @@ export class CrearTareaDto {
   @IsOptional()
   @IsDateString()
   fechaLimite?: string;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Max(43200)
+  recordatorioMinutos?: number | null;
 
   @IsOptional()
   @IsEnum(OrigenTarea)
