@@ -33,6 +33,13 @@ export interface ResetPasswordRequest {
 
 export interface PerfilResponse {
   nombre: string | null;
+  recordatorioEmailHabilitado: boolean;
+  recordatorioMinutos: number | null;
+}
+
+export interface PreferenciasRecordatorio {
+  recordatorioEmailHabilitado: boolean;
+  recordatorioMinutos: number | null;
 }
 
 export interface JwtPayload {
@@ -92,8 +99,8 @@ export class AuthService {
     return this.http.get<PerfilResponse>('/auth/perfil');
   }
 
-  actualizarPerfil(nombre: string): Observable<MessageResponse> {
-    return this.http.patch<MessageResponse>('/auth/perfil', { nombre }).pipe(
+  actualizarPerfil(nombre: string, preferencias?: PreferenciasRecordatorio): Observable<MessageResponse> {
+    return this.http.patch<MessageResponse>('/auth/perfil', { nombre, ...preferencias }).pipe(
       tap(() => this.nombreUsuario.set(nombre?.trim().split(/\s+/)[0] ?? null)),
     );
   }

@@ -9,6 +9,7 @@ export interface Tarea {
   tipo: TipoTarea;
   estado: EstadoTarea;
   fechaLimite: string | null;
+  recordatorioMinutos: number | null;
   origen: OrigenTarea;
   fechaCreacion: string;
 }
@@ -19,5 +20,6 @@ export interface CrearTareaDto {
   materiaId?: string;
   tipo?: TipoTarea;
   fechaLimite?: string;
+  recordatorioMinutos?: number | null;
   origen?: OrigenTarea;
 }

@@ -1,6 +1,7 @@
 import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { TareasService } from './tareas.service';
 import { MateriasService } from '../materias/materias.service';
 import { Tarea, Materia, EstadoTarea, TipoTarea } from '../../core/models';
@@ -8,12 +9,14 @@ import { LoaderComponent } from '../../shared/components/loader.component';
 import { ErrorComponent } from '../../shared/components/error.component';
 import { TareaBadgeComponent } from '../../shared/components/tarea-badge.component';
 import { ConfirmDialogService } from '../../shared/components/confirm-dialog.service';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-tareas',
   imports: [
     CommonModule,
     FormsModule,
+    RouterLink,
     LoaderComponent,
     ErrorComponent,
     TareaBadgeComponent,
@@ -23,6 +26,19 @@ import { ConfirmDialogService } from '../../shared/components/confirm-dialog.ser
       <h1 class="title-bar">Tareas</h1>
 
       <div class="max-w-6xl mx-auto space-y-5 px-3 md:px-5 py-6">
+
+        @if (mostrarAvisoRecordatorios()) {
+          <section class="recordatorio-aviso" aria-labelledby="recordatorio-aviso-titulo">
+            <div>
+              <p class="recordatorio-aviso-etiqueta">Organización automática</p>
+              <h2 id="recordatorio-aviso-titulo">No te olvides de tus entregas</h2>
+              <p>Activá un recordatorio por email para todas tus tareas desde tu perfil.</p>
+            </div>
+            <a routerLink="/perfil" fragment="recordatorios" class="recordatorio-aviso-enlace">
+              Configurar recordatorio
+            </a>
+          </section>
+        }
 
         <!-- FILTROS -->
         <div class="filtros-bar">
@@ -248,6 +264,54 @@ import { ConfirmDialogService } from '../../shared/components/confirm-dialog.ser
       border-radius: 0.65rem;
 
       padding: 1rem 1.25rem;
+    }
+
+    .recordatorio-aviso {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1rem 1.25rem;
+      border: 1px solid #e2c2c7;
+      border-left: 4px solid #6e1f2b;
+      border-radius: 0.65rem;
+      background: #fbf3f4;
+    }
+
+    .recordatorio-aviso-etiqueta {
+      margin: 0 0 0.2rem;
+      color: #6e1f2b;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .recordatorio-aviso h2 {
+      color: #3a2a22;
+      font-family: 'Fraunces', serif;
+      font-size: 1.1rem;
+    }
+
+    .recordatorio-aviso p:not(.recordatorio-aviso-etiqueta) {
+      margin: 0.2rem 0 0;
+      color: #6b5f56;
+      font-size: 0.82rem;
+    }
+
+    .recordatorio-aviso-enlace {
+      flex-shrink: 0;
+      border-radius: 0.5rem;
+      background: #6e1f2b;
+      color: #fffefa;
+      padding: 0.6rem 0.85rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .recordatorio-aviso-enlace:hover {
+      background: #4f1620;
     }
 
     .filtro-campo {
@@ -505,6 +569,17 @@ import { ConfirmDialogService } from '../../shared/components/confirm-dialog.ser
       gap: 0.5rem;
     }
 
+    @media (max-width: 640px) {
+      .recordatorio-aviso {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .recordatorio-aviso-enlace {
+        text-align: center;
+      }
+    }
+
 
     /* =========================================================
        MOBILE
@@ -622,12 +697,14 @@ export class TareasComponent implements OnInit {
   private readonly tareasService = inject(TareasService);
   private readonly materiasService = inject(MateriasService);
   private readonly confirmDialog = inject(ConfirmDialogService);
+  private readonly auth = inject(AuthService);
 
   protected readonly cargando = signal(true);
   protected readonly error = signal<string | null>(null);
   protected readonly tareas = signal<Tarea[]>([]);
   protected readonly materias = signal<Materia[]>([]);
   protected readonly tareasFiltradas = signal<Tarea[]>([]);
+  protected readonly mostrarAvisoRecordatorios = signal(false);
 
   protected filtroEstado = '';
   protected filtroMateria = '';
@@ -653,6 +730,9 @@ export class TareasComponent implements OnInit {
 
   ngOnInit(): void {
     this.cargar();
+    this.auth.getPerfil().subscribe({
+      next: (perfil) => this.mostrarAvisoRecordatorios.set(!perfil.recordatorioEmailHabilitado),
+    });
   }
 
   private cargar(): void {
@@ -788,4 +868,5 @@ export class TareasComponent implements OnInit {
 
     return d.toISOString().slice(0, 10);
   }
+
 }

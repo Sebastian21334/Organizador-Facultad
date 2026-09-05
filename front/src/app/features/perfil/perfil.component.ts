@@ -35,6 +35,54 @@ import { AuthService } from '../../core/services/auth.service';
         </form>
       </section>
 
+      <section id="recordatorios" class="card" [class.recordatorio-destacado]="mostrarAvisoInicial()">
+        <p class="section-label">Recordatorios</p>
+        <h2 class="sub-title">Avisos por email</h2>
+        <p class="help-text">Se aplicará el mismo aviso a todas tus tareas con fecha límite.</p>
+
+        @if (mostrarAvisoInicial()) {
+          <div class="recordatorio-bienvenida" role="status">
+            Configurá este aviso una sola vez y se aplicará a todas tus materias.
+          </div>
+        }
+
+        @if (successRecordatorio()) {
+          <p class="message-success" role="status">{{ successRecordatorio() }}</p>
+        }
+
+        <form (ngSubmit)="guardarRecordatorio()" [formGroup]="recordatorioForm" class="space-y-4 mt-5">
+          <label class="toggle-row">
+            <input type="checkbox" formControlName="habilitado" />
+            <span>Recibir recordatorios por email</span>
+          </label>
+
+          @if (recordatorioForm.controls.habilitado.value) {
+            <div class="reminder-fields">
+              <label class="block text-sm text-[#5B5748]">
+                Avisar con anticipación de
+                <input type="number" formControlName="cantidad" min="1" max="30" class="field" />
+              </label>
+
+              <label class="block text-sm text-[#5B5748]">
+                Unidad
+                <select formControlName="unidad" class="field">
+                  <option value="horas">horas antes</option>
+                  <option value="dias">días antes</option>
+                </select>
+              </label>
+            </div>
+          }
+
+          @if (errorRecordatorio()) {
+            <p class="message-error" role="alert">{{ errorRecordatorio() }}</p>
+          }
+
+          <button type="submit" [disabled]="loadingRecordatorio()" class="button-primary w-full">
+            {{ loadingRecordatorio() ? 'Guardando...' : 'Guardar recordatorio' }}
+          </button>
+        </form>
+      </section>
+
       <section class="card">
         <p class="section-label">Seguridad</p>
         <h2 class="sub-title">Cambiar contraseña</h2>
@@ -106,6 +154,55 @@ import { AuthService } from '../../core/services/auth.service';
       font-size: 1.5rem;
       font-weight: 700;
       color: #3a2a22;
+    }
+
+    .help-text {
+      margin: 0.45rem 0 0;
+      color: #8c8570;
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+
+    .recordatorio-destacado {
+      border-color: #6e1f2b;
+      box-shadow: 0 0 0 4px rgba(110, 31, 43, 0.1);
+    }
+
+    .recordatorio-bienvenida {
+      margin-top: 1rem;
+      border: 1px solid #e2c2c7;
+      border-radius: 0.5rem;
+      background: #fbf3f4;
+      color: #6e1f2b;
+      padding: 0.7rem 0.8rem;
+      font-size: 0.82rem;
+      line-height: 1.45;
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      color: #5b5748;
+      font-size: 0.9rem;
+    }
+
+    .toggle-row input {
+      accent-color: #6e1f2b;
+      width: 1rem;
+      height: 1rem;
+    }
+
+    .reminder-fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+
+    @media (max-width: 480px) {
+      .reminder-fields {
+        grid-template-columns: 1fr;
+      }
     }
 
     .section-label {
@@ -199,14 +296,69 @@ export class PerfilComponent implements OnInit {
   protected readonly errorPassword = signal<string | null>(null);
   protected readonly successNombre = signal<string | null>(null);
   protected readonly successPassword = signal<string | null>(null);
+  protected readonly loadingRecordatorio = signal(false);
+  protected readonly errorRecordatorio = signal<string | null>(null);
+  protected readonly successRecordatorio = signal<string | null>(null);
+  protected readonly mostrarAvisoInicial = signal(false);
+
+  protected readonly recordatorioForm = this.formBuilder.nonNullable.group({
+    habilitado: false,
+    cantidad: [1, [Validators.required, Validators.min(1), Validators.max(30)]],
+    unidad: 'dias' as 'horas' | 'dias',
+  });
 
   ngOnInit(): void {
+    const claveAviso = 'tempo-recordatorios-perfil-v1';
+    const esPrimeraVisita = localStorage.getItem(claveAviso) !== 'visto';
+    this.mostrarAvisoInicial.set(esPrimeraVisita);
+    if (esPrimeraVisita) {
+      localStorage.setItem(claveAviso, 'visto');
+    }
+
     this.auth.getPerfil().subscribe({
-      next: ({ nombre }) => {
+      next: ({ nombre, recordatorioEmailHabilitado, recordatorioMinutos }) => {
         this.nombreForm.patchValue({ nombre: nombre ?? '' });
+        if (recordatorioEmailHabilitado) {
+          this.mostrarAvisoInicial.set(false);
+        }
+        this.recordatorioForm.patchValue({
+          habilitado: recordatorioEmailHabilitado,
+          cantidad: this.cantidadRecordatorio(recordatorioMinutos),
+          unidad: this.unidadRecordatorio(recordatorioMinutos),
+        });
       },
       error: (error) => {
         this.errorNombre.set(this.messageFromError(error, 'No se pudo cargar tu perfil.'));
+      },
+    });
+  }
+
+  protected guardarRecordatorio(): void {
+    if (this.recordatorioForm.invalid) {
+      this.recordatorioForm.markAllAsTouched();
+      return;
+    }
+
+    this.loadingRecordatorio.set(true);
+    this.errorRecordatorio.set(null);
+    this.successRecordatorio.set(null);
+
+    const { habilitado, cantidad, unidad } = this.recordatorioForm.getRawValue();
+    const minutos = habilitado ? cantidad * (unidad === 'dias' ? 1440 : 60) : null;
+    const nombre = this.nombreForm.controls.nombre.value;
+
+    this.auth.actualizarPerfil(nombre, {
+      recordatorioEmailHabilitado: habilitado,
+      recordatorioMinutos: minutos,
+    }).subscribe({
+      next: () => {
+        this.loadingRecordatorio.set(false);
+        this.mostrarAvisoInicial.set(false);
+        this.successRecordatorio.set('Preferencia de recordatorios guardada con éxito.');
+      },
+      error: (error) => {
+        this.loadingRecordatorio.set(false);
+        this.errorRecordatorio.set(this.messageFromError(error, 'No se pudo guardar el recordatorio.'));
       },
     });
   }
@@ -267,5 +419,14 @@ export class PerfilComponent implements OnInit {
   private messageFromError(error: { error?: { message?: string | string[] } }, fallback: string): string {
     const message = error.error?.message;
     return Array.isArray(message) ? message.join(' ') : message || fallback;
+  }
+
+  private unidadRecordatorio(minutos: number | null): 'horas' | 'dias' {
+    return minutos && minutos % 1440 === 0 ? 'dias' : 'horas';
+  }
+
+  private cantidadRecordatorio(minutos: number | null): number {
+    if (!minutos) return 1;
+    return minutos % 1440 === 0 ? minutos / 1440 : Math.ceil(minutos / 60);
   }
 }
