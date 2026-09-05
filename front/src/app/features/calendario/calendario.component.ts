@@ -38,7 +38,8 @@ interface DiaCalendario {
           @for (d of diasSemana; track d; let i = $index) {
             <div class="py-2.5 flex items-center justify-center gap-1.5">
               <span class="dia-punto" [class.punto-bordo]="i % 3 === 0" [class.punto-oscuro]="i % 3 === 1" [class.punto-muted]="i % 3 === 2"></span>
-              <span>{{ d }}</span>
+              <span class="dia-nombre-largo">{{ d }}</span>
+              <span class="dia-nombre-corto">{{ diasSemanaCortos[i] }}</span>
             </div>
           }
         </div>
@@ -139,6 +140,12 @@ interface DiaCalendario {
     .punto-bordo { background: #6E1F2B; }
     .punto-oscuro { background: #7A6B57; }
     .punto-muted { background: #A69577; }
+    .dia-nombre-corto { display: none; }
+    @media (max-width: 480px) {
+      .dias-semana-header > div { gap: 0.15rem; }
+      .dia-nombre-largo { display: none; }
+      .dia-nombre-corto { display: inline; }
+    }
   `,
 })
 export class CalendarioComponent implements OnInit {
@@ -151,6 +158,7 @@ export class CalendarioComponent implements OnInit {
   protected readonly tareaSeleccionada = signal<Tarea | null>(null);
 
   protected readonly diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+  protected readonly diasSemanaCortos = ['LUN', 'MAR', 'MIÉ', 'JUE', 'VIE', 'SÁB', 'DOM'];
   protected readonly tareasMes = signal<Tarea[]>([]);
   protected readonly tareasDelMes = computed(() => [...this.tareasMes()].sort((a, b) => new Date(a.fechaLimite!).getTime() - new Date(b.fechaLimite!).getTime()));
 

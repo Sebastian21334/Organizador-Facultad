@@ -198,6 +198,10 @@
   padding: 0;
 }
 
+.app-content.app-content--full-bleed {
+  padding: 0;
+}
+
 
 /* =========================================================
    DÍAS DE LA SEMANA
@@ -324,6 +328,11 @@
    ========================================================= */
 
 @media (max-width: 480px) {
+
+  .app-content:not(.app-content--full-bleed) .title-bar {
+    width: calc(100% + 1.5rem);
+    margin-left: -0.75rem;
+  }
 
   .app-sidebar {
     padding: 0.7rem 0.75rem;

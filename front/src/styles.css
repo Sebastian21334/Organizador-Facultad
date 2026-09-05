@@ -76,7 +76,7 @@ input, select, textarea {
 .font-body { font-family: var(--font-body); }
 
 .title-bar {
-  width: 100vw;
+  width: 100%;
   margin: 0 0 0 -154px;
   padding: 1.35rem 1rem;
   background: var(--accent);
@@ -93,15 +93,20 @@ input, select, textarea {
    padding viejo de .app-content (2rem arriba, 1.25rem a los costados) necesitan
    además cancelar ese padding para que el header llegue al borde. */
 .app-content:not(.app-content--full-bleed) .title-bar {
+  width: calc(100% + 154px + 2.5rem);
   margin: -2rem 0 0 calc(-154px - 1.25rem);
 }
 
 @media (max-width: 768px) {
   /* En mobile el sidebar deja de ser fixed y .app-content pierde el
      margin-left, así que el header full-bleed no necesita corregir nada. */
-  .title-bar { margin-left: 0; }
+  .title-bar {
+    width: 100%;
+    margin-left: 0;
+  }
 
   .app-content:not(.app-content--full-bleed) .title-bar {
+    width: calc(100% + 2rem);
     margin: -1.25rem 0 0 -1rem;
   }
 }

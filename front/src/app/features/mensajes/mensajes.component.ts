@@ -154,6 +154,9 @@ import { ErrorComponent } from '../../shared/components/error.component';
     .msg-ok-borde { border-color: #C3D4B4; }
     .msg-default-fondo { background-color: #FFFEFA; }
     .msg-default-borde { border-color: #D9D3C2; }
+    @media (max-width: 768px) {
+      .mensajes-page { height: calc(100dvh - 124px); }
+    }
   `,
 })
 export class MensajesComponent implements OnInit {
