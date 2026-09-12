@@ -31,24 +31,27 @@
   --error-border: #F8C8C8;
   --font-display: 'Fraunces', Georgia, serif;
   --font-body: 'Sora', sans-serif;
+  --shadow-soft: 0 12px 30px rgba(58, 42, 34, 0.07);
+  --shadow-hover: 0 18px 42px rgba(58, 42, 34, 0.13);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .dark {
-  --bg: #171413;
-  --bg-subtle: #1F1B19;
-  --card: #221D1B;
-  --card-strong: #2A2422;
-  --border: #3A322E;
-  --border-strong: #4D433E;
-  --ink: #F7F3EE;
-  --ink-secondary: #C8BEB5;
-  --muted: #9E938A;
-  --label: #857A71;
-  --accent: #9E3544;
-  --accent-hover: #B84354;
-  --accent-light: #2D1A1E;
-  --accent-soft: #3D2228;
-  --accent-border: #5A2E37;
+  --bg: #0c1118;
+  --bg-subtle: #111720;
+  --card: #171d25;
+  --card-strong: #1d242e;
+  --border: #2d3541;
+  --border-strong: #414b5a;
+  --ink: #f4f6fb;
+  --ink-secondary: #c7cdd8;
+  --muted: #929baa;
+  --label: #778191;
+  --accent: #7484f4;
+  --accent-hover: #8e9bff;
+  --accent-light: #171d38;
+  --accent-soft: #222a50;
+  --accent-border: #46528d;
   --success-text: #4ADE80;
   --success-bg: #142E1F;
   --success-border: #1E462E;
@@ -80,6 +83,100 @@ body {
 
 * {
   box-sizing: border-box;
+}
+
+::selection {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+button, a, input, select, textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:not(:disabled), a {
+  transition: transform 180ms var(--ease-out), box-shadow 180ms var(--ease-out),
+    background-color 180ms ease, border-color 180ms ease, color 180ms ease;
+}
+
+button:not(:disabled):active {
+  transform: translateY(1px) scale(0.985);
+}
+
+button:focus-visible, a:focus-visible, input:focus-visible,
+select:focus-visible, textarea:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--accent) 28%, transparent);
+  outline-offset: 3px;
+}
+
+@keyframes pageEnter {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes softPop {
+  from { opacity: 0; transform: scale(.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.app-content > * {
+  animation: pageEnter 420ms var(--ease-out) both;
+}
+
+.card,
+.materia-card,
+.tareas-item,
+.filtros-bar,
+.stat-card,
+.month-tasks,
+.recordatorio-aviso {
+  box-shadow: var(--shadow-soft);
+  transition: box-shadow 220ms var(--ease-out), transform 220ms var(--ease-out),
+    border-color 220ms ease;
+}
+
+.card:hover,
+.materia-card:hover,
+.tareas-item:hover,
+.stat-card:hover,
+.month-tasks:hover {
+  box-shadow: var(--shadow-hover);
+}
+
+.field {
+  min-height: 2.75rem;
+  border: 1px solid var(--border);
+  border-radius: .75rem;
+  padding: .65rem .8rem;
+  background: color-mix(in srgb, var(--card) 88%, var(--bg));
+  box-shadow: inset 0 1px 1px rgba(58, 42, 34, .025);
+  transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+
+.field:hover { border-color: var(--border-strong); }
+.field:focus {
+  border-color: var(--accent);
+  background: var(--card);
+  box-shadow: 0 0 0 4px var(--accent-soft);
+  outline: none;
+}
+
+.button-primary,
+.button-secondary,
+.btn-primario,
+.btn-secundario,
+.btn-peligro {
+  border-radius: .75rem;
+  min-height: 2.65rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.button-primary:hover, .btn-primario:hover { filter: brightness(1.06); box-shadow: 0 8px 18px rgba(110,31,43,.18); }
+.button-secondary:hover, .btn-secundario:hover { background: var(--accent-light); border-color: var(--accent-border); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -116,37 +213,22 @@ input, select, textarea {
 
 .title-bar {
   width: 100%;
-  margin: 0 0 0 -154px;
-  padding: 1.35rem 1rem;
-  background: var(--accent);
+  margin: 0 0 1.5rem;
+  padding: 1.15rem 1rem;
+  background: linear-gradient(110deg, var(--accent) 0%, #842f3c 62%, #a24b4f 100%);
   color: var(--card);
   text-align: center;
   font-family: var(--font-display);
   font-size: 1.65rem;
   font-weight: 800;
-}
-
-/* Las páginas full-bleed (data: { fullBleed: true } en las rutas) ya arrancan
-   sin padding en .app-content, así que el title-bar solo necesita cancelar el
-   margin-left del sidebar (regla de arriba). Las páginas que TODAVÍA usan el
-   padding viejo de .app-content (2rem arriba, 1.25rem a los costados) necesitan
-   además cancelar ese padding para que el header llegue al borde. */
-.app-content:not(.app-content--full-bleed) .title-bar {
-  width: calc(100% + 154px + 2.5rem);
-  margin: -2rem 0 0 calc(-154px - 1.25rem);
+  letter-spacing: -.015em;
+  box-shadow: 0 10px 24px rgba(110, 31, 43, .12);
 }
 
 @media (max-width: 768px) {
-  /* En mobile el sidebar deja de ser fixed y .app-content pierde el
-     margin-left, así que el header full-bleed no necesita corregir nada. */
   .title-bar {
     width: 100%;
-    margin-left: 0;
-  }
-
-  .app-content:not(.app-content--full-bleed) .title-bar {
-    width: calc(100% + 2rem);
-    margin: -1.25rem 0 0 -1rem;
+    margin: 0 0 1.25rem;
   }
 }
 
@@ -155,12 +237,6 @@ input, select, textarea {
    0.75rem a los costados), así que el title-bar necesita compensar
    esos valores nuevos en vez de seguir restando los de 768px —
    si no, queda un resto de fondo visible en el borde izquierdo. */
-@media (max-width: 480px) {
-  .app-content:not(.app-content--full-bleed) .title-bar {
-    margin: -1rem 0 0 -0.75rem;
-  }
-}
-
 .text-mono-label {
   font-family: 'JetBrains Mono', 'SFMono-Regular', monospace;
   letter-spacing: 0.08em;
@@ -230,3 +306,262 @@ input, select, textarea {
 .animate-pulse-dot {
   animation: pulseDot 1.4s ease-in-out infinite;
 }
+
+/* =========================================================
+   TEMA OSCURO — TEMPO
+   Los componentes existentes combinan variables y utilidades con colores
+   literales. Estas reglas forman una capa completa y consistente sobre ambos.
+   ========================================================= */
+
+html.dark body {
+  background-color: #0c1118;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, .018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, .014) 1px, transparent 1px),
+    radial-gradient(circle at 1px 1px, rgba(116, 132, 244, .07) 1px, transparent 0);
+}
+
+html.dark .app-content { color: var(--ink); }
+html.dark .title-bar { background: linear-gradient(110deg, #161d28, #20283a 62%, #293354); color: #f7f8ff; border-bottom: 1px solid #35405c; box-shadow: 0 12px 30px rgba(0,0,0,.32); }
+
+html.dark [class*="bg-[#6E1F2B]"],
+html.dark .button-primary,
+html.dark .btn-primario { background-color: #6574e8 !important; color: #fff !important; }
+html.dark [class*="from-[#6E1F2B]"] { --tw-gradient-from: #7484f4 var(--tw-gradient-from-position) !important; }
+html.dark [class*="to-[#4F1620]"] { --tw-gradient-to: #4e5fce var(--tw-gradient-to-position) !important; }
+html.dark [class*="text-[#6E1F2B]"] { color: #9da7ff !important; }
+html.dark [class*="border-[#6E1F2B]"] { border-color: #7484f4 !important; }
+
+html.dark [class*="bg-[#FFFEFA]"],
+html.dark [class*="bg-[#FFFFFF]"],
+html.dark [class*="bg-white"],
+html.dark [class*="bg-[#FAFDF9]"],
+html.dark [class*="bg-[#FEFCF7]"] { background-color: #171d25 !important; }
+
+html.dark [class*="bg-[#FAF6EE]"],
+html.dark [class*="bg-[#F9F7F2]"],
+html.dark [class*="bg-[#FAF8F5]"],
+html.dark [class*="bg-[#F5F2E9]"] { background-color: #0f141c !important; }
+
+html.dark [class*="bg-[#EFEBDF]"],
+html.dark [class*="bg-[#F3EFE6]"],
+html.dark [class*="bg-[#F2EFE8]"] { background-color: #202731 !important; }
+
+html.dark [class*="bg-[#F1DEE1]"],
+html.dark [class*="bg-[#F3DFE2]"],
+html.dark [class*="bg-[#FBF3F4]"],
+html.dark [class*="bg-[#FFF5F6]"] { background-color: #202947 !important; }
+
+html.dark [class*="text-[#2B231F]"],
+html.dark [class*="text-[#3A2A22]"],
+html.dark [class*="text-[#1A2540]"],
+html.dark [class*="text-[#1F2E23]"],
+html.dark [class*="text-[#382E2B]"] { color: #f4f6fb !important; }
+
+html.dark [class*="text-[#5E534B]"],
+html.dark [class*="text-[#5B5748]"],
+html.dark [class*="text-[#7A6F66]"],
+html.dark [class*="text-[#7A6B57]"],
+html.dark [class*="text-[#8C8570]"],
+html.dark [class*="text-[#968A7E]"],
+html.dark [class*="text-[#A39C87]"],
+html.dark [class*="text-[#A69577]"] { color: #98a1b0 !important; }
+html.dark [class*="text-[#B3401A]"],
+html.dark [class*="text-[#6B5F56]"] { color: #aab2c0 !important; }
+
+html.dark [class*="border-[#D8CBAE]"],
+html.dark [class*="border-[#D9D3C2]"],
+html.dark [class*="border-[#D5CBB9]"],
+html.dark [class*="border-[#E5DFD3]"] { border-color: #2f3845 !important; }
+
+html.dark input,
+html.dark select,
+html.dark textarea,
+html.dark .field,
+html.dark .field-input,
+html.dark .filtro-select {
+  background: #121821 !important;
+  border-color: #35404d !important;
+  color: #f4f6fb !important;
+  color-scheme: dark;
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder { color: #747b85 !important; }
+html.dark input:focus,
+html.dark select:focus,
+html.dark textarea:focus { border-color: #7484f4 !important; box-shadow: 0 0 0 4px rgba(116,132,244,.18) !important; }
+
+html.dark .card,
+html.dark .materia-card,
+html.dark .tareas-item,
+html.dark .filtros-bar,
+html.dark .month-tasks,
+html.dark .stat-card,
+html.dark .academic-progress-card,
+html.dark .tarea-row,
+html.dark .dias-semana-header {
+  background: linear-gradient(145deg, #171d25, #1b222c) !important;
+  border-color: #2d3643 !important;
+  color: #f4f6fb !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, .2) !important;
+}
+
+html.dark .materia-card:hover,
+html.dark .tareas-item:hover,
+html.dark .stat-card:hover,
+html.dark .tarea-row:hover { background: #202936 !important; border-color: #46526a !important; }
+
+html.dark .academic-progress-ring::before { background: #171d25 !important; }
+html.dark .academic-progress-ring { background: conic-gradient(#8794ff var(--progress), #343d4a 0) !important; }
+html.dark .academic-progress-ring span,
+html.dark .academic-progress-link { color: #9da7ff !important; }
+html.dark .inicio-dashboard { background: #0c1118 !important; }
+html.dark .inicio-welcome { background: radial-gradient(circle at 20% 15%, rgba(116,132,244,.1), transparent 35%), linear-gradient(160deg, #111720, #0d1219) !important; }
+html.dark .inicio-dashboard-inner > section:first-child { background: linear-gradient(145deg, #171d25, #1b222c) !important; border: 1px solid #2d3643; box-shadow: 0 12px 32px rgba(0,0,0,.2); }
+html.dark .inicio-quick-actions a { background: #171e29 !important; border-color: #394458 !important; color: #e8ebf5 !important; }
+html.dark .inicio-quick-actions a:first-child { background: linear-gradient(135deg, #7484f4, #5b69d9) !important; border-color: #8f9aff !important; color: #fff !important; box-shadow: 0 8px 22px rgba(83,100,217,.28); }
+html.dark .dia-fondo { background: #131922 !important; border: 1px solid #2a3340; }
+html.dark .dia-hoy-fondo { background: #232b43 !important; border-color: #8794ff !important; box-shadow: inset 0 0 18px rgba(116,132,244,.08); }
+html.dark .dia-hoy-label { color: #aab2ff !important; }
+html.dark .tarea-normal { background: #202834 !important; color: #e9ecf2 !important; }
+
+html.dark .badge-tarea,
+html.dark .badge-examen,
+html.dark .badge-entrega,
+html.dark .badge-otro,
+html.dark .badge-pendiente,
+html.dark .badge-progreso { background: #252d48 !important; color: #b9c0ff !important; border-color: #46528d !important; }
+html.dark .badge-tp,
+html.dark .badge-hecha,
+html.dark .status-aprobado { background: #183126 !important; color: #79c995 !important; border-color: #2e5940 !important; }
+
+html.dark .tareas-header h1 { color: #f4f6fb !important; }
+html.dark .tareas-eyebrow { color: #7f8ba0 !important; }
+html.dark .tareas-header > div > p:last-child { color: #9aa4b4 !important; }
+html.dark .nueva-tarea-btn { background: linear-gradient(135deg, #8794ff, #6574e8) !important; color: #fff !important; box-shadow: 0 10px 24px rgba(83,100,217,.28) !important; }
+html.dark .busqueda-campo,
+html.dark .estado-tabs button { background: #121821 !important; border-color: #303a48 !important; color: #9aa5b6 !important; }
+html.dark .estado-tabs button.active { background: #222b50 !important; border-color: #8794ff !important; color: #c9ceff !important; }
+html.dark .estado-tabs span { background: #35416f !important; color: #e4e7ff !important; }
+html.dark .tareas-lista { background: transparent !important; border: 0 !important; display: grid; gap: .42rem; overflow: visible !important; }
+html.dark .tareas-item { border: 1px solid #2d3745 !important; border-radius: .65rem; background: linear-gradient(100deg, #19212b, #171e27) !important; }
+html.dark .tareas-item-titulo { color: #eef1f7 !important; font-family: var(--font-body) !important; }
+html.dark .tareas-item-meta { color: #8e99aa !important; }
+html.dark .btn-peligro { color: #aeb7c7 !important; border-color: #3c4655 !important; }
+html.dark .btn-peligro:hover { color: #ff9ba7 !important; background: #351d24 !important; border-color: #65303b !important; }
+
+/* Chat oscuro limpio: encabezado y compositor se integran al lienzo. */
+html.dark .mensajes-page { background: #0c1118 !important; }
+html.dark .mensajes-page > header { background: rgba(13,18,25,.9) !important; border-color: #27303d !important; box-shadow: none !important; }
+html.dark .mensajes-page > header [class*="bg-[#F3EFE6]"] { background: #171f2c !important; border-color: #2d3748 !important; }
+html.dark .mensajes-page [class*="from-[#6E1F2B]"][class*="to-[#4F1620]"] { background-image: linear-gradient(135deg, #5265d4, #3e4ca5) !important; border: 1px solid #7d8aff !important; box-shadow: 0 10px 24px rgba(57,72,170,.28) !important; }
+html.dark .mensajes-page [class*="from-[#6E1F2B]"][class*="to-[#4F1620]"] p { color: #fbfcff !important; }
+html.dark .mensajes-page [class*="from-[#6E1F2B]"][class*="to-[#4F1620]"] p { background: transparent !important; }
+html.dark .mensajes-page [class*="from-[#6E1F2B]"][class*="to-[#4F1620]"] [class*="text-[#F3DFE2]"] { color: #dce2ff !important; }
+html.dark .mensajes-page [class*="rounded-2xl"][class*="border"] { border-color: #35404e !important; }
+html.dark .mensajes-page [class*="bg-[#FAFDF9]"],
+html.dark .mensajes-page [class*="bg-[#FEFCF7]"],
+html.dark .mensajes-page [class*="bg-[#FFFFFF]"] { background: linear-gradient(145deg, #1d2632, #18202a) !important; border-color: #3d4a5e !important; }
+html.dark .mensajes-page [class*="shadow-xs"] { box-shadow: 0 10px 28px rgba(0,0,0,.16) !important; }
+html.dark .mensajes-page > div:last-child { background: rgba(12,17,24,.94) !important; border-color: #27303d !important; box-shadow: 0 -10px 30px rgba(0,0,0,.18) !important; }
+html.dark .mensajes-page > div:last-child form { background: #141b25 !important; border-color: #35404e !important; box-shadow: 0 10px 30px rgba(0,0,0,.25) !important; }
+html.dark .mensajes-page > div:last-child form:focus-within { border-color: #7484f4 !important; box-shadow: 0 0 0 3px rgba(116,132,244,.14), 0 10px 30px rgba(0,0,0,.25) !important; }
+
+html.dark [class*="bg-[#EAF6EE]"],
+html.dark [class*="bg-[#E7EEE1]"] { background-color: #183126 !important; }
+html.dark [class*="border-[#BCE3C8]"],
+html.dark [class*="border-[#C3D4B4]"] { border-color: #2e5940 !important; }
+html.dark [class*="text-[#1E6E38]"],
+html.dark [class*="text-[#245834]"],
+html.dark [class*="text-[#3F6B4A]"] { color: #79c995 !important; }
+
+html.dark [class*="bg-[#FEF8EC]"] { background-color: #332a18 !important; }
+html.dark [class*="border-[#F6DFB3]"] { border-color: #5b4924 !important; }
+html.dark [class*="text-[#8C580B]"] { color: #e6b85c !important; }
+
+html.dark [class*="bg-[#FDF0F0]"],
+html.dark [class*="bg-[#FFF8F8]"] { background-color: #351d21 !important; }
+html.dark [class*="border-[#F8C8C8]"] { border-color: #653039 !important; }
+html.dark [class*="text-[#A62828]"],
+html.dark [class*="text-[#8B1E1E]"] { color: #f08b98 !important; }
+
+html.dark .button-secondary,
+html.dark .btn-secundario,
+html.dark .icon-button { background: #1b222c !important; border-color: #35404d !important; color: #d9deea !important; }
+html.dark .button-secondary:hover,
+html.dark .btn-secundario:hover,
+html.dark .icon-button:hover { background: #252e3a !important; border-color: #536078 !important; }
+
+html.dark .chat-scroll { scrollbar-color: rgba(135,148,255,.38) transparent; }
+html.dark .sidebar-overlay { background: rgba(0,0,0,.68); }
+
+@media (prefers-color-scheme: dark) {
+  html:not(.dark) { color-scheme: light; }
+}
+
+/* Contraste tipográfico final. Los estilos encapsulados de algunos componentes
+   todavía declaran marrones/bordó; esta capa los neutraliza en tema oscuro. */
+html.dark .app-content :is(h1, h2, h3, h4, strong) {
+  color: #f4f6fb !important;
+}
+
+html.dark .app-content :is(p, label, dt, dd, small),
+html.dark .app-content :is(.filtro-label, .filtro-contador, .section-label, .help-text,
+  .materia-meta, .tareas-item-meta, .tarea-row-fecha, .dashboard-eyebrow,
+  .recordatorio-aviso-etiqueta) {
+  color: #aab3c2 !important;
+}
+
+html.dark .inicio-page .tarea-row-nombre {
+  color: #f1f4fa !important;
+}
+
+html.dark .inicio-page .tarea-row-fecha {
+  color: #b8c4e8 !important;
+}
+
+html.dark .inicio-page .tarea-row:hover .tarea-row-nombre {
+  color: #ffffff !important;
+}
+
+html.dark .app-content a:not(.button-primary):not(.nueva-tarea-btn),
+html.dark .app-content button:not(.button-primary):not(.btn-primario):not(.btn-peligro) {
+  color: #cbd2df !important;
+}
+
+html.dark .app-content :is(.academic-progress-link, .estado-tabs button.active),
+html.dark .app-content [class*="text-[#6E1F2B]"] {
+  color: #aeb6ff !important;
+}
+
+html.dark .app-content :is(.message-success, .status-aprobado, .btn-hecha),
+html.dark .app-content [class*="text-[#1E6E38]"],
+html.dark .app-content [class*="text-[#3F6B4A]"] {
+  color: #72d6a0 !important;
+}
+
+html.dark .app-content :is(.message-error, .field-error-msg),
+html.dark .app-content [role="alert"] :is(p, span, strong) {
+  color: #ff9fac !important;
+}
+
+html.dark .app-content :is(.button-primary, .btn-primario, .nueva-tarea-btn),
+html.dark .app-content [class*="bg-[#6E1F2B]"] {
+  color: #ffffff !important;
+}
+
+html.dark .mensajes-page [class*="text-[#F3DFE2]"],
+html.dark .app-content [class*="text-[#EFEBDF]"],
+html.dark .app-content [class*="text-[#F1DEE1]"],
+html.dark .app-content [class*="text-[#FAF6EE]"],
+html.dark .mensajes-page [class*="text-white"] { color: #f7f8ff !important; }
+
+/* Calendario: la vista tiene sus propias superficies, no debe heredar la
+   tarjeta genérica usada por Inicio y Tareas. */
+html.dark .calendario-page .dias-semana-header { background: transparent !important; border-color: transparent !important; }
+html.dark .calendario-page .month-tasks { background: linear-gradient(145deg,#171d25,#121820) !important; border-color: #2d3745 !important; }
+html.dark .calendario-page .month-task:hover { background: #232b43 !important; }
+html.dark .calendario-page .month-task-date { color: #aeb6ff !important; }
+html.dark .calendario-page .month-task-copy strong { color: #f4f6fb !important; }
+html.dark .calendario-page .month-task-copy small { color: #9aa6b8 !important; }

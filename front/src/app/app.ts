@@ -11,9 +11,12 @@ import {
   LucideLogOut,
   LucideMenu,
   LucideMessageCircle,
+  LucideMoon,
+  LucideSun,
   LucideUserCircle,
 } from '@lucide/angular';
 import { AuthService } from './core/services/auth.service';
+import { ThemeService } from './core/services/theme.service';
 import { ConfirmDialogComponent } from './shared/components/confirm-dialog.component';
 import { ConfirmDialogService } from './shared/components/confirm-dialog.service';
 
@@ -25,6 +28,7 @@ import { ConfirmDialogService } from './shared/components/confirm-dialog.service
 })
 export class App {
   protected readonly auth = inject(AuthService);
+  protected readonly theme = inject(ThemeService);
   private readonly confirmDialog = inject(ConfirmDialogService);
   private readonly router = inject(Router);
   private readonly activatedRoute = inject(ActivatedRoute);
@@ -44,6 +48,8 @@ export class App {
   ];
   protected readonly logOutIcon = LucideLogOut;
   protected readonly menuIcon = LucideMenu;
+  protected readonly moonIcon = LucideMoon;
+  protected readonly sunIcon = LucideSun;
 
   constructor() {
     this.router.events

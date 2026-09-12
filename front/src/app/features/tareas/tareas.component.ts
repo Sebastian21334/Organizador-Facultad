@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, inject } from '@angular/core';
+import { Component, OnInit, computed, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -24,8 +24,16 @@ import { AuthService } from '../../core/services/auth.service';
   template: `
     <div class="tareas-page">
       <h1 class="title-bar">Tareas</h1>
+      <div class="tareas-shell max-w-6xl mx-auto px-3 md:px-5 py-8">
+        <header class="tareas-header">
+          <div>
+            <p class="tareas-eyebrow">Organización</p>
+            <p class="tareas-intro">Administrá tus actividades, entregas y parciales.</p>
+          </div>
+          <a routerLink="/mensajes" class="nueva-tarea-btn">＋ Nueva tarea</a>
+        </header>
 
-      <div class="max-w-6xl mx-auto space-y-5 px-3 md:px-5 py-6">
+      <div class="space-y-5">
 
         @if (mostrarAvisoRecordatorios()) {
           <section class="recordatorio-aviso" aria-labelledby="recordatorio-aviso-titulo">
@@ -42,6 +50,16 @@ import { AuthService } from '../../core/services/auth.service';
 
         <!-- FILTROS -->
         <div class="filtros-bar">
+
+          <label class="busqueda-campo">
+            <span aria-hidden="true">⌕</span>
+            <input
+              [(ngModel)]="busqueda"
+              (ngModelChange)="aplicarFiltros()"
+              placeholder="Buscar tareas..."
+              aria-label="Buscar tareas"
+            />
+          </label>
 
           <label class="filtro-campo">
             <span class="filtro-label">Estado</span>
@@ -79,6 +97,15 @@ import { AuthService } from '../../core/services/auth.service';
             {{ tareasFiltradas().length }}
             {{ tareasFiltradas().length === 1 ? 'tarea' : 'tareas' }}
           </span>
+        </div>
+
+        <div class="estado-tabs" aria-label="Filtrar por estado">
+          <button type="button" [class.active]="filtroEstado !== estadoHecha" (click)="mostrarPendientes()">
+            Pendientes <span>{{ cantidadPendientes() }}</span>
+          </button>
+          <button type="button" [class.active]="filtroEstado === estadoHecha" (click)="mostrarCompletadas()">
+            Completadas <span>{{ cantidadCompletadas() }}</span>
+          </button>
         </div>
 
         <!-- ESTADOS -->
@@ -245,10 +272,23 @@ import { AuthService } from '../../core/services/auth.service';
         }
 
       </div>
+      </div>
     </div>
   `,
 
   styles: `
+    .tareas-page { min-height: 100%; }
+    .tareas-header { display: flex; justify-content: space-between; align-items: flex-end; gap: 1rem; margin-bottom: 1.4rem; }
+    .tareas-eyebrow { margin: 0 0 .25rem; color: #8c8570; font: 600 .68rem 'JetBrains Mono', monospace; letter-spacing: .12em; text-transform: uppercase; }
+    .tareas-header h1 { color: #2b231f; font-size: clamp(2rem, 4vw, 2.65rem); line-height: 1; }
+    .tareas-intro { color: #7a6f66; font-size: .88rem; margin-top: .3rem; }
+    .nueva-tarea-btn { padding: .72rem 1rem; border-radius: .7rem; background: #6e1f2b; color: white; font-size: .78rem; font-weight: 600; text-decoration: none; box-shadow: 0 8px 18px rgba(110,31,43,.18); }
+    .busqueda-campo { display: flex; align-items: center; gap: .55rem; min-width: min(20rem, 100%); padding: 0 .8rem; background: #fffefa; border: 1px solid #d9d3c2; border-radius: .55rem; color: #8c8570; }
+    .busqueda-campo input { width: 100%; min-height: 2.5rem; border: 0; outline: 0; background: transparent; font-size: .82rem; }
+    .estado-tabs { display: flex; gap: .35rem; }
+    .estado-tabs button { display: inline-flex; align-items: center; gap: .55rem; padding: .55rem .8rem; border-radius: .65rem; border: 1px solid #d9d3c2; background: #fffefa; color: #7a6f66; font-size: .78rem; }
+    .estado-tabs button.active { border-color: #6e1f2b; background: #f3dfe2; color: #6e1f2b; }
+    .estado-tabs span { display: grid; place-items: center; min-width: 1.35rem; height: 1.35rem; border-radius: 999px; background: rgba(110,31,43,.1); font-size: .68rem; }
     /* =========================================================
        FILTROS
        ========================================================= */
@@ -570,6 +610,10 @@ import { AuthService } from '../../core/services/auth.service';
     }
 
     @media (max-width: 640px) {
+      .tareas-header { align-items: flex-start; }
+      .tareas-intro { max-width: 22ch; }
+      .nueva-tarea-btn { white-space: nowrap; }
+      .busqueda-campo { min-width: 0; width: 100%; }
       .recordatorio-aviso {
         align-items: stretch;
         flex-direction: column;
@@ -708,6 +752,14 @@ export class TareasComponent implements OnInit {
 
   protected filtroEstado = '';
   protected filtroMateria = '';
+  protected busqueda = '';
+
+  protected readonly cantidadPendientes = computed(() =>
+    this.tareas().filter((t) => t.estado !== EstadoTarea.HECHA).length,
+  );
+  protected readonly cantidadCompletadas = computed(() =>
+    this.tareas().filter((t) => t.estado === EstadoTarea.HECHA).length,
+  );
 
   protected readonly estados = Object.values(EstadoTarea);
   protected readonly tipos = Object.values(TipoTarea);
@@ -759,6 +811,7 @@ export class TareasComponent implements OnInit {
   }
 
   protected aplicarFiltros(): void {
+    const termino = this.busqueda.trim().toLocaleLowerCase('es');
     const filtradas = this.tareas().filter((t) => {
       if (this.filtroEstado && t.estado !== this.filtroEstado) {
         return false;
@@ -768,10 +821,24 @@ export class TareasComponent implements OnInit {
         return false;
       }
 
+      if (termino && !`${t.titulo} ${t.materia?.nombre ?? ''} ${t.descripcion ?? ''}`.toLocaleLowerCase('es').includes(termino)) {
+        return false;
+      }
+
       return true;
     });
 
     this.tareasFiltradas.set(filtradas);
+  }
+
+  protected mostrarPendientes(): void {
+    this.filtroEstado = EstadoTarea.PENDIENTE;
+    this.aplicarFiltros();
+  }
+
+  protected mostrarCompletadas(): void {
+    this.filtroEstado = EstadoTarea.HECHA;
+    this.aplicarFiltros();
   }
 
   protected marcarHecha(tarea: Tarea): void {

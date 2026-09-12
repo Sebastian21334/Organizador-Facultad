@@ -17,6 +17,14 @@
         <span class="brand-mark">T</span>
         <span class="brand-name">Tempo</span>
       </a>
+      <button
+        type="button"
+        class="mobile-theme-toggle"
+        (click)="theme.alternar()"
+        [attr.aria-label]="theme.esOscuro() ? 'Activar tema claro' : 'Activar tema oscuro'"
+      >
+        <svg [lucideIcon]="theme.esOscuro() ? sunIcon : moonIcon" [size]="18" aria-hidden="true"></svg>
+      </button>
     </header>
 
     <!-- Overlay para cerrar el drawer tocando afuera -->
@@ -51,6 +59,17 @@
             <span class="nav-item-label">{{ item.label }}</span>
           </a>
         }
+
+        <button
+          type="button"
+          class="nav-item nav-item--theme"
+          (click)="theme.alternar()"
+          [attr.aria-label]="theme.esOscuro() ? 'Activar tema claro' : 'Activar tema oscuro'"
+          [title]="theme.esOscuro() ? 'Tema claro' : 'Tema oscuro'"
+        >
+          <svg [lucideIcon]="theme.esOscuro() ? sunIcon : moonIcon" [size]="18" aria-hidden="true"></svg>
+          <span class="nav-item-label">{{ theme.esOscuro() ? 'Tema claro' : 'Tema oscuro' }}</span>
+        </button>
 
         <button
           type="button"

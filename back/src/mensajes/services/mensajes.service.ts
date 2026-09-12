@@ -54,6 +54,21 @@ export class MensajesService {
     let materia: Materia | undefined;
     if (resultadoIA.materia) {
       materia = await this.resolverMateria(resultadoIA.materia, usuarioId, materiasExistentes);
+
+      // Nunca vinculamos una tarea a una materia dudosa. La materia detectada
+      // puede venir abreviada o inventada por el modelo; en ese caso dejamos
+      // el mensaje procesado, pero pedimos confirmación antes de crear la tarea.
+      if (!materia) {
+        const opciones = materiasExistentes.map((m) => m.nombre).join(', ');
+        const aclaracion = opciones
+          ? `No pude relacionar “${resultadoIA.materia}” con una materia registrada. ¿A cuál te referís? Tus materias son: ${opciones}.`
+          : `Detecté la materia “${resultadoIA.materia}”, pero todavía no tenés materias registradas. Cargala primero desde Materias o enviame el mensaje sin materia.`;
+        const actualizado = await this.mensajesRepository.update(mensaje.id, {
+          procesado: true,
+          resultadoIA: { ...resultadoIA, aclaracion },
+        });
+        return actualizado!;
+      }
     }
 
     // 4. Creamos la tarea (si la IA logró extraer al menos un título)
@@ -94,6 +109,7 @@ export class MensajesService {
 
     let mejorCoincidencia: Materia | undefined;
     let mejorDistancia = Infinity;
+    let cantidadCoincidenciasFuertes = 0;
 
     for (const m of todas) {
       const normalizadoExistente = this.normalizar(m.nombre);
@@ -108,6 +124,7 @@ export class MensajesService {
       ) {
         mejorCoincidencia = m;
         mejorDistancia = 0;
+        cantidadCoincidenciasFuertes++;
         continue;
       }
 
@@ -121,7 +138,8 @@ export class MensajesService {
       }
     }
 
-    if (mejorCoincidencia) {
+    // Si más de una materia parece coincidir, no elegimos arbitrariamente.
+    if (mejorCoincidencia && (cantidadCoincidenciasFuertes <= 1 || mejorDistancia > 0)) {
       return mejorCoincidencia;
     }
 

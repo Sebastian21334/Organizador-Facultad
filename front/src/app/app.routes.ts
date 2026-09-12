@@ -20,6 +20,7 @@ export const routes: Routes = [
         (m) => m.CalendarioComponent,
       ),
     title: 'Calendario',
+    data: { fullBleed: true },
   },
   {
     path: 'tareas',

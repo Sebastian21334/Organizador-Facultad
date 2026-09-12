@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { TareasService } from '../tareas/tareas.service';
 import { MateriasService } from '../materias/materias.service';
-import { Tarea, Materia, EstadoTarea } from '../../core/models';
+import { Tarea, Materia, EstadoTarea, EstadoMateria } from '../../core/models';
 import { AuthService } from '../../core/services/auth.service';
 import { LoaderComponent } from '../../shared/components/loader.component';
 import { ErrorComponent } from '../../shared/components/error.component';
@@ -40,9 +40,13 @@ interface DiaSemana {
               <h1 class="text-5xl md:text-6xl font-display font-bold text-[#FAF6EE] mt-4 leading-[1.05]">
                 {{ saludo() }}
               </h1>
-              <p class="text-sm text-[#F1DEE1]/80 mt-5 leading-relaxed max-w-[26ch]">
-                {{ resumen() }}
-              </p>
+               <p class="text-sm text-[#F1DEE1]/80 mt-5 leading-relaxed max-w-[26ch]">
+                 {{ resumen() }}
+               </p>
+               <div class="inicio-quick-actions">
+                 <a routerLink="/tareas">+ Nueva tarea</a>
+                 <a routerLink="/mensajes">✦ Hablar con IA</a>
+               </div>
             </div>
           </aside>
 
@@ -90,21 +94,34 @@ interface DiaSemana {
                 </div>
               </section>
 
-              <!-- Stats rápidas -->
-              <section class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <a routerLink="/materias" class="stat-card">
-                  <p class="text-3xl font-display font-bold text-[#6E1F2B]">{{ materias().length }}</p>
-                  <p class="text-xs text-[#8C8570] mt-1">materias activas</p>
-                </a>
-                <a routerLink="/tareas" class="stat-card">
-                  <p class="text-3xl font-display font-bold text-[#6E1F2B]">{{ tareasPendientes().length }}</p>
-                  <p class="text-xs text-[#8C8570] mt-1">tareas pendientes</p>
-                </a>
-                <a routerLink="/tareas" class="stat-card">
-                  <p class="text-3xl font-display font-bold text-[#6E1F2B]">{{ tareasVencidas().length }}</p>
-                  <p class="text-xs text-[#8C8570] mt-1">vencidas</p>
-                </a>
-              </section>
+               <!-- Resumen académico -->
+               <section class="academic-progress-card">
+                 <div class="academic-progress-copy">
+                   <p class="dashboard-eyebrow">Tu carrera</p>
+                   <h2>Progreso académico</h2>
+                   <p>{{ materiasAprobadas() }} de {{ materias().length }} materias aprobadas</p>
+                 </div>
+                 <div class="academic-progress-ring" [style.--progress]="porcentajeAprobadas() + '%'" role="img" [attr.aria-label]="porcentajeAprobadas() + '% de materias aprobadas'">
+                   <span>{{ porcentajeAprobadas() }}<small>%</small></span>
+                 </div>
+                 <a routerLink="/materias" class="academic-progress-link">Ver materias <span aria-hidden="true">→</span></a>
+               </section>
+
+               <!-- Stats rápidas -->
+               <section class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                 <a routerLink="/materias" class="stat-card">
+                   <p class="text-3xl font-display font-bold text-[#6E1F2B]">{{ materias().length }}</p>
+                   <p class="text-xs text-[#8C8570] mt-1">materias registradas</p>
+                 </a>
+                 <a routerLink="/materias" class="stat-card stat-card--success">
+                   <p class="text-3xl font-display font-bold text-[#3F6B4A]">{{ materiasAprobadas() }}</p>
+                   <p class="text-xs text-[#8C8570] mt-1">materias aprobadas</p>
+                 </a>
+                 <a routerLink="/tareas" class="stat-card">
+                   <p class="text-3xl font-display font-bold text-[#B3401A]">{{ tareasPendientes().length }}</p>
+                   <p class="text-xs text-[#8C8570] mt-1">tareas pendientes</p>
+                 </a>
+               </section>
 
               <!-- Tus tareas (lista completa) -->
               <section class="bg-[#FFFEFA] border border-[#D9D3C2] rounded-lg p-5 flex-1">
@@ -185,6 +202,9 @@ interface DiaSemana {
       align-items: flex-start;
     }
     .inicio-welcome-divider { width: 2.5rem; height: 2px; background: #F0C9BC; margin-top: 0.85rem; opacity: 0.7; }
+    .inicio-quick-actions { display: flex; flex-direction: column; gap: .55rem; margin-top: 2.5rem; }
+    .inicio-quick-actions a { width: fit-content; padding: .6rem .8rem; border: 1px solid rgba(241,222,225,.3); border-radius: .65rem; color: #fffefa; font-size: .72rem; text-decoration: none; background: rgba(255,255,255,.08); }
+    .inicio-quick-actions a:hover { background: rgba(255,255,255,.16); transform: translateX(3px); }
 
     .inicio-dashboard { min-width: 0; background: var(--bg); display: flex; }
     .inicio-dashboard-inner {
@@ -196,6 +216,17 @@ interface DiaSemana {
     }
 
     .stat-card { @apply bg-[#FFFEFA] border border-[#D9D3C2] rounded-lg p-6 text-center hover:bg-[#EFEBDF] transition-colors block; }
+    .stat-card--success { background: linear-gradient(145deg, #FFFEFA, #F1F7EE); }
+    .academic-progress-card { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 1.25rem; background: linear-gradient(120deg, #fffefa, #f7efe5); border: 1px solid #d9d3c2; border-radius: .75rem; padding: 1.25rem 1.5rem; box-shadow: var(--shadow-soft); animation: softPop 500ms var(--ease-out) both; }
+    .dashboard-eyebrow { color: #a69577; font: 600 .65rem 'JetBrains Mono', monospace; letter-spacing: .12em; text-transform: uppercase; margin: 0 0 .25rem; }
+    .academic-progress-copy h2 { color: #3a2a22; font: 700 1.25rem var(--font-display); }
+    .academic-progress-copy > p:last-child { color: #7a6f66; font-size: .78rem; margin-top: .25rem; }
+    .academic-progress-ring { --progress: 0%; width: 4.5rem; height: 4.5rem; border-radius: 50%; display: grid; place-items: center; background: conic-gradient(#3f6b4a var(--progress), #e5dfd3 0); position: relative; }
+    .academic-progress-ring::before { content: ''; position: absolute; inset: .42rem; background: #fffefa; border-radius: 50%; }
+    .academic-progress-ring span { position: relative; color: #3f6b4a; font: 700 1.1rem var(--font-display); }
+    .academic-progress-ring small { font: .65rem var(--font-body); }
+    .academic-progress-link { color: #6e1f2b; font-size: .75rem; font-weight: 600; text-decoration: none; white-space: nowrap; }
+    .academic-progress-link:hover { transform: translateX(3px); }
     .dia-label { color: #9BA6C4; }
     .dia-hoy-label { color: #F0C9BC; }
     .dia-fondo { background-color: #FFFEFA; }
@@ -232,6 +263,8 @@ interface DiaSemana {
       .inicio-layout { grid-template-columns: 1fr; min-height: auto; }
       .inicio-welcome { padding: 2rem 1.5rem; }
       .inicio-dashboard-inner { padding: 1.5rem 1.25rem; }
+      .academic-progress-card { grid-template-columns: 1fr auto; }
+      .academic-progress-link { grid-column: 1 / -1; border-top: 1px solid #e5dfd3; padding-top: .75rem; }
       .tarea-row { flex-direction: column; align-items: flex-start; gap: 0.25rem; }
       .tarea-row-fecha { margin-left: 0; }
     }
@@ -249,6 +282,11 @@ export class InicioComponent implements OnInit {
   protected readonly tareaSeleccionada = signal<Tarea | null>(null);
 
   protected readonly hoy = new Date();
+  protected readonly materiasAprobadas = computed(() => this.materias().filter((m) => m.estado === EstadoMateria.APROBADO).length);
+  protected readonly porcentajeAprobadas = computed(() => {
+    const total = this.materias().length;
+    return total === 0 ? 0 : Math.round((this.materiasAprobadas() / total) * 100);
+  });
   private readonly diasSemanaLabels = ['LUN', 'MAR', 'MIÉ', 'JUE', 'VIE', 'SÁB', 'DOM'];
 
   protected readonly tareasPendientes = computed(() =>
