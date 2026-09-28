@@ -1,0 +1,23 @@
+name: Despertar backend para recordatorios
+
+on:
+  schedule:
+    - cron: "5 9,21 * * *"
+      timezone: "America/Argentina/Buenos_Aires"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  despertar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Despertar backend
+        run: |
+          curl --fail --silent --show-error \
+            --retry 2 \
+            --retry-all-errors \
+            --retry-delay 30 \
+            --max-time 120 \
+            https://organizador-facultad.onrender.com/health
