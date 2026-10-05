@@ -1,5 +1,5 @@
 import { IsString, IsOptional, IsEnum, IsDateString, IsUUID, MaxLength, IsInt, Min, Max } from 'class-validator';
-import { TipoTarea, OrigenTarea } from '../entities/tarea.entity';
+import { TipoTarea, EstadoTarea, OrigenTarea } from '../entities/tarea.entity';
 
 export class CrearTareaDto {
   @IsString()
@@ -17,6 +17,10 @@ export class CrearTareaDto {
   @IsOptional()
   @IsEnum(TipoTarea)
   tipo?: TipoTarea;
+
+  @IsOptional()
+  @IsEnum(EstadoTarea)
+  estado?: EstadoTarea;
 
   @IsOptional()
   @IsDateString()

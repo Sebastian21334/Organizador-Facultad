@@ -31,7 +31,7 @@ export class TareasService implements OnModuleInit, OnModuleDestroy {
 
     for (const tarea of tareas) {
       const minutos = tarea.usuario?.recordatorioEmailHabilitado
-        ? tarea.usuario.recordatorioMinutos
+        ? (tarea.recordatorioMinutos ?? tarea.usuario.recordatorioMinutos)
         : null;
       if (!tarea.fechaLimite || !tarea.usuario?.email || !minutos) {
         continue;

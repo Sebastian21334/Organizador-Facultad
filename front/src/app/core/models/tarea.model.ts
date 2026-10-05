@@ -19,6 +19,7 @@ export interface CrearTareaDto {
   descripcion?: string;
   materiaId?: string;
   tipo?: TipoTarea;
+  estado?: EstadoTarea;
   fechaLimite?: string;
   recordatorioMinutos?: number | null;
   origen?: OrigenTarea;

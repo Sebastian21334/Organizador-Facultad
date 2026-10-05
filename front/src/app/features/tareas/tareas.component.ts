@@ -10,6 +10,7 @@ import { ErrorComponent } from '../../shared/components/error.component';
 import { TareaBadgeComponent } from '../../shared/components/tarea-badge.component';
 import { ConfirmDialogService } from '../../shared/components/confirm-dialog.service';
 import { AuthService } from '../../core/services/auth.service';
+import { TareaManualFormComponent } from './tarea-manual-form.component';
 
 @Component({
   selector: 'app-tareas',
@@ -20,6 +21,7 @@ import { AuthService } from '../../core/services/auth.service';
     LoaderComponent,
     ErrorComponent,
     TareaBadgeComponent,
+    TareaManualFormComponent,
   ],
   template: `
     <div class="tareas-page">
@@ -30,10 +32,20 @@ import { AuthService } from '../../core/services/auth.service';
             <p class="tareas-eyebrow">Organización</p>
             <p class="tareas-intro">Administrá tus actividades, entregas y parciales.</p>
           </div>
-          <a routerLink="/mensajes" class="nueva-tarea-btn">＋ Nueva tarea</a>
+          <button type="button" class="nueva-tarea-btn" (click)="alternarFormulario()" [attr.aria-expanded]="mostrarFormulario()">
+            {{ mostrarFormulario() ? 'Cerrar' : '＋ Nueva tarea' }}
+          </button>
         </header>
 
       <div class="space-y-5">
+
+        @if (mostrarFormulario()) {
+          <app-tarea-manual-form
+            [materias]="materias()"
+            (creada)="tareaCreada($event)"
+            (cancelar)="mostrarFormulario.set(false)"
+          />
+        }
 
         @if (mostrarAvisoRecordatorios()) {
           <section class="recordatorio-aviso" aria-labelledby="recordatorio-aviso-titulo">
@@ -282,7 +294,7 @@ import { AuthService } from '../../core/services/auth.service';
     .tareas-eyebrow { margin: 0 0 .25rem; color: #8c8570; font: 600 .68rem 'JetBrains Mono', monospace; letter-spacing: .12em; text-transform: uppercase; }
     .tareas-header h1 { color: #2b231f; font-size: clamp(2rem, 4vw, 2.65rem); line-height: 1; }
     .tareas-intro { color: #7a6f66; font-size: .88rem; margin-top: .3rem; }
-    .nueva-tarea-btn { padding: .72rem 1rem; border-radius: .7rem; background: #6e1f2b; color: white; font-size: .78rem; font-weight: 600; text-decoration: none; box-shadow: 0 8px 18px rgba(110,31,43,.18); }
+    .nueva-tarea-btn { padding: .72rem 1rem; border: 0; border-radius: .7rem; background: #6e1f2b; color: white; font-size: .78rem; font-weight: 600; text-decoration: none; box-shadow: 0 8px 18px rgba(110,31,43,.18); cursor: pointer; }
     .busqueda-campo { display: flex; align-items: center; gap: .55rem; min-width: min(20rem, 100%); padding: 0 .8rem; background: #fffefa; border: 1px solid #d9d3c2; border-radius: .55rem; color: #8c8570; }
     .busqueda-campo input { width: 100%; min-height: 2.5rem; border: 0; outline: 0; background: transparent; font-size: .82rem; }
     .estado-tabs { display: flex; gap: .35rem; }
@@ -749,6 +761,7 @@ export class TareasComponent implements OnInit {
   protected readonly materias = signal<Materia[]>([]);
   protected readonly tareasFiltradas = signal<Tarea[]>([]);
   protected readonly mostrarAvisoRecordatorios = signal(false);
+  protected readonly mostrarFormulario = signal(false);
 
   protected filtroEstado = '';
   protected filtroMateria = '';
@@ -839,6 +852,19 @@ export class TareasComponent implements OnInit {
   protected mostrarCompletadas(): void {
     this.filtroEstado = EstadoTarea.HECHA;
     this.aplicarFiltros();
+  }
+
+  protected alternarFormulario(): void {
+    this.mostrarFormulario.update((visible) => !visible);
+  }
+
+  protected tareaCreada(tarea: Tarea): void {
+    this.tareas.update((lista) => [tarea, ...lista]);
+    this.busqueda = '';
+    this.filtroMateria = '';
+    this.filtroEstado = tarea.estado;
+    this.aplicarFiltros();
+    this.mostrarFormulario.set(false);
   }
 
   protected marcarHecha(tarea: Tarea): void {
