@@ -23,6 +23,7 @@ export class ConfirmDialogService {
    *   if (!ok) return;
    */
   confirm(options: ConfirmOptions): Promise<boolean> {
+    this.cancelar();
     return new Promise<boolean>((resolve) => {
       this._estado.set({ ...options, resolver: resolve });
     });

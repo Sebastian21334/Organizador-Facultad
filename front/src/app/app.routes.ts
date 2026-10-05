@@ -1,9 +1,20 @@
 import { Routes } from '@angular/router';
-import { authGuard, publicOnlyGuard } from './core/guards/auth.guard';
+import { authGuard, landingGuard, publicOnlyGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   {
     path: '',
+    pathMatch: 'full',
+    canActivate: [landingGuard],
+    loadComponent: () =>
+      import('./features/landing/landing.component').then(
+        (m) => m.LandingComponent,
+      ),
+    title: 'Tempo — Tu vida universitaria, en orden',
+    data: { fullBleed: true },
+  },
+  {
+    path: 'inicio',
     canActivate: [authGuard],
     loadComponent: () =>
       import('./features/inicio/inicio.component').then(
@@ -57,6 +68,11 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () => import('./features/perfil/perfil.component').then((m) => m.PerfilComponent),
     title: 'Perfil',
+  },
+  {
+    path: 'contacto',
+    loadComponent: () => import('./features/contacto/contacto.component').then((m) => m.ContactoComponent),
+    title: 'Contacto — Tempo',
   },
   {
     path: 'login',

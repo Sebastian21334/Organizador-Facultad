@@ -1,11 +1,22 @@
-import { IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString, Max, Min } from 'class-validator';
+import {
+  IsBoolean,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Max,
+  Min,
+  MaxLength,
+  ValidateIf,
+} from 'class-validator';
 
 export class ActualizarPerfilDto {
   @IsString()
   @IsNotEmpty()
+  @MaxLength(80)
   nombre!: string;
 
-  @IsOptional()
+  @ValidateIf((_object, value) => value !== undefined)
   @IsBoolean()
   recordatorioEmailHabilitado?: boolean;
 

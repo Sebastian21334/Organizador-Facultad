@@ -43,6 +43,7 @@ lerna-debug.log*
 .env.local
 
 # temp directory
+.angular/
 .temp
 .tmp
 

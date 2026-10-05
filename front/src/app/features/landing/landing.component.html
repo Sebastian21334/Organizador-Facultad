@@ -1,0 +1,63 @@
+<div class="landing" id="inicio">
+  <header>
+    <a class="brand" href="#inicio" aria-label="Tempo, ir al inicio"><i>T</i><strong>Tempo</strong></a>
+    <nav aria-label="Navegación de la portada">
+      <a href="#como-funciona">Cómo funciona</a>
+      <a href="#herramientas">Herramientas</a>
+      <a href="#contacto">Contacto</a>
+    </nav>
+    <div class="header-actions">
+      <button type="button" class="theme" (click)="theme.alternar()" [attr.aria-label]="theme.esOscuro() ? 'Activar tema claro' : 'Activar tema oscuro'">
+        @if (theme.esOscuro()) {
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        } @else {
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
+        }
+      </button>
+      <a routerLink="/login" class="login">Iniciar sesión</a>
+      <a routerLink="/register" class="small-cta button-primary">Crear cuenta</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow"><span></span> Hecho para estudiantes</p>
+        <h1>Tu vida universitaria,<br><em>en su justo tempo.</em></h1>
+        <p class="lead">Materias, entregas y exámenes en un solo lugar. Creá tareas con IA y recibí recordatorios por mail para llegar a todo sin vivir corriendo.</p>
+        <div class="hero-actions">
+          <a routerLink="/register" class="primary button-primary">Empezar gratis <span aria-hidden="true">→</span></a>
+          <a href="#como-funciona" class="secondary">Ver cómo funciona</a>
+        </div>
+        <p class="returning">¿Ya tenés cuenta? <a routerLink="/login">Iniciá sesión</a></p>
+        <div class="trust"><span aria-hidden="true">✓</span><p><strong>Simple desde el primer día.</strong><br>Sin tarjetas ni configuraciones eternas.</p></div>
+      </div>
+      <div class="product"><div class="circle" aria-hidden="true"></div><app-dashboard-preview /></div>
+    </section>
+
+    <section class="benefits" aria-label="Beneficios de Tempo"><p><span>01</span> Todo en un lugar</p><p><span>02</span> Tareas creadas con IA</p><p><span>03</span> Avisos automáticos por mail</p></section>
+
+    <section class="how" id="como-funciona">
+      <div class="section-title"><p class="eyebrow"><span></span> Menos caos, más claridad</p><h2>Vos estudiá.<br><em>Tempo ordena el resto.</em></h2></div>
+      <div class="steps">
+        <article><span>01</span><i aria-hidden="true">☰</i><h3>Cargá tus materias</h3><p>Armá tu espacio académico y seguí el progreso de cada cursada.</p></article>
+        <article><span>02</span><i aria-hidden="true">✦</i><h3>Contáselo a la IA</h3><p>Escribí “Parcial de Redes el martes a las 14” y Tempo interpreta el mensaje para crear la tarea. También podés cargarla manualmente.</p></article>
+        <article><span>03</span><i aria-hidden="true">✉</i><h3>Recibí un aviso a tiempo</h3><p>Activá los recordatorios por email desde tu perfil y elegí la anticipación. Tempo te avisa automáticamente antes del vencimiento.</p></article>
+      </div>
+    </section>
+
+    <section class="features" id="herramientas">
+      <div class="feature-copy"><p class="eyebrow"><span></span> Tu semestre, conectado</p><h2>Las herramientas justas.<br><em>Sin ruido de más.</em></h2><p>Tempo reúne lo que usás todos los días para que dejes de saltar entre calendarios, notas y recordatorios.</p><a routerLink="/register">Crear mi espacio <span aria-hidden="true">→</span></a></div>
+      <div class="feature-list">
+        <article><i aria-hidden="true">CAL</i><div><h3>Calendario académico</h3><p>Una vista clara de tus tareas, entregas y exámenes.</p></div></article>
+        <article><i aria-hidden="true">MAT</i><div><h3>Materias y progreso</h3><p>Tu recorrido académico, siempre a mano.</p></div></article>
+        <article><i aria-hidden="true">IA</i><div><h3>Creación de tareas con IA</h3><p>Escribí como hablás. Tempo extrae la tarea, la materia y la fecha, y la agrega a tu organización.</p></div></article>
+        <article><i aria-hidden="true">MAIL</i><div><h3>Recordatorios automáticos</h3><p>Con los avisos activados en tu perfil, recibís un mail antes de que venza cada tarea con fecha.</p></div></article>
+      </div>
+    </section>
+
+    <section class="final"><i aria-hidden="true">T</i><h2>Tu próximo semestre<br>puede sentirse <em>distinto.</em></h2><p>Empezá hoy. Es gratis.</p><a routerLink="/register" class="primary button-primary">Crear mi cuenta <span aria-hidden="true">→</span></a></section>
+    <app-contacto />
+  </main>
+  <footer><a class="brand" href="#inicio"><i>T</i><strong>Tempo</strong></a><p>Organizá tu vida universitaria.</p><a href="#contacto">Ayuda y contacto</a><p>© 2026 Tempo</p></footer>
+</div>

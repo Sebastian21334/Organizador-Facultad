@@ -1,6 +1,21 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards, Req } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Body,
+  Param,
+  Query,
+  UseGuards,
+  Req,
+  ParseUUIDPipe,
+  BadRequestException,
+} from '@nestjs/common';
 import { TareasService } from '../services/tareas.service';
 import { CrearTareaDto } from '../dto/crear-tarea.dto';
+import { ActualizarTareaDto } from '../dto/actualizar-tarea.dto';
+import { PaginacionDto } from '../../paginacion.dto';
 import { Materia } from '../../materias/entities/materia.entity';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 
@@ -23,19 +38,28 @@ export class TareasController {
     const hastaDate = new Date(hasta);
 
     if (isNaN(desdeDate.getTime()) || isNaN(hastaDate.getTime())) {
-      return [];
+      throw new BadRequestException('Las fechas del calendario son inválidas');
     }
+    if (
+      hastaDate < desdeDate ||
+      hastaDate.getTime() - desdeDate.getTime() > 366 * 86_400_000
+    )
+      throw new BadRequestException('Consultá un rango de hasta un año');
 
-    return this.tareasService.obtenerParaCalendario(desdeDate, hastaDate, req.user.userId);
-  } 
+    return this.tareasService.obtenerParaCalendario(
+      desdeDate,
+      hastaDate,
+      req.user.userId,
+    );
+  }
 
   @Get()
-  async obtenerTodas(@Req() req) {
-    return this.tareasService.obtenerTodas(req.user.userId);
+  async obtenerTodas(@Req() req, @Query() paginacion: PaginacionDto) {
+    return this.tareasService.obtenerTodas(req.user.userId, paginacion);
   }
 
   @Get(':id')
-  async obtenerPorId(@Param('id') id: string, @Req() req) {
+  async obtenerPorId(@Param('id', ParseUUIDPipe) id: string, @Req() req) {
     return this.tareasService.obtenerPorId(id, req.user.userId);
   }
 
@@ -53,29 +77,31 @@ export class TareasController {
   }
 
   @Patch(':id/completar')
-  async marcarComoHecha(@Param('id') id: string, @Req() req) {
+  async marcarComoHecha(@Param('id', ParseUUIDPipe) id: string, @Req() req) {
     return this.tareasService.marcarComoHecha(id, req.user.userId);
   }
 
   @Patch(':id')
-  async actualizar(@Param('id') id: string, @Body() dto: Partial<CrearTareaDto>, @Req() req) {
+  async actualizar(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: ActualizarTareaDto,
+    @Req() req,
+  ) {
     const { materiaId, fechaLimite, recordatorioMinutos, ...resto } = dto;
     return this.tareasService.actualizar(
       id,
       {
         ...resto,
-        ...(fechaLimite ? { fechaLimite: new Date(fechaLimite), recordatorioEnviadoEn: null } : {}),
+        ...(fechaLimite ? { fechaLimite: new Date(fechaLimite) } : {}),
         ...(materiaId ? { materia: { id: materiaId } as Materia } : {}),
-        ...(recordatorioMinutos !== undefined
-          ? { recordatorioMinutos, recordatorioEnviadoEn: null }
-          : {}),
+        ...(recordatorioMinutos !== undefined ? { recordatorioMinutos } : {}),
       },
       req.user.userId,
     );
   }
 
   @Delete(':id')
-  async eliminar(@Param('id') id: string, @Req() req) {
+  async eliminar(@Param('id', ParseUUIDPipe) id: string, @Req() req) {
     await this.tareasService.eliminar(id, req.user.userId);
     return { mensaje: 'Tarea eliminada correctamente' };
   }

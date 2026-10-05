@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  CreateDateColumn,
+} from 'typeorm';
 import { Materia } from '../../materias/entities/materia.entity';
 import { Tarea } from '../../tareas/entities/tarea.entity';
 
@@ -27,6 +33,21 @@ export class Usuario {
 
   @Column({ default: false })
   emailVerificado!: boolean;
+
+  @Column({ type: 'integer', default: 0 })
+  sessionVersion!: number;
+
+  @Column({ type: 'varchar', length: 64, nullable: true, select: false })
+  verificationTokenHash!: string | null;
+
+  @Column({ type: 'timestamptz', nullable: true, select: false })
+  verificationTokenExpires!: Date | null;
+
+  @Column({ type: 'varchar', length: 64, nullable: true, select: false })
+  resetTokenHash!: string | null;
+
+  @Column({ type: 'timestamptz', nullable: true, select: false })
+  resetTokenExpires!: Date | null;
 
   @Column({ default: false })
   recordatorioEmailHabilitado!: boolean;

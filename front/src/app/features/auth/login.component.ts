@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
+import { ToastService } from '../../core/services/toast.service';
 
 @Component({
   selector: 'app-login',
@@ -126,6 +127,9 @@ import { AuthService } from '../../core/services/auth.service';
             }
           </button>
         </form>
+        <button type="button" (click)="reenviarVerificacion()" [disabled]="loading()" class="mt-4 text-sm text-[#6E1F2B] hover:underline">
+          ¿No recibiste el correo de confirmación? Reenviar enlace
+        </button>
 
         <div class="mt-6 pt-5 border-t border-[#E5DFD3] text-center">
           <p class="text-xs sm:text-sm text-[#7A6F66]">
@@ -159,6 +163,7 @@ import { AuthService } from '../../core/services/auth.service';
 export class LoginComponent {
   private readonly formBuilder = inject(FormBuilder);
   private readonly auth = inject(AuthService);
+  private readonly toast = inject(ToastService);
   private readonly router = inject(Router);
   protected readonly form = this.formBuilder.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
@@ -176,7 +181,7 @@ export class LoginComponent {
     this.loading.set(true);
     this.error.set(null);
     this.auth.login(this.form.getRawValue().email, this.form.getRawValue().password).subscribe({
-      next: () => { this.loading.set(false); void this.router.navigate(['/']); },
+      next: () => { this.loading.set(false); void this.router.navigate(['/inicio']); },
       error: (error) => {
         this.loading.set(false);
         const message = this.messageFromError(error, 'No se pudo iniciar sesión.');
@@ -184,6 +189,15 @@ export class LoginComponent {
           ? 'Tu email todavía no está verificado. Revisá tu correo para confirmar la cuenta.'
           : message);
       },
+    });
+  }
+
+  protected reenviarVerificacion(): void {
+    if (this.form.controls.email.invalid) { this.form.controls.email.markAsTouched(); return; }
+    this.loading.set(true);
+    this.auth.resendVerification(this.form.getRawValue().email).subscribe({
+      next: ({ mensaje }) => { this.loading.set(false); this.error.set(null); this.toast.info(mensaje); },
+      error: (error) => { this.loading.set(false); this.error.set(this.messageFromError(error, 'No se pudo solicitar el enlace.')); },
     });
   }
 

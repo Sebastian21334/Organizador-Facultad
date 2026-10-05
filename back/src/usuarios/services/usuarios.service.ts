@@ -25,4 +25,24 @@ export class UsuariosService {
     }
     return usuario;
   }
+
+  revocarSesiones(id: string) {
+    return this.usuariosRepository.revocarSesiones(id);
+  }
+  buscarVerificacion(hash: string) {
+    return this.usuariosRepository.buscarVerificacion(hash);
+  }
+  consumirVerificacion(hash: string, password: string) {
+    return this.usuariosRepository.consumirVerificacion(hash, password);
+  }
+  consumirReset(hash: string, password: string) {
+    return this.usuariosRepository.consumirReset(hash, password);
+  }
+  cambiarPasswordSeguro(id: string, anterior: string, password: string) {
+    return this.usuariosRepository.cambiarPasswordSeguro(
+      id,
+      anterior,
+      password,
+    );
+  }
 }

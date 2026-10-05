@@ -1,176 +1,103 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, tap } from 'rxjs';
+import { Observable, catchError, map, of, shareReplay, switchMap, tap, throwError, timeout } from 'rxjs';
+import { ToastService } from './toast.service';
 
-export interface AuthResponse {
-  access_token: string;
-}
-
-export interface MessageResponse {
-  mensaje: string;
-}
-
-export interface RegisterRequest {
-  email: string;
-  password: string;
-  nombre: string;
-}
-
-export interface LoginRequest {
-  email: string;
-  password: string;
-}
-
-export interface TokenRequest {
-  token: string;
-}
-
-export interface ResetPasswordRequest {
-  token: string;
-  nuevaPassword: string;
-}
-
-export interface PerfilResponse {
-  nombre: string | null;
-  recordatorioEmailHabilitado: boolean;
-  recordatorioMinutos: number | null;
-}
-
-export interface PreferenciasRecordatorio {
-  recordatorioEmailHabilitado: boolean;
-  recordatorioMinutos: number | null;
-}
-
-export interface JwtPayload {
-  sub?: string;
-  email?: string;
-  nombre?: string;
-  exp?: number;
-}
+export interface AuthResponse { access_token?: string; mensaje?: string; }
+export interface MessageResponse { mensaje: string; }
+export interface RegisterRequest { email: string; password: string; nombre: string; }
+export interface LoginRequest { email: string; password: string; }
+export interface TokenRequest { token: string; password: string; }
+export interface ResetPasswordRequest { token: string; nuevaPassword: string; }
+export interface PerfilResponse { nombre: string | null; recordatorioEmailHabilitado: boolean; recordatorioMinutos: number | null; }
+export interface PreferenciasRecordatorio { recordatorioEmailHabilitado: boolean; recordatorioMinutos: number | null; }
+interface SessionResponse extends PerfilResponse { csrfToken: string; }
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
-  private readonly tokenKey = 'access_token';
-  private readonly authenticated = signal(this.hasValidToken());
+  private readonly toast = inject(ToastService);
+  private readonly authenticated = signal(false);
+  private readonly checking = signal(true);
   private readonly nombreUsuario = signal<string | null>(null);
-
+  private ready = false;
+  private restoring?: Observable<boolean>;
+  private csrf = '';
+  private loggingOut = false;
   readonly isAuthenticated = this.authenticated.asReadonly();
   readonly currentUserName = this.nombreUsuario.asReadonly();
+  readonly checkingSession = this.checking.asReadonly();
 
   constructor() {
-    if (this.hasValidToken()) {
-      // Se difiere para evitar dependencia circular: el interceptor de auth
-      // inyecta AuthService, y si se dispara un HTTP call de forma síncrona
-      // dentro de este constructor, Angular lanza NG0200 (circular dependency)
-      // porque AuthService todavía no terminó de construirse.
-      queueMicrotask(() => this.cargarPerfil());
-    }
+    // Elimina únicamente las credenciales persistentes de la versión anterior.
+    try { localStorage.removeItem('access_token'); sessionStorage.removeItem('access_token'); } catch { /* El almacenamiento puede estar deshabilitado. La sesión no depende de él. */ }
+    queueMicrotask(() => this.ensureSession().subscribe());
   }
+
+  ensureSession(force = false): Observable<boolean> {
+    if (!force && this.ready) return of(this.authenticated());
+    if (!force && this.restoring) return this.restoring;
+    this.restoring = this.http.get<SessionResponse>('/auth/session').pipe(
+      timeout(15_000),
+      tap((perfil) => {
+        this.csrf = perfil.csrfToken;
+        this.authenticated.set(true);
+        this.nombreUsuario.set(perfil.nombre?.trim().split(/\s+/)[0] ?? null);
+        this.ready = true;
+        this.checking.set(false);
+      }),
+      map(() => true),
+      catchError(() => { this.clearSession(); return of(false); }),
+      shareReplay({ bufferSize: 1, refCount: false }),
+    );
+    return this.restoring;
+  }
+
+  csrfToken(): string { return this.csrf; }
 
   login(email: string, password: string): Observable<AuthResponse> {
     return this.http.post<AuthResponse>('/auth/login', { email, password }).pipe(
-      tap(({ access_token }) => {
-        this.setToken(access_token);
-        this.cargarPerfil();
-      }),
+      switchMap((respuesta) => this.ensureSession(true).pipe(switchMap((ok) => ok ? of(respuesta) :
+        throwError(() => new HttpErrorResponse({ status: 401, error: { message: 'No pudimos guardar la sesión. Revisá que las cookies estén permitidas.' } }))))),
     );
   }
-
-  register(request: RegisterRequest): Observable<MessageResponse> {
-    return this.http.post<MessageResponse>('/auth/register', request);
-  }
-
-  verifyEmail(request: TokenRequest): Observable<MessageResponse> {
-    return this.http.post<MessageResponse>('/auth/verify-email', request);
-  }
-
-  forgotPassword(email: string): Observable<MessageResponse> {
-    return this.http.post<MessageResponse>('/auth/forgot-password', { email });
-  }
-
-  resetPassword(request: ResetPasswordRequest): Observable<MessageResponse> {
-    return this.http.post<MessageResponse>('/auth/reset-password', request);
-  }
-
-  getPerfil(): Observable<PerfilResponse> {
-    return this.http.get<PerfilResponse>('/auth/perfil');
-  }
+  register(request: RegisterRequest): Observable<MessageResponse> { return this.http.post<MessageResponse>('/auth/register', request); }
+  verifyEmail(request: TokenRequest): Observable<MessageResponse> { return this.http.post<MessageResponse>('/auth/verify-email', request); }
+  resendVerification(email: string): Observable<MessageResponse> { return this.http.post<MessageResponse>('/auth/resend-verification', { email }); }
+  forgotPassword(email: string): Observable<MessageResponse> { return this.http.post<MessageResponse>('/auth/forgot-password', { email }); }
+  resetPassword(request: ResetPasswordRequest): Observable<MessageResponse> { return this.http.post<MessageResponse>('/auth/reset-password', request).pipe(tap(() => this.clearSession())); }
+  getPerfil(): Observable<PerfilResponse> { return this.http.get<PerfilResponse>('/auth/perfil'); }
 
   actualizarPerfil(nombre: string, preferencias?: PreferenciasRecordatorio): Observable<MessageResponse> {
     return this.http.patch<MessageResponse>('/auth/perfil', { nombre, ...preferencias }).pipe(
       tap(() => this.nombreUsuario.set(nombre?.trim().split(/\s+/)[0] ?? null)),
     );
   }
-
   cambiarPassword(contraseñaActual: string, nuevaPassword: string): Observable<MessageResponse> {
-    return this.http.patch<MessageResponse>('/auth/cambiar-password', { contraseñaActual, nuevaPassword });
+    return this.http.patch<MessageResponse>('/auth/cambiar-password', { contraseñaActual, nuevaPassword }).pipe(
+      tap(({ mensaje }) => { this.clearSession(); this.toast.success(mensaje); void this.router.navigate(['/login']); }),
+    );
   }
-
   logout(): void {
-    localStorage.removeItem(this.tokenKey);
-    this.authenticated.set(false);
-    this.nombreUsuario.set(null);
-    void this.router.navigate(['/login']);
-  }
-
-  token(): string | null {
-    return this.hasValidToken() ? localStorage.getItem(this.tokenKey) : null;
-  }
-
-  private cargarPerfil(): void {
-    this.getPerfil().subscribe({
-      next: (perfil) => this.nombreUsuario.set(perfil.nombre?.trim().split(/\s+/)[0] ?? null),
-      error: () => this.nombreUsuario.set(null),
+    if (this.loggingOut) return;
+    this.loggingOut = true;
+    this.http.post<MessageResponse>('/auth/logout', {}).subscribe({
+      next: () => { this.loggingOut = false; this.expireSession(); },
+      error: (error: HttpErrorResponse) => {
+        this.loggingOut = false;
+        if (error.status === 401) this.expireSession();
+        else this.toast.error('No se pudo cerrar la sesión en el servidor. Intentá de nuevo.');
+      },
     });
   }
-
-  private setToken(token: string): void {
-    localStorage.setItem(this.tokenKey, token);
-    this.authenticated.set(true);
+  expireSession(): void {
+    this.clearSession();
+    void this.router.navigate(['/']);
   }
-
-  private hasValidToken(): boolean {
-    const token = localStorage.getItem(this.tokenKey);
-    if (!token) return false;
-    try {
-      const payload = JSON.parse(this.decodeBase64Url(token.split('.')[1] ?? '')) as { exp?: number };
-      if (payload.exp && payload.exp * 1000 <= Date.now()) {
-        localStorage.removeItem(this.tokenKey);
-        return false;
-      }
-      return true;
-    } catch {
-      localStorage.removeItem(this.tokenKey);
-      return false;
-    }
-  }
-
-  private decodeToken<T>(token: string): T {
-    const payload = token.split('.')[1];
-    if (!payload) return {} as T;
-
-    const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
-    const normalized = atob(base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), '='));
-    return JSON.parse(
-      decodeURIComponent(
-        normalized
-          .split('')
-          .map((character) => `%${(`00${character.charCodeAt(0).toString(16)}`).slice(-2)}`)
-          .join(''),
-      ),
-    ) as T;
-  }
-
-  private decodeBase64Url(value: string): string {
-    const base64 = value.replace(/-/g, '+').replace(/_/g, '/');
-    return decodeURIComponent(
-      atob(base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), '='))
-        .split('')
-        .map((character) => `%${(`00${character.charCodeAt(0).toString(16)}`).slice(-2)}`)
-        .join(''),
-    );
+  private clearSession(): void {
+    this.authenticated.set(false); this.nombreUsuario.set(null); this.csrf = ''; this.ready = true; this.restoring = undefined;
+    this.checking.set(false);
   }
 }

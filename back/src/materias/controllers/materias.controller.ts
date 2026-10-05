@@ -1,4 +1,17 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, UseGuards, Req } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Body,
+  Param,
+  UseGuards,
+  Req,
+  ParseUUIDPipe,
+  Query,
+} from '@nestjs/common';
+import { PaginacionDto } from '../../paginacion.dto';
 import { MateriasService } from '../services/materias.service';
 import { CrearMateriaDto } from '../dto/crear-materia.dto';
 import { ActualizarMateriaDto } from '../dto/actualizar-materia.dto';
@@ -10,12 +23,12 @@ export class MateriasController {
   constructor(private readonly materiasService: MateriasService) {}
 
   @Get()
-  async obtenerTodas(@Req() req) {
-    return this.materiasService.obtenerTodas(req.user.userId);
+  async obtenerTodas(@Req() req, @Query() paginacion: PaginacionDto) {
+    return this.materiasService.obtenerTodas(req.user.userId, paginacion);
   }
 
   @Get(':id')
-  async obtenerPorId(@Param('id') id: string, @Req() req) {
+  async obtenerPorId(@Param('id', ParseUUIDPipe) id: string, @Req() req) {
     return this.materiasService.obtenerPorId(id, req.user.userId);
   }
 
@@ -25,12 +38,16 @@ export class MateriasController {
   }
 
   @Patch(':id')
-  async actualizar(@Param('id') id: string, @Body() dto: ActualizarMateriaDto, @Req() req) {
+  async actualizar(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: ActualizarMateriaDto,
+    @Req() req,
+  ) {
     return this.materiasService.actualizar(id, dto, req.user.userId);
   }
 
   @Delete(':id')
-  async eliminar(@Param('id') id: string, @Req() req) {
+  async eliminar(@Param('id', ParseUUIDPipe) id: string, @Req() req) {
     await this.materiasService.eliminar(id, req.user.userId);
     return { mensaje: 'Materia eliminada correctamente' };
   }

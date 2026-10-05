@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MensajeEntrante } from '../entities/mensaje-entrante.entity';
+import { PaginacionDto } from '../../paginacion.dto';
 
 @Injectable()
 export class MensajesRepository {
@@ -10,11 +11,16 @@ export class MensajesRepository {
     private readonly repo: Repository<MensajeEntrante>,
   ) {}
 
-  async findAll(usuarioId: string): Promise<MensajeEntrante[]> {
+  async findAll(
+    usuarioId: string,
+    paginacion = new PaginacionDto(),
+  ): Promise<MensajeEntrante[]> {
     return this.repo.find({
       where: { usuarioId },
       relations: { tareaGenerada: { materia: true } },
-      order: { fechaRecibido: 'DESC' },
+      order: { fechaRecibido: 'DESC', id: 'ASC' },
+      take: paginacion.limit,
+      skip: paginacion.offset,
     });
   }
 
@@ -30,7 +36,10 @@ export class MensajesRepository {
     return this.repo.save(nuevo);
   }
 
-  async update(id: string, data: Partial<MensajeEntrante>): Promise<MensajeEntrante | null> {
+  async update(
+    id: string,
+    data: Partial<MensajeEntrante>,
+  ): Promise<MensajeEntrante | null> {
     await this.repo.update(id, data);
     return this.findById(id);
   }

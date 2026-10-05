@@ -6,6 +6,7 @@ import { Cuatrimestre, EstadoMateria, Materia } from '../../core/models';
 import { LoaderComponent } from '../../shared/components/loader.component';
 import { ErrorComponent } from '../../shared/components/error.component';
 import { ConfirmDialogService } from '../../shared/components/confirm-dialog.service';
+import { ToastService } from '../../core/services/toast.service';
 
 @Component({
   selector: 'app-materias',
@@ -15,38 +16,38 @@ import { ConfirmDialogService } from '../../shared/components/confirm-dialog.ser
       <h1 class="title-bar">Materias</h1>
 
       <div class="max-w-6xl mx-auto space-y-6 px-4 md:px-8 py-6">
-      <section class="bg-[#FFFEFA] rounded-lg border border-[#D9D3C2] shadow-sm p-5">
+      <section data-motion class="bg-[#FFFEFA] rounded-lg border border-[#D9D3C2] shadow-sm p-5">
         <h2 class="text-sm font-semibold text-[#1A2540] mb-4">Nueva materia</h2>
         <form [formGroup]="form" (ngSubmit)="crear()" class="grid gap-3 sm:grid-cols-2">
           <div class="flex flex-col gap-1 sm:col-span-2">
-            <label class="text-xs font-medium text-[#8C8570]">Nombre *</label>
-            <input formControlName="nombre" class="field" placeholder="Análisis Matemático II" />
+            <label for="materia-nombre" class="text-xs font-medium text-[#8C8570]">Nombre *</label>
+            <input id="materia-nombre" formControlName="nombre" class="field" placeholder="Análisis Matemático II" />
             @if (form.controls.nombre.touched && form.controls.nombre.invalid) {
-              <span class="text-xs text-[#F6E2DA]0">El nombre es obligatorio.</span>
+              <span class="text-xs text-[#A62828]">El nombre es obligatorio.</span>
             }
           </div>
           <div class="flex flex-col gap-1">
-            <label class="text-xs font-medium text-[#8C8570]">Año de cursado</label>
-            <input formControlName="anioCursado" type="number" min="1" step="1" class="field" placeholder="1" />
+            <label for="materia-anio" class="text-xs font-medium text-[#8C8570]">Año de cursado</label>
+            <input id="materia-anio" formControlName="anioCursado" type="number" min="1" step="1" class="field" placeholder="1" />
             @if (form.controls.anioCursado.touched && form.controls.anioCursado.invalid) {
-              <span class="text-xs text-[#F6E2DA]0">Indicá un año de cursado válido.</span>
+              <span class="text-xs text-[#A62828]">Indicá un año de cursado válido.</span>
             }
           </div>
           <div class="flex flex-col gap-1">
-            <label class="text-xs font-medium text-[#8C8570]">Cuatrimestre</label>
-            <select formControlName="cuatrimestre" class="field">
+            <label for="materia-cuatrimestre" class="text-xs font-medium text-[#8C8570]">Cuatrimestre</label>
+            <select id="materia-cuatrimestre" formControlName="cuatrimestre" class="field">
               <option value="">Sin definir</option>
               <option [value]="Cuatrimestre.PRIMERO">Primero</option>
               <option [value]="Cuatrimestre.SEGUNDO">Segundo</option>
               <option [value]="Cuatrimestre.ANUAL">Anual</option>
             </select>
             @if (form.controls.cuatrimestre.touched && form.controls.cuatrimestre.invalid) {
-              <span class="text-xs text-[#F6E2DA]0">Elegí un cuatrimestre.</span>
+              <span class="text-xs text-[#A62828]">Elegí un cuatrimestre.</span>
             }
           </div>
           <div class="flex flex-col gap-1">
-            <label class="text-xs font-medium text-[#8C8570]">Estado</label>
-            <select formControlName="estado" class="field">
+            <label for="materia-estado" class="text-xs font-medium text-[#8C8570]">Estado</label>
+            <select id="materia-estado" formControlName="estado" class="field">
               <option [value]="EstadoMateria.REGULAR">Regular</option>
               <option [value]="EstadoMateria.APROBADO">Aprobado</option>
               <option [value]="EstadoMateria.LIBRE">Libre</option>
@@ -61,7 +62,7 @@ import { ConfirmDialogService } from '../../shared/components/confirm-dialog.ser
       @if (cargando()) {
         <app-loader mensaje="Cargando materias..." />
       } @else if (error()) {
-        <app-error [mensaje]="error()" />
+        <app-error [mensaje]="error()" [permitirReintento]="true" (reintentar)="cargar()" />
       } @else if (materias().length === 0) {
         <p class="text-sm text-[#8C8570] py-6 text-center">Todavía no cargaste materias.</p>
       } @else {
@@ -81,22 +82,22 @@ import { ConfirmDialogService } from '../../shared/components/confirm-dialog.ser
                       <article class="materia-card">
                         @if (editandoId() === m.id) {
                           <form [formGroup]="editForm" (ngSubmit)="guardarEdicion(m.id)" class="grid gap-2 sm:grid-cols-2">
-                            <input formControlName="nombre" class="field sm:col-span-2" placeholder="Nombre" />
-                            <input formControlName="anioCursado" type="number" min="1" step="1" class="field" placeholder="Año de cursado" />
-                            <select formControlName="cuatrimestre" class="field">
+                            <input formControlName="nombre" class="field sm:col-span-2" placeholder="Nombre" aria-label="Nombre de la materia" />
+                            <input formControlName="anioCursado" type="number" min="1" step="1" class="field" placeholder="Año de cursado" aria-label="Año de cursado" />
+                            <select formControlName="cuatrimestre" class="field" aria-label="Cuatrimestre">
                               <option value="">Sin definir</option>
                               <option [value]="Cuatrimestre.PRIMERO">Primero</option>
                               <option [value]="Cuatrimestre.SEGUNDO">Segundo</option>
                               <option [value]="Cuatrimestre.ANUAL">Anual</option>
                             </select>
-                            <select formControlName="estado" class="field">
+                            <select formControlName="estado" class="field" aria-label="Estado de la materia">
                               <option [value]="EstadoMateria.REGULAR">Regular</option>
                               <option [value]="EstadoMateria.APROBADO">Aprobado</option>
                               <option [value]="EstadoMateria.LIBRE">Libre</option>
                             </select>
                             <div class="flex gap-2 sm:col-span-2">
                               <button type="submit" [disabled]="guardandoEdicion()" class="button-primary">{{ guardandoEdicion() ? 'Guardando...' : 'Guardar' }}</button>
-                              <button type="button" (click)="cancelarEdicion()" class="button-secondary">Cancelar</button>
+                              <button type="button" (click)="cancelarEdicion()" [disabled]="guardandoEdicion()" class="button-secondary">Cancelar</button>
                             </div>
                           </form>
                         } @else {
@@ -108,8 +109,8 @@ import { ConfirmDialogService } from '../../shared/components/confirm-dialog.ser
                               </span>
                             </div>
                             <div class="acciones">
-                              <button type="button" (click)="iniciarEdicion(m)" title="Editar" class="icon-button">Editar</button>
-                              <button type="button" (click)="eliminar(m)" [disabled]="eliminandoId() === m.id" title="Eliminar" class="icon-button danger">Eliminar</button>
+                              <button type="button" (click)="iniciarEdicion(m)" [disabled]="guardandoEdicion() || eliminandoId() !== null" title="Editar" class="icon-button">Editar</button>
+                              <button type="button" (click)="eliminar(m)" [disabled]="guardandoEdicion() || eliminandoId() !== null" title="Eliminar" class="icon-button danger">{{ eliminandoId() === m.id ? 'Eliminando...' : 'Eliminar' }}</button>
                             </div>
                           </div>
                           <p class="materia-meta">Año {{ m.anioCursado ?? 'sin definir' }} · {{ nombreCuatrimestre(m.cuatrimestre) }}</p>
@@ -213,6 +214,7 @@ export class MateriasComponent implements OnInit {
   private readonly materiasService = inject(MateriasService);
   private readonly fb = inject(FormBuilder);
   private readonly confirmDialog = inject(ConfirmDialogService);
+  private readonly toast = inject(ToastService);
   protected readonly Cuatrimestre = Cuatrimestre;
   protected readonly EstadoMateria = EstadoMateria;
   protected readonly cargando = signal(true);
@@ -238,7 +240,7 @@ export class MateriasComponent implements OnInit {
 
   ngOnInit(): void { this.cargar(); }
 
-  private cargar(): void {
+  protected cargar(): void {
     this.cargando.set(true);
     this.error.set(null);
     this.materiasService.listar().subscribe({
@@ -248,13 +250,15 @@ export class MateriasComponent implements OnInit {
   }
 
   protected crear(): void {
+    if (this.enviando()) return;
+    this.form.controls.nombre.setValue(this.form.controls.nombre.value.trim());
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     this.enviando.set(true);
     this.error.set(null);
     const value = this.form.getRawValue();
     this.materiasService.crear({ nombre: value.nombre, anioCursado: value.anioCursado ?? undefined, cuatrimestre: value.cuatrimestre || undefined, estado: value.estado }).subscribe({
-      next: (materia) => { this.materias.update((lista) => [...lista, materia]); this.form.reset({ estado: EstadoMateria.REGULAR }); this.enviando.set(false); },
-      error: () => { this.error.set('No se pudo crear la materia.'); this.enviando.set(false); },
+      next: (materia) => { this.materias.update((lista) => [...lista, materia]); this.form.reset({ nombre: '', cuatrimestre: '', estado: EstadoMateria.REGULAR }); this.enviando.set(false); this.toast.success('Materia creada.'); },
+      error: () => { this.toast.error('No se pudo crear la materia. Conservamos los datos para que reintentes.'); this.enviando.set(false); },
     });
   }
 
@@ -266,17 +270,20 @@ export class MateriasComponent implements OnInit {
   protected cancelarEdicion(): void { this.editandoId.set(null); this.editForm.reset({ estado: EstadoMateria.REGULAR }); }
 
   protected guardarEdicion(id: string): void {
+    if (this.guardandoEdicion()) return;
+    this.editForm.controls.nombre.setValue(this.editForm.controls.nombre.value.trim());
     if (this.editForm.invalid) { this.editForm.markAllAsTouched(); return; }
     this.guardandoEdicion.set(true);
     this.error.set(null);
     const value = this.editForm.getRawValue();
     this.materiasService.actualizar(id, { nombre: value.nombre, anioCursado: value.anioCursado, cuatrimestre: value.cuatrimestre || null, estado: value.estado }).subscribe({
-      next: (actualizada) => { this.materias.update((lista) => lista.map((m) => m.id === id ? actualizada : m)); this.guardandoEdicion.set(false); this.cancelarEdicion(); },
-      error: () => { this.error.set('No se pudo actualizar la materia.'); this.guardandoEdicion.set(false); },
+      next: (actualizada) => { this.materias.update((lista) => lista.map((m) => m.id === id ? actualizada : m)); this.guardandoEdicion.set(false); this.cancelarEdicion(); this.toast.success('Materia actualizada.'); },
+      error: () => { this.toast.error('No se pudo guardar la materia. Intentá de nuevo.'); this.guardandoEdicion.set(false); },
     });
   }
 
   protected async eliminar(materia: Materia): Promise<void> {
+    if (this.eliminandoId() || this.guardandoEdicion()) return;
     const confirmado = await this.confirmDialog.confirm({
       titulo: 'Eliminar materia',
       mensaje: `¿Eliminar la materia "${materia.nombre}"? Esta acción no se puede deshacer.`,
@@ -287,8 +294,8 @@ export class MateriasComponent implements OnInit {
     this.eliminandoId.set(materia.id);
     this.error.set(null);
     this.materiasService.eliminar(materia.id).subscribe({
-      next: () => { this.materias.update((lista) => lista.filter((m) => m.id !== materia.id)); this.eliminandoId.set(null); },
-      error: () => { this.error.set('No se pudo eliminar la materia.'); this.eliminandoId.set(null); },
+      next: () => { this.materias.update((lista) => lista.filter((m) => m.id !== materia.id)); this.eliminandoId.set(null); this.toast.success('Materia eliminada.'); },
+      error: () => { this.toast.error('No se pudo eliminar la materia. Intentá de nuevo.'); this.eliminandoId.set(null); },
     });
   }
 

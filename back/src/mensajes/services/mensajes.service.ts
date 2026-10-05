@@ -3,9 +3,14 @@ import { MensajesRepository } from '../repositories/mensajes.repository';
 import { IaService } from '../../ia/services/ia.service';
 import { TareasService } from '../../tareas/services/tareas.service';
 import { MateriasRepository } from '../../materias/repositories/materias.repository';
-import { MensajeEntrante, FuenteMensaje } from '../entities/mensaje-entrante.entity';
+import {
+  MensajeEntrante,
+  FuenteMensaje,
+} from '../entities/mensaje-entrante.entity';
 import { Materia } from '../../materias/entities/materia.entity';
 import { TipoTarea, OrigenTarea } from '../../tareas/entities/tarea.entity';
+import { LimitesService } from '../../usuarios/services/limites.service';
+import { PaginacionDto } from '../../paginacion.dto';
 
 @Injectable()
 export class MensajesService {
@@ -14,29 +19,42 @@ export class MensajesService {
     private readonly iaService: IaService,
     private readonly tareasService: TareasService,
     private readonly materiasRepository: MateriasRepository,
+    private readonly limites: LimitesService,
   ) {}
 
-  async obtenerTodos(usuarioId: string): Promise<MensajeEntrante[]> {
-    return this.mensajesRepository.findAll(usuarioId);
+  async obtenerTodos(
+    usuarioId: string,
+    paginacion = new PaginacionDto(),
+  ): Promise<MensajeEntrante[]> {
+    return this.mensajesRepository.findAll(usuarioId, paginacion);
   }
 
   private readonly UMBRAL_CONFIANZA_MINIMA = 0.5;
 
-  async procesarMensaje(texto: string, fuente: FuenteMensaje, usuarioId: string): Promise<MensajeEntrante> {
+  async procesarMensaje(
+    texto: string,
+    fuente: FuenteMensaje,
+    usuarioId: string,
+  ): Promise<MensajeEntrante> {
+    await this.limites.consumir('ia-usuario-minuto', usuarioId, 5, 60_000);
+    await this.limites.consumir('ia-usuario-dia', usuarioId, 30, 86_400_000);
+    await this.limites.consumir('ia-global-dia', 'global', 500, 86_400_000);
     // 1. Guardamos el mensaje crudo primero, sin importar qué pase después
-    const mensaje = await this.mensajesRepository.create({ textoOriginal: texto, fuente, usuarioId });
+    const mensaje = await this.mensajesRepository.create({
+      textoOriginal: texto,
+      fuente,
+      usuarioId,
+    });
 
     // 2. Traemos las materias del usuario: se las pasamos a la IA para que reconozca
     //    coincidencias semánticas (ej: "Bases" -> "Bases de Datos"), y reutilizamos la misma
     //    lista después como respaldo con fuzzy match, sin pegarle dos veces a la base.
-    const materiasExistentes = await this.materiasRepository.buscarPorUsuario(usuarioId);
+    const materiasExistentes =
+      await this.materiasRepository.buscarPorUsuario(usuarioId);
     const resultadoIA = await this.iaService.extraerTarea(
       texto,
       materiasExistentes.map((m) => m.nombre),
     );
-
-
-
 
     // Si la IA no está lo suficientemente segura, no creamos tarea: guardamos el mensaje
     // con la aclaración que la propia IA redactó, para que el frontend la muestre como
@@ -46,14 +64,18 @@ export class MensajesService {
         procesado: true,
         resultadoIA: resultadoIA as any,
       });
-        return actualizado!;
-      }
+      return actualizado!;
+    }
 
     // 3. Buscamos la materia por nombre (tolerando typos/mayúsculas), o la creamos si no existe.
     //    Esto queda como red de seguridad por si la IA no devolvió el nombre exacto.
     let materia: Materia | undefined;
     if (resultadoIA.materia) {
-      materia = await this.resolverMateria(resultadoIA.materia, usuarioId, materiasExistentes);
+      materia = await this.resolverMateria(
+        resultadoIA.materia,
+        usuarioId,
+        materiasExistentes,
+      );
 
       // Nunca vinculamos una tarea a una materia dudosa. La materia detectada
       // puede venir abreviada o inventada por el modelo; en ese caso dejamos
@@ -77,9 +99,14 @@ export class MensajesService {
         titulo: resultadoIA.titulo,
         descripcion: resultadoIA.descripcion ?? undefined,
         tipo: resultadoIA.tipo as TipoTarea,
-        fechaLimite: resultadoIA.fecha ? new Date(resultadoIA.fecha) : undefined,
+        fechaLimite: resultadoIA.fecha
+          ? new Date(resultadoIA.fecha)
+          : undefined,
         materia,
-        origen: fuente === FuenteMensaje.WHATSAPP ? OrigenTarea.WHATSAPP : OrigenTarea.IA_CHAT,
+        origen:
+          fuente === FuenteMensaje.WHATSAPP
+            ? OrigenTarea.WHATSAPP
+            : OrigenTarea.IA_CHAT,
       },
       usuarioId,
     );
@@ -97,7 +124,7 @@ export class MensajesService {
   /**
    * Busca una materia ya existente (del mismo usuario) cuyo nombre "se parezca" al
    * detectado por la IA (ignorando mayúsculas, tildes, espacios extra y typos menores).
-  * Si no encuentra ninguna razonablemente parecida, devuelve undefined sin crear una materia.
+   * Si no encuentra ninguna razonablemente parecida, devuelve undefined sin crear una materia.
    */
   private async resolverMateria(
     nombreDetectado: string,
@@ -105,7 +132,9 @@ export class MensajesService {
     materiasPrecargadas?: Materia[],
   ): Promise<Materia | undefined> {
     const normalizadoDetectado = this.normalizar(nombreDetectado);
-    const todas = materiasPrecargadas ?? (await this.materiasRepository.buscarPorUsuario(usuarioId));
+    const todas =
+      materiasPrecargadas ??
+      (await this.materiasRepository.buscarPorUsuario(usuarioId));
 
     let mejorCoincidencia: Materia | undefined;
     let mejorDistancia = Infinity;
@@ -128,8 +157,14 @@ export class MensajesService {
         continue;
       }
 
-      const distancia = this.distanciaLevenshtein(normalizadoExistente, normalizadoDetectado);
-      const largoMax = Math.max(normalizadoExistente.length, normalizadoDetectado.length);
+      const distancia = this.distanciaLevenshtein(
+        normalizadoExistente,
+        normalizadoDetectado,
+      );
+      const largoMax = Math.max(
+        normalizadoExistente.length,
+        normalizadoDetectado.length,
+      );
       const distanciaRelativa = distancia / largoMax;
 
       if (distanciaRelativa <= 0.2 && distancia < mejorDistancia) {
@@ -139,7 +174,10 @@ export class MensajesService {
     }
 
     // Si más de una materia parece coincidir, no elegimos arbitrariamente.
-    if (mejorCoincidencia && (cantidadCoincidenciasFuertes <= 1 || mejorDistancia > 0)) {
+    if (
+      mejorCoincidencia &&
+      (cantidadCoincidenciasFuertes <= 1 || mejorDistancia > 0)
+    ) {
       return mejorCoincidencia;
     }
 
@@ -158,14 +196,18 @@ export class MensajesService {
   private capitalizar(texto: string): string {
     return texto
       .split(' ')
-      .map((palabra) => (palabra ? palabra[0].toUpperCase() + palabra.slice(1) : palabra))
+      .map((palabra) =>
+        palabra ? palabra[0].toUpperCase() + palabra.slice(1) : palabra,
+      )
       .join(' ');
   }
 
   private distanciaLevenshtein(a: string, b: string): number {
     const filas = a.length + 1;
     const columnas = b.length + 1;
-    const matriz: number[][] = Array.from({ length: filas }, () => new Array(columnas).fill(0));
+    const matriz: number[][] = Array.from({ length: filas }, () =>
+      new Array(columnas).fill(0),
+    );
 
     for (let i = 0; i < filas; i++) matriz[i][0] = i;
     for (let j = 0; j < columnas; j++) matriz[0][j] = j;

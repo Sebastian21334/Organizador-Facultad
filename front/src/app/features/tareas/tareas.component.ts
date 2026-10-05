@@ -11,6 +11,8 @@ import { TareaBadgeComponent } from '../../shared/components/tarea-badge.compone
 import { ConfirmDialogService } from '../../shared/components/confirm-dialog.service';
 import { AuthService } from '../../core/services/auth.service';
 import { TareaManualFormComponent } from './tarea-manual-form.component';
+import { ToastService } from '../../core/services/toast.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-tareas',
@@ -78,7 +80,7 @@ import { TareaManualFormComponent } from './tarea-manual-form.component';
 
             <select
               [(ngModel)]="filtroEstado"
-              (ngModelChange)="aplicarFiltros()"
+              (ngModelChange)="soloPendientes = false; aplicarFiltros()"
               class="filtro-select"
             >
               <option value="">Todos</option>
@@ -112,10 +114,10 @@ import { TareaManualFormComponent } from './tarea-manual-form.component';
         </div>
 
         <div class="estado-tabs" aria-label="Filtrar por estado">
-          <button type="button" [class.active]="filtroEstado !== estadoHecha" (click)="mostrarPendientes()">
+          <button type="button" [class.active]="soloPendientes" [attr.aria-pressed]="soloPendientes" (click)="mostrarPendientes()">
             Pendientes <span>{{ cantidadPendientes() }}</span>
           </button>
-          <button type="button" [class.active]="filtroEstado === estadoHecha" (click)="mostrarCompletadas()">
+          <button type="button" [class.active]="filtroEstado === estadoHecha" [attr.aria-pressed]="filtroEstado === estadoHecha" (click)="mostrarCompletadas()">
             Completadas <span>{{ cantidadCompletadas() }}</span>
           </button>
         </div>
@@ -127,12 +129,18 @@ import { TareaManualFormComponent } from './tarea-manual-form.component';
 
         } @else if (error()) {
 
-          <app-error [mensaje]="error()" />
+          <app-error [mensaje]="error()" [permitirReintento]="true" (reintentar)="cargar()" />
 
         } @else if (tareasFiltradas().length === 0) {
 
           <div class="tareas-vacio">
-            <p>No hay tareas que coincidan con los filtros.</p>
+            <p>{{ tareas().length === 0 ? 'Tu espacio está listo. Creá tu primera tarea o contásela a Tempo IA.' : 'No hay tareas que coincidan con los filtros.' }}</p>
+            @if (tareas().length === 0) {
+              <button type="button" class="btn-secundario" (click)="mostrarFormulario.set(true)">Crear una tarea</button>
+              <a routerLink="/mensajes" class="btn-secundario">Crear con IA</a>
+            } @else {
+              <button type="button" class="btn-secundario" (click)="limpiarFiltros()">Ver todas las tareas</button>
+            }
           </div>
 
         } @else {
@@ -153,12 +161,15 @@ import { TareaManualFormComponent } from './tarea-manual-form.component';
                       [(ngModel)]="edicion.titulo"
                       class="filtro-select"
                       placeholder="Título"
+                      aria-label="Título de la tarea"
+                      maxlength="200"
                     />
 
                     <div class="tarea-edicion-campos">
 
                       <select
                         [(ngModel)]="edicion.materiaId"
+                        aria-label="Materia de la tarea"
                         class="filtro-select"
                       >
                         <option [ngValue]="undefined">
@@ -175,11 +186,13 @@ import { TareaManualFormComponent } from './tarea-manual-form.component';
                       <input
                         type="date"
                         [(ngModel)]="edicion.fechaLimite"
+                        aria-label="Fecha límite"
                         class="filtro-select"
                       />
 
                       <select
                         [(ngModel)]="edicion.tipo"
+                        aria-label="Tipo de tarea"
                         class="filtro-select"
                       >
                         @for (tp of tipos; track tp) {
@@ -195,6 +208,7 @@ import { TareaManualFormComponent } from './tarea-manual-form.component';
 
                       <button
                         (click)="cancelarEdicion()"
+                        [disabled]="operando().includes(t.id)"
                         class="btn-secundario"
                       >
                         Cancelar
@@ -202,9 +216,10 @@ import { TareaManualFormComponent } from './tarea-manual-form.component';
 
                       <button
                         (click)="guardarEdicion(t)"
+                        [disabled]="operando().includes(t.id)"
                         class="btn-primario"
                       >
-                        Guardar
+                        {{ operando().includes(t.id) ? 'Guardando...' : 'Guardar' }}
                       </button>
 
                     </div>
@@ -245,7 +260,7 @@ import { TareaManualFormComponent } from './tarea-manual-form.component';
 
                       <button
                         (click)="marcarHecha(t)"
-                        [disabled]="t.estado === estadoHecha"
+                        [disabled]="t.estado === estadoHecha || operando().includes(t.id)"
                         class="btn-secundario"
                         [class.btn-hecha]="t.estado === estadoHecha"
                       >
@@ -258,6 +273,7 @@ import { TareaManualFormComponent } from './tarea-manual-form.component';
 
                       <button
                         (click)="iniciarEdicion(t)"
+                        [disabled]="operando().includes(t.id)"
                         class="btn-secundario"
                       >
                         Editar
@@ -265,6 +281,7 @@ import { TareaManualFormComponent } from './tarea-manual-form.component';
 
                       <button
                         (click)="eliminar(t)"
+                        [disabled]="operando().includes(t.id)"
                         class="btn-peligro"
                       >
                         Eliminar
@@ -754,6 +771,8 @@ export class TareasComponent implements OnInit {
   private readonly materiasService = inject(MateriasService);
   private readonly confirmDialog = inject(ConfirmDialogService);
   private readonly auth = inject(AuthService);
+  private readonly toast = inject(ToastService);
+  protected readonly operando = signal<string[]>([]);
 
   protected readonly cargando = signal(true);
   protected readonly error = signal<string | null>(null);
@@ -766,6 +785,7 @@ export class TareasComponent implements OnInit {
   protected filtroEstado = '';
   protected filtroMateria = '';
   protected busqueda = '';
+  protected soloPendientes = true;
 
   protected readonly cantidadPendientes = computed(() =>
     this.tareas().filter((t) => t.estado !== EstadoTarea.HECHA).length,
@@ -797,10 +817,11 @@ export class TareasComponent implements OnInit {
     this.cargar();
     this.auth.getPerfil().subscribe({
       next: (perfil) => this.mostrarAvisoRecordatorios.set(!perfil.recordatorioEmailHabilitado),
+      error: () => this.mostrarAvisoRecordatorios.set(false),
     });
   }
 
-  private cargar(): void {
+  protected cargar(): void {
     this.cargando.set(true);
     this.error.set(null);
 
@@ -826,6 +847,7 @@ export class TareasComponent implements OnInit {
   protected aplicarFiltros(): void {
     const termino = this.busqueda.trim().toLocaleLowerCase('es');
     const filtradas = this.tareas().filter((t) => {
+      if (this.soloPendientes && t.estado === EstadoTarea.HECHA) return false;
       if (this.filtroEstado && t.estado !== this.filtroEstado) {
         return false;
       }
@@ -845,11 +867,13 @@ export class TareasComponent implements OnInit {
   }
 
   protected mostrarPendientes(): void {
-    this.filtroEstado = EstadoTarea.PENDIENTE;
+    this.soloPendientes = true;
+    this.filtroEstado = '';
     this.aplicarFiltros();
   }
 
   protected mostrarCompletadas(): void {
+    this.soloPendientes = false;
     this.filtroEstado = EstadoTarea.HECHA;
     this.aplicarFiltros();
   }
@@ -863,22 +887,26 @@ export class TareasComponent implements OnInit {
     this.busqueda = '';
     this.filtroMateria = '';
     this.filtroEstado = tarea.estado;
+    this.soloPendientes = false;
     this.aplicarFiltros();
     this.mostrarFormulario.set(false);
+    this.toast.success('Tarea creada. Ya aparece en tu lista.');
   }
 
   protected marcarHecha(tarea: Tarea): void {
-    if (tarea.estado === EstadoTarea.HECHA) {
+    if (tarea.estado === EstadoTarea.HECHA || this.operando().includes(tarea.id)) {
       return;
     }
 
+    this.operando.update((ids) => [...ids, tarea.id]);
     this.tareasService
       .actualizar(tarea.id, {
         estado: EstadoTarea.HECHA,
       })
+      .pipe(finalize(() => this.finalizarOperacion(tarea.id)))
       .subscribe({
-        next: (actualizada) => this.reemplazarEnLista(actualizada),
-        error: () => this.error.set('No se pudo actualizar la tarea.'),
+        next: (actualizada) => { this.reemplazarEnLista(actualizada); this.toast.success('¡Una menos! Tarea completada.'); },
+        error: () => this.toast.error('No se pudo actualizar la tarea. Intentá de nuevo.'),
       });
   }
 
@@ -900,26 +928,33 @@ export class TareasComponent implements OnInit {
   }
 
   protected guardarEdicion(tarea: Tarea): void {
+    if (this.operando().includes(tarea.id)) return;
+    const titulo = this.edicion.titulo.trim();
+    if (!titulo) { this.toast.error('Escribí un título para la tarea.'); return; }
+    this.operando.update((ids) => [...ids, tarea.id]);
     this.tareasService
       .actualizar(tarea.id, {
-        titulo: this.edicion.titulo,
+        titulo,
         materiaId: this.edicion.materiaId,
         fechaLimite: this.edicion.fechaLimite || undefined,
         tipo: this.edicion.tipo,
       })
+      .pipe(finalize(() => this.finalizarOperacion(tarea.id)))
       .subscribe({
         next: (actualizada) => {
           this.reemplazarEnLista(actualizada);
           this.tareaEnEdicion.set(null);
+          this.toast.success('Cambios de la tarea guardados.');
         },
 
         error: () => {
-          this.error.set('No se pudo actualizar la tarea.');
+          this.toast.error('No se pudo guardar la tarea. Conservamos tus cambios para que reintentes.');
         },
       });
   }
 
   protected async eliminar(tarea: Tarea): Promise<void> {
+    if (this.operando().includes(tarea.id)) return;
     const confirmado = await this.confirmDialog.confirm({
       titulo: 'Eliminar tarea',
       mensaje: `¿Eliminar la tarea "${tarea.titulo}"? Esta acción no se puede deshacer.`,
@@ -931,17 +966,19 @@ export class TareasComponent implements OnInit {
       return;
     }
 
-    this.tareasService.eliminar(tarea.id).subscribe({
+    this.operando.update((ids) => [...ids, tarea.id]);
+    this.tareasService.eliminar(tarea.id).pipe(finalize(() => this.finalizarOperacion(tarea.id))).subscribe({
       next: () => {
         this.tareas.set(
           this.tareas().filter((t) => t.id !== tarea.id)
         );
 
         this.aplicarFiltros();
+        this.toast.success('Tarea eliminada.');
       },
 
       error: () => {
-        this.error.set('No se pudo eliminar la tarea.');
+        this.toast.error('No se pudo eliminar la tarea. Intentá de nuevo.');
       },
     });
   }
@@ -954,6 +991,18 @@ export class TareasComponent implements OnInit {
     );
 
     this.aplicarFiltros();
+  }
+
+  protected limpiarFiltros(): void {
+    this.busqueda = '';
+    this.filtroEstado = '';
+    this.filtroMateria = '';
+    this.soloPendientes = false;
+    this.aplicarFiltros();
+  }
+
+  private finalizarOperacion(id: string): void {
+    this.operando.update((ids) => ids.filter((item) => item !== id));
   }
 
   private aInputDate(fecha: Date | string): string {

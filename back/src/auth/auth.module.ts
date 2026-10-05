@@ -7,6 +7,7 @@ import { AuthService } from './services/auth.service';
 import { AuthController } from './controllers/auth.controller';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { MailModule } from 'src/mail/mail.module';
+import { JWT_AUDIENCE, JWT_ISSUER, SESSION_SECONDS } from '../security.config';
 
 @Module({
   imports: [
@@ -18,7 +19,12 @@ import { MailModule } from 'src/mail/mail.module';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),
-        signOptions: { expiresIn: '7d' },
+        signOptions: {
+          expiresIn: SESSION_SECONDS,
+          algorithm: 'HS256',
+          issuer: JWT_ISSUER,
+          audience: JWT_AUDIENCE,
+        },
       }),
     }),
   ],

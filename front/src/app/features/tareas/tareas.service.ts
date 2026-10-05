@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { listarPaginas } from '../../core/services/paginacion';
 import { Tarea, CrearTareaDto, EstadoTarea } from '../../core/models';
 
 @Injectable({ providedIn: 'root' })
@@ -8,7 +9,7 @@ export class TareasService {
   private readonly http = inject(HttpClient);
 
   listar(): Observable<Tarea[]> {
-    return this.http.get<Tarea[]>('/tareas');
+    return listarPaginas<Tarea>(this.http, '/tareas');
   }
 
   listarCalendario(desde?: Date, hasta?: Date): Observable<Tarea[]> {

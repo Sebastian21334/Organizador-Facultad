@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { listarPaginas } from '../../core/services/paginacion';
 import { Materia, CrearMateriaDto } from '../../core/models';
 
 @Injectable({ providedIn: 'root' })
@@ -8,7 +9,7 @@ export class MateriasService {
   private readonly http = inject(HttpClient);
 
   listar(): Observable<Materia[]> {
-    return this.http.get<Materia[]>('/materias');
+    return listarPaginas<Materia>(this.http, '/materias');
   }
 
   crear(dto: CrearMateriaDto): Observable<Materia> {

@@ -5,6 +5,7 @@ import { MensajesService } from './mensajes.service';
 import { MensajeEntrante, FuenteMensaje } from '../../core/models';
 import { LoaderComponent } from '../../shared/components/loader.component';
 import { ErrorComponent } from '../../shared/components/error.component';
+import { ToastService } from '../../core/services/toast.service';
 
 @Component({
   selector: 'app-mensajes',
@@ -12,7 +13,7 @@ import { ErrorComponent } from '../../shared/components/error.component';
   template: `
     <div class="mensajes-page flex flex-col h-full overflow-hidden">
       <!-- Header Superior Moderno tipo Mensajería -->
-      <header class="shrink-0 z-20 bg-[#FAF6EE]/90 backdrop-blur-md border-b border-[#D8CBAE] px-4 py-2.5 sm:px-6 shadow-xs">
+      <header data-motion class="shrink-0 z-20 bg-[#FAF6EE]/90 backdrop-blur-md border-b border-[#D8CBAE] px-4 py-2.5 sm:px-6 shadow-xs">
         <div class="max-w-4xl mx-auto flex items-center justify-between">
           <div class="flex items-center gap-3">
             <div class="relative flex-shrink-0">
@@ -60,7 +61,7 @@ import { ErrorComponent } from '../../shared/components/error.component';
             </div>
           } @else if (error() && mensajes().length === 0) {
             <div class="py-8">
-              <app-error [mensaje]="error()" />
+              <app-error [mensaje]="error()" [permitirReintento]="true" (reintentar)="cargar()" />
             </div>
           } @else if (mensajesOrdenados().length === 0 && !textoPendiente()) {
             <!-- Empty State Amigable con Sugerencias Rápidas -->
@@ -271,6 +272,7 @@ import { ErrorComponent } from '../../shared/components/error.component';
               (keydown.enter)="$event.preventDefault(); enviar()"
               class="flex-1 bg-transparent px-2 py-2 text-[16px] sm:text-sm text-[#2B231F] outline-none placeholder:text-[#968A7E]"
               placeholder="Escribí una tarea (ej: 'Parcial de Física el martes')..."
+              aria-label="Tarea o compromiso para Tempo IA"
               [disabled]="enviando()"
               autocomplete="off"
             />
@@ -310,6 +312,7 @@ import { ErrorComponent } from '../../shared/components/error.component';
 })
 export class MensajesComponent implements OnInit {
   private readonly mensajesService = inject(MensajesService);
+  private readonly toast = inject(ToastService);
 
   protected readonly scrollContainer = viewChild<ElementRef<HTMLDivElement>>('scrollContainer');
 
@@ -349,7 +352,7 @@ export class MensajesComponent implements OnInit {
     this.cargar();
   }
 
-  private cargar(): void {
+  protected cargar(): void {
     this.cargando.set(true);
     this.error.set(null);
     this.mensajesService.listar().subscribe({
@@ -366,7 +369,7 @@ export class MensajesComponent implements OnInit {
 
   protected enviar(): void {
     const texto = this.texto.trim();
-    if (!texto) return;
+    if (!texto || this.enviando()) return;
 
     this.textoPendiente.set(texto);
     this.enviando.set(true);
@@ -378,11 +381,14 @@ export class MensajesComponent implements OnInit {
         this.mensajes.update((lista) => [mensaje, ...lista]);
         this.textoPendiente.set(null);
         this.enviando.set(false);
+        if (mensaje.tareaGenerada) this.toast.success('La IA creó tu tarea. Ya aparece en tu lista.');
       },
       error: () => {
         this.error.set('No se pudo procesar el mensaje. Probá de nuevo.');
         this.textoPendiente.set(null);
         this.enviando.set(false);
+        this.texto = texto;
+        this.toast.error('No se pudo procesar el mensaje. Tu texto está listo para reintentar.');
       },
     });
   }

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, output } from '@angular/core';
 
 @Component({
   selector: 'app-error',
@@ -13,10 +13,15 @@ import { Component, Input } from '@angular/core';
         @if (mensaje) {
           <p class="mt-0.5 text-[#A62828] leading-relaxed">{{ mensaje }}</p>
         }
+        @if (permitirReintento) {
+          <button type="button" class="mt-3 rounded-lg border border-[#F8C8C8] px-3 py-2 text-xs font-semibold" (click)="reintentar.emit()">Reintentar</button>
+        }
       </div>
     </div>
   `,
 })
 export class ErrorComponent {
   @Input() mensaje?: string | null;
+  @Input() permitirReintento = false;
+  readonly reintentar = output<void>();
 }

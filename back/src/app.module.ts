@@ -9,11 +9,16 @@ import { AuthModule } from './auth/auth.module';
 import { UsuariosModule } from './usuarios/usuarios.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { ContactoModule } from './contacto/contacto.module';
+import { APP_GUARD } from '@nestjs/core';
+import { SeguridadGuard } from './auth/guards/seguridad.guard';
+import { databaseSsl, validateEnvironment } from './security.config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      validate: validateEnvironment,
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -27,8 +32,11 @@ import { AppService } from './app.service';
         database: config.get('DB_NAME'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
         synchronize: false,
-        ssl: {
-          rejectUnauthorized: false,
+        ssl: databaseSsl(),
+        extra: {
+          max: 10,
+          statement_timeout: 15_000,
+          connectionTimeoutMillis: 10_000,
         },
       }),
     }),
@@ -38,8 +46,9 @@ import { AppService } from './app.service';
     MensajesModule,
     AuthModule,
     UsuariosModule,
+    ContactoModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, { provide: APP_GUARD, useClass: SeguridadGuard }],
 })
 export class AppModule {}

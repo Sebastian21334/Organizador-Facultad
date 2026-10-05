@@ -1,7 +1,9 @@
+import { passwordBytes } from '../../core/services/password-policy';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-reset-password',
@@ -48,7 +50,7 @@ import { AuthService } from '../../core/services/auth.service';
                   formControlName="nuevaPassword"
                   class="field-input pr-12"
                   [class.field-error]="(form.controls.nuevaPassword.hasError('minlength') || form.controls.nuevaPassword.invalid) && form.controls.nuevaPassword.touched"
-                  placeholder="Mínimo 6 caracteres"
+                  placeholder="Mínimo 15 caracteres"
                   autocomplete="new-password"
                 />
                 <button
@@ -74,7 +76,7 @@ import { AuthService } from '../../core/services/auth.service';
                   <svg class="w-3.5 h-3.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
                   </svg>
-                  La contraseña debe tener al menos 6 caracteres.
+                  La contraseña debe tener al menos 15 caracteres.
                 </p>
               }
             </div>
@@ -146,7 +148,8 @@ import { AuthService } from '../../core/services/auth.service';
                 <span>Cambiar contraseña</span>
               }
             </button>
-          </form>
+          <p class="text-xs text-[#7A6F66] mt-2">Usá una frase de 15 caracteres o más. Máximo 72 bytes; los emojis ocupan varios bytes.</p>
+        </form>
         }
 
         <div class="mt-6 pt-5 border-t border-[#E5DFD3] text-center">
@@ -176,13 +179,14 @@ import { AuthService } from '../../core/services/auth.service';
   `,
 })
 export class ResetPasswordComponent implements OnInit {
+  private readonly location = inject(Location);
   private readonly formBuilder = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly auth = inject(AuthService);
   private token = '';
   protected readonly form = this.formBuilder.nonNullable.group({
-    nuevaPassword: ['', [Validators.required, Validators.minLength(6)]],
+    nuevaPassword: ['', [Validators.required, Validators.minLength(15), Validators.maxLength(72), passwordBytes]],
     confirmarPassword: ['', Validators.required],
   }, { validators: (group) => group.get('nuevaPassword')?.value === group.get('confirmarPassword')?.value ? null : { passwordMismatch: true } });
   protected readonly loading = signal(false);
@@ -193,6 +197,9 @@ export class ResetPasswordComponent implements OnInit {
 
   ngOnInit(): void {
     this.token = this.route.snapshot.queryParamMap.get('token') ?? '';
+    const url = new URL(window.location.href);
+    url.searchParams.delete('token');
+    this.location.replaceState(url.pathname + url.search + url.hash);
     if (!this.token) this.error.set('El link es inválido o expiró.');
   }
 
@@ -213,7 +220,11 @@ export class ResetPasswordComponent implements OnInit {
         this.success.set(mensaje || 'Contraseña actualizada. Te redirigiremos al inicio de sesión.');
         setTimeout(() => void this.router.navigate(['/login']), 2500);
       },
-      error: () => { this.loading.set(false); this.error.set('El link es inválido o expiró.'); },
+      error: (error) => {
+        this.loading.set(false);
+        const message = error.error?.message;
+        this.error.set(Array.isArray(message) ? message.join(' ') : message || 'No pudimos cambiar la contraseña. Intentá de nuevo.');
+      },
     });
   }
 }

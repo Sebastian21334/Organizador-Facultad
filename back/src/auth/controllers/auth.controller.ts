@@ -1,4 +1,20 @@
-import { Body, Controller, Get, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Patch,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
+import type { Response } from 'express';
+import { ConfigService } from '@nestjs/config';
+import {
+  csrfToken,
+  sessionCookieName,
+  sessionCookieOptions,
+} from '../../security.config';
 import { AuthService } from '../services/auth.service';
 import { RegisterDto } from '../dto/register.dto';
 import { LoginDto } from '../dto/login.dto';
@@ -11,7 +27,10 @@ import { CambiarPasswordDto } from '../dto/cambiar-password.dto';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly config: ConfigService,
+  ) {}
 
   @Post('register')
   register(@Body() dto: RegisterDto) {
@@ -19,13 +38,49 @@ export class AuthController {
   }
 
   @Post('login')
-  login(@Body() dto: LoginDto) {
-    return this.authService.login(dto);
+  async login(
+    @Body() dto: LoginDto,
+    @Res({ passthrough: true }) res: Response,
+    @Req() req,
+  ) {
+    const result = await this.authService.login(dto);
+    res.cookie(
+      sessionCookieName(),
+      result.access_token,
+      sessionCookieOptions(),
+    );
+    // El navegador solo recibe la cookie HttpOnly; clientes servidor-a-servidor conservan Bearer.
+    return req.headers.origin ? { mensaje: 'Sesión iniciada.' } : result;
+  }
+
+  @Post('resend-verification')
+  reenviarVerificacion(@Body() dto: ForgotPasswordDto) {
+    return this.authService.reenviarVerificacion(dto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('session')
+  async session(@Req() req) {
+    return {
+      ...(await this.authService.getPerfil(req.user.userId)),
+      csrfToken: csrfToken(
+        req.user.jti,
+        this.config.getOrThrow<string>('JWT_SECRET'),
+      ),
+    };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('logout')
+  async logout(@Req() req, @Res({ passthrough: true }) res: Response) {
+    const result = await this.authService.logout(req.user.userId);
+    res.clearCookie(sessionCookieName(), sessionCookieOptions());
+    return result;
   }
 
   @Post('verify-email')
   verificarEmail(@Body() dto: VerifyEmailDto) {
-    return this.authService.verificarEmail(dto.token);
+    return this.authService.verificarEmail(dto.token, dto.password);
   }
 
   @Post('forgot-password')
@@ -34,8 +89,13 @@ export class AuthController {
   }
 
   @Post('reset-password')
-  resetPassword(@Body() dto: ResetPasswordDto) {
-    return this.authService.resetPassword(dto);
+  async resetPassword(
+    @Body() dto: ResetPasswordDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const result = await this.authService.resetPassword(dto);
+    res.clearCookie(sessionCookieName(), sessionCookieOptions());
+    return result;
   }
 
   @UseGuards(JwtAuthGuard)
@@ -52,7 +112,13 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Patch('cambiar-password')
-  cambiarPassword(@Req() req, @Body() dto: CambiarPasswordDto) {
-    return this.authService.cambiarPassword(req.user.userId, dto);
+  async cambiarPassword(
+    @Req() req,
+    @Body() dto: CambiarPasswordDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const result = await this.authService.cambiarPassword(req.user.userId, dto);
+    res.clearCookie(sessionCookieName(), sessionCookieOptions());
+    return result;
   }
 }

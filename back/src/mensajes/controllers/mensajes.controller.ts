@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, UseGuards, Req } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  UseGuards,
+  Req,
+  Query,
+} from '@nestjs/common';
+import { PaginacionDto } from '../../paginacion.dto';
 import { MensajesService } from '../services/mensajes.service';
 import { CrearMensajeDto } from '../dto/crear-mensaje.dto';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
@@ -9,12 +18,16 @@ export class MensajesController {
   constructor(private readonly mensajesService: MensajesService) {}
 
   @Get()
-  async obtenerTodos(@Req() req) {
-    return this.mensajesService.obtenerTodos(req.user.userId);
+  async obtenerTodos(@Req() req, @Query() paginacion: PaginacionDto) {
+    return this.mensajesService.obtenerTodos(req.user.userId, paginacion);
   }
 
   @Post()
   async procesar(@Body() dto: CrearMensajeDto, @Req() req) {
-    return this.mensajesService.procesarMensaje(dto.texto, dto.fuente, req.user.userId);
+    return this.mensajesService.procesarMensaje(
+      dto.texto,
+      dto.fuente,
+      req.user.userId,
+    );
   }
 }

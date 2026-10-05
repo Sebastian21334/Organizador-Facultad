@@ -1,3 +1,4 @@
+import { passwordBytes } from '../../core/services/password-policy';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../core/services/auth.service';
@@ -108,7 +109,8 @@ import { AuthService } from '../../core/services/auth.service';
           </label>
 
           @if (passwordForm.controls.nuevaPassword.invalid && passwordForm.controls.nuevaPassword.touched) {
-            <p class="message-error">La contraseña debe tener al menos 6 caracteres.</p>
+            <p class="message-error">La contraseña debe tener al menos 15 caracteres.</p>
+            <p class="message-error">Máximo 72 bytes; los emojis ocupan varios bytes.</p>
           }
 
           @if (passwordForm.hasError('passwordMismatch') && passwordForm.controls.confirmarPassword.touched) {
@@ -279,7 +281,7 @@ export class PerfilComponent implements OnInit {
   protected readonly passwordForm = this.formBuilder.nonNullable.group(
     {
       contraseñaActual: ['', Validators.required],
-      nuevaPassword: ['', [Validators.required, Validators.minLength(6)]],
+      nuevaPassword: ['', [Validators.required, Validators.minLength(15), Validators.maxLength(72), passwordBytes]],
       confirmarPassword: ['', Validators.required],
     },
     {

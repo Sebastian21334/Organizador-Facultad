@@ -1,15 +1,23 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+import { map } from 'rxjs';
 
 export const authGuard: CanActivateFn = () => {
   const auth = inject(AuthService);
   const router = inject(Router);
-  return auth.isAuthenticated() ? true : router.createUrlTree(['/login']);
+  return auth.ensureSession().pipe(map((ok) => ok ? true : router.createUrlTree(['/'])));
 };
 
 export const publicOnlyGuard: CanActivateFn = () => {
   const auth = inject(AuthService);
   const router = inject(Router);
-  return auth.isAuthenticated() ? router.createUrlTree(['/']) : true;
+  return auth.ensureSession().pipe(map((ok) => ok ? router.createUrlTree(['/inicio']) : true));
+};
+
+/** La portada solo se muestra a visitantes; una sesión vigente entra directo a la app. */
+export const landingGuard: CanActivateFn = () => {
+  const auth = inject(AuthService);
+  const router = inject(Router);
+  return auth.ensureSession().pipe(map((ok) => ok ? router.createUrlTree(['/inicio']) : true));
 };

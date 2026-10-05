@@ -163,6 +163,8 @@ export class TareaManualFormComponent {
   });
 
   protected crear(): void {
+    if (this.guardando()) return;
+    this.form.controls.titulo.setValue(this.form.controls.titulo.value.trim());
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;

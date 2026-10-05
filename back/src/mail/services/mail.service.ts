@@ -1,65 +1,135 @@
-import { Injectable, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  ServiceUnavailableException,
+} from '@nestjs/common';
+import { LimitesService } from '../../usuarios/services/limites.service';
 import { EmailClient } from '@azure/communication-email';
+import {
+  crearEmailTempo,
+  crearEmailVerificacion,
+  crearEmailReset,
+  crearEmailRecordatorio,
+} from '../templates/tempo-email';
+import type { RecordatorioEmail } from '../templates/tempo-email';
 
 @Injectable()
 export class MailService {
   private readonly logger = new Logger(MailService.name);
   private readonly client: EmailClient;
   private readonly senderAddress: string;
+  private activos = 0;
 
-  constructor() {
+  constructor(private readonly limites: LimitesService) {
     const connectionString = process.env.ACS_CONNECTION_STRING;
     const senderAddress = process.env.ACS_SENDER_ADDRESS;
 
     if (!connectionString || !senderAddress) {
-      throw new Error('Faltan las variables de entorno ACS_CONNECTION_STRING o ACS_SENDER_ADDRESS');
+      throw new Error(
+        'Faltan las variables de entorno ACS_CONNECTION_STRING o ACS_SENDER_ADDRESS',
+      );
     }
 
     this.client = new EmailClient(connectionString);
     this.senderAddress = senderAddress;
   }
 
-  async enviarMail(destinatario: string, asunto: string, textoPlano: string, html?: string) {
-    const message = {
-      senderAddress: this.senderAddress,
-      content: {
-        subject: asunto,
-        plainText: textoPlano,
-        html: html ?? `<p>${textoPlano}</p>`,
-      },
-      recipients: {
-        to: [{ address: destinatario }],
-      },
-    };
-
+  async enviarMail(
+    destinatario: string,
+    asunto: string,
+    textoPlano: string,
+    html?: string,
+  ) {
+    if (this.activos >= 8)
+      throw new ServiceUnavailableException(
+        'El servicio de correo está ocupado',
+      );
+    this.activos++;
     try {
-      const poller = await this.client.beginSend(message);
-      const result = await poller.pollUntilDone();
-      this.logger.log(`Mail enviado a ${destinatario}: ${result.status}`);
+      await this.limites.consumir('mail-global-minuto', 'global', 60, 60_000);
+      await this.limites.consumir(
+        'mail-global-dia',
+        'global',
+        1000,
+        86_400_000,
+      );
+      const message = {
+        senderAddress: this.senderAddress,
+        content: {
+          subject: asunto,
+          plainText: textoPlano,
+          html:
+            html ??
+            crearEmailTempo({
+              asunto,
+              preheader: asunto,
+              etiqueta: 'Tu espacio académico',
+              titulo: asunto,
+              parrafos: [textoPlano],
+              nota: 'Un mensaje de Tempo para vos.',
+            }).html,
+        },
+        recipients: {
+          to: [{ address: destinatario }],
+        },
+      };
+
+      const abortSignal = AbortSignal.timeout(45_000);
+      const poller = await this.client.beginSend(message, { abortSignal });
+      const result = await poller.pollUntilDone({ abortSignal });
+      if (result.status !== 'Succeeded')
+        throw new Error(`El proveedor no confirmó el envío: ${result.status}`);
+      this.logger.log('Correo confirmado por el proveedor');
       return result;
     } catch (error) {
-      this.logger.error(`Error enviando mail a ${destinatario}`, error);
+      this.logger.warn(
+        'No se pudo confirmar un correo; revisar el estado del proveedor',
+      );
       throw error;
+    } finally {
+      this.activos--;
     }
   }
 
-  async enviarVerificacionEmail(destinatario: string, nombre: string, token: string) {
-    const link = `${process.env.FRONTEND_URL}/verificar-email?token=${token}`;
-    await this.enviarMail(
-        destinatario,
-        'Confirmá tu cuenta - Organizador Facultad',
-        `Hola ${nombre}, confirmá tu cuenta entrando a este link: ${link}`,
-        `<p>Hola ${nombre},</p><p>Confirmá tu cuenta haciendo click <a href="${link}">acá</a>.</p><p>Este link expira en 24 horas.</p>`,
+  async enviarVerificacionEmail(
+    destinatario: string,
+    nombre: string,
+    token: string,
+  ) {
+    const correo = crearEmailVerificacion(
+      process.env.FRONTEND_URL,
+      nombre,
+      token,
     );
-    }
+    return this.enviarMail(
+      destinatario,
+      correo.asunto,
+      correo.texto,
+      correo.html,
+    );
+  }
 
-    async enviarResetPassword(destinatario: string, nombre: string, token: string) {
-    const link = `${process.env.FRONTEND_URL}/resetear-password?token=${token}`;
-    await this.enviarMail(
-        destinatario,
-        'Recuperar contraseña - Organizador Facultad',
-        `Hola ${nombre}, para restablecer tu contraseña entrá a: ${link}`,
-        `<p>Hola ${nombre},</p><p>Restablecé tu contraseña haciendo click <a href="${link}">acá</a>.</p><p>Este link expira en 1 hora. Si no pediste esto, ignorá el mail.</p>`,
+  async enviarResetPassword(
+    destinatario: string,
+    nombre: string,
+    token: string,
+  ) {
+    const correo = crearEmailReset(process.env.FRONTEND_URL, nombre, token);
+    return this.enviarMail(
+      destinatario,
+      correo.asunto,
+      correo.texto,
+      correo.html,
     );
-    }
+  }
+
+  async enviarRecordatorio(destinatario: string, tarea: RecordatorioEmail) {
+    const correo = crearEmailRecordatorio(process.env.FRONTEND_URL, tarea);
+    return this.enviarMail(
+      destinatario,
+      correo.asunto,
+      correo.texto,
+      correo.html,
+    );
+  }
 }

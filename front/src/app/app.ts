@@ -14,15 +14,19 @@ import {
   LucideMoon,
   LucideSun,
   LucideUserCircle,
+  LucideMail,
 } from '@lucide/angular';
 import { AuthService } from './core/services/auth.service';
 import { ThemeService } from './core/services/theme.service';
 import { ConfirmDialogComponent } from './shared/components/confirm-dialog.component';
 import { ConfirmDialogService } from './shared/components/confirm-dialog.service';
+import { ToastComponent } from './shared/components/toast.component';
+import { MotionDirective } from './shared/directives/motion.directive';
+import { LoaderComponent } from './shared/components/loader.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, ConfirmDialogComponent, LucideDynamicIcon],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, ConfirmDialogComponent, ToastComponent, LucideDynamicIcon, MotionDirective, LoaderComponent],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
@@ -39,12 +43,13 @@ export class App {
   protected readonly menuAbierto = signal(false);
 
   protected readonly navItems = [
-    { path: '/', label: 'Inicio', icon: LucideCompass },
+    { path: '/inicio', label: 'Inicio', icon: LucideCompass },
     { path: '/calendario', label: 'Calendario', icon: LucideCalendar },
     { path: '/tareas', label: 'Tareas', icon: LucideCheckSquare },
     { path: '/materias', label: 'Materias', icon: LucideBookOpen },
     { path: '/mensajes', label: 'Mensajes', icon: LucideMessageCircle },
     { path: '/perfil', label: 'Perfil', icon: LucideUserCircle },
+    { path: '/contacto', label: 'Ayuda y contacto', icon: LucideMail },
   ];
   protected readonly logOutIcon = LucideLogOut;
   protected readonly menuIcon = LucideMenu;
@@ -76,7 +81,7 @@ export class App {
   protected async cerrarSesion(): Promise<void> {
     const confirmado = await this.confirmDialog.confirm({
       titulo: 'Cerrar sesión',
-      mensaje: '¿Seguro que querés salir?',
+      mensaje: '¿Seguro que querés salir? Por seguridad se cerrarán todas las sesiones de tu cuenta.',
       textoConfirmar: 'Salir',
     });
     if (confirmado) {

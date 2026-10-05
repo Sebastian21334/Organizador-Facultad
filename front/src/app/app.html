@@ -13,7 +13,7 @@
         <svg [lucideIcon]="menuIcon" [size]="22" aria-hidden="true"></svg>
       </button>
 
-      <a class="brand-block brand-block--compact" routerLink="/" aria-label="Tempo, ir a Inicio">
+      <a class="brand-block brand-block--compact" routerLink="/inicio" aria-label="Tempo, ir a Inicio">
         <span class="brand-mark">T</span>
         <span class="brand-name">Tempo</span>
       </a>
@@ -38,7 +38,7 @@
       [class.app-sidebar--open]="menuAbierto()"
       aria-label="Navegación principal"
     >
-      <a class="brand-block" routerLink="/" (click)="cerrarMenu()" aria-label="Tempo, ir a Inicio">
+      <a class="brand-block" routerLink="/inicio" (click)="cerrarMenu()" aria-label="Tempo, ir a Inicio">
         <span class="brand-mark">T</span>
         <span class="brand-name">Tempo</span>
         <span class="brand-slogan">Organizá tu vida universitaria.</span>
@@ -85,9 +85,11 @@
     </aside>
   }
 
-  <main class="app-content" [class.app-content--full-bleed]="fullBleed()">
+  <main appMotion class="app-content" [class.app-content--full-bleed]="fullBleed()">
+    @if (auth.checkingSession()) { <app-loader mensaje="Comprobando tu sesión…" /> }
     <router-outlet />
   </main>
 </div>
 
 <app-confirm-dialog />
+<app-toasts />

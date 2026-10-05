@@ -1,9 +1,9 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { TareasService } from '../tareas/tareas.service';
 import { MateriasService } from '../materias/materias.service';
-import { Tarea, Materia, EstadoTarea, EstadoMateria } from '../../core/models';
+import { Tarea, Materia, EstadoTarea, EstadoMateria, Cuatrimestre, OrigenTarea, TipoTarea } from '../../core/models';
 import { AuthService } from '../../core/services/auth.service';
 import { LoaderComponent } from '../../shared/components/loader.component';
 import { ErrorComponent } from '../../shared/components/error.component';
@@ -18,6 +18,7 @@ interface DiaSemana {
 
 @Component({
   selector: 'app-inicio',
+  host: { '[class.inicio-preview]': 'vistaPrevia()' },
   imports: [CommonModule, RouterLink, LoaderComponent, ErrorComponent, TareaBadgeComponent],
   template: `
     <div class="inicio-page">
@@ -27,7 +28,7 @@ interface DiaSemana {
         </div>
       } @else if (error()) {
         <div class="inicio-loading">
-          <app-error [mensaje]="error()" />
+          <app-error [mensaje]="error()" [permitirReintento]="true" (reintentar)="cargar()" />
         </div>
       } @else {
         <div class="inicio-layout">
@@ -108,7 +109,7 @@ interface DiaSemana {
                </section>
 
                <!-- Stats rápidas -->
-               <section class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+               <section class="inicio-stats grid grid-cols-1 sm:grid-cols-3 gap-4">
                  <a routerLink="/materias" class="stat-card">
                    <p class="text-3xl font-display font-bold text-[#6E1F2B]">{{ materias().length }}</p>
                    <p class="text-xs text-[#8C8570] mt-1">materias registradas</p>
@@ -187,6 +188,16 @@ interface DiaSemana {
        padding propio, hay que sacarlo ahí también para que el bordó llegue
        realmente hasta el borde de la ventana, como en la referencia. */
     .inicio-page { min-height: 100%; }
+    :host { display: block; }
+    :host.inicio-preview .inicio-layout { grid-template-columns: minmax(280px, 30%) 1fr; min-height: 730px; }
+    :host.inicio-preview .inicio-welcome { padding: 3rem 2.5rem; }
+    :host.inicio-preview .inicio-dashboard-inner { padding: 2.5rem; }
+    :host.inicio-preview .academic-progress-card { grid-template-columns: 1fr auto auto; }
+    :host.inicio-preview .academic-progress-link { grid-column: auto; border-top: 0; padding-top: 0; }
+    :host.inicio-preview .tarea-row { flex-direction: row; align-items: center; }
+    :host.inicio-preview .tarea-row-fecha { margin-left: 1rem; }
+    :host.inicio-preview .inicio-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    :host.inicio-preview h1 { font-size: 3.75rem; }
     .inicio-loading { padding: 2rem; }
 
     .inicio-layout {
@@ -271,6 +282,8 @@ interface DiaSemana {
   `,
 })
 export class InicioComponent implements OnInit {
+  /** Reutiliza el panel real en la portada, sin consultar ni modificar datos del usuario. */
+  readonly vistaPrevia = input(false);
   private readonly tareasService = inject(TareasService);
   private readonly materiasService = inject(MateriasService);
   private readonly authService = inject(AuthService);
@@ -346,6 +359,7 @@ export class InicioComponent implements OnInit {
   });
 
   protected readonly saludo = computed(() => {
+    if (this.vistaPrevia()) return 'Hola, Seba';
     const nombre = this.authService.currentUserName();
     return nombre ? `Hola, ${nombre}` : 'Hola';
   });
@@ -364,10 +378,40 @@ export class InicioComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    if (this.vistaPrevia()) {
+      this.cargarEjemplo();
+      return;
+    }
     this.cargar();
   }
 
-  private cargar(): void {
+  private cargarEjemplo(): void {
+    const materias: Materia[] = ['Programación II', 'Bases de Datos', 'Álgebra', 'Redes', 'Sistemas', 'Inglés'].map((nombre, index) => ({
+      id: `demo-materia-${index}`, nombre, anioCursado: 2,
+      cuatrimestre: Cuatrimestre.SEGUNDO, usuarioId: 'demo',
+      estado: index < 2 ? EstadoMateria.APROBADO : EstadoMateria.REGULAR,
+    }));
+    const ejemplos = [
+      { titulo: 'Entrega TP de Programación', dias: 0, materia: 0, tipo: TipoTarea.TP },
+      { titulo: 'Parcial de Bases de Datos', dias: 2, materia: 1, tipo: TipoTarea.EXAMEN },
+      { titulo: 'Práctica de Álgebra', dias: 4, materia: 2, tipo: TipoTarea.TAREA },
+    ];
+    this.materias.set(materias);
+    this.tareas.set(ejemplos.map((ejemplo, index) => {
+      const fecha = new Date();
+      fecha.setDate(fecha.getDate() + ejemplo.dias);
+      const limite = new Date(Date.UTC(fecha.getFullYear(), fecha.getMonth(), fecha.getDate(), 23, 59));
+      return {
+        id: `demo-tarea-${index}`, titulo: ejemplo.titulo, descripcion: null,
+        materia: materias[ejemplo.materia], tipo: ejemplo.tipo,
+        estado: EstadoTarea.PENDIENTE, fechaLimite: limite.toISOString(),
+        recordatorioMinutos: 1440, origen: OrigenTarea.IA_CHAT, fechaCreacion: new Date().toISOString(),
+      };
+    }));
+    this.cargando.set(false);
+  }
+
+  protected cargar(): void {
     this.cargando.set(true);
     this.error.set(null);
     this.materiasService.listar().subscribe({

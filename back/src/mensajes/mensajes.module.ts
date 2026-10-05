@@ -7,6 +7,7 @@ import { MensajeEntrante } from './entities/mensaje-entrante.entity';
 import { IaModule } from '../ia/ia.module';
 import { TareasModule } from '../tareas/tareas.module';
 import { MateriasModule } from '../materias/materias.module';
+import { UsuariosModule } from '../usuarios/usuarios.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { MateriasModule } from '../materias/materias.module';
     IaModule,
     TareasModule,
     MateriasModule,
+    UsuariosModule,
   ],
   controllers: [MensajesController],
   providers: [MensajesService, MensajesRepository],

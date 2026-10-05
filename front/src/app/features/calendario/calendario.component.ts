@@ -59,9 +59,10 @@ interface DiaCalendario {
           }
         </div>
         <div class="calendar-grid grid grid-cols-7" [class.week-view]="vista() === 'semana'">
-          @for (dia of dias(); track dia.fecha.getTime()) {
+          @for (dia of dias(); track dia.fecha.getTime(); let i = $index) {
             <div
               class="calendar-cell min-h-[96px] p-1.5 text-xs transition-colors"
+              [style.--calendar-delay]="(i % 7) * 25 + 'ms'"
               [class]="dia.esDelMesActual ? 'bg-[#FFFEFA] border-[#D9D3C2]' : 'bg-[#F5F2E9] border-[#EFEBDF] text-[#A39C87]'"
               [class.hoy-borde]="dia.esHoy"
               [class.hoy-fondo]="dia.esHoy"

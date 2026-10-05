@@ -59,6 +59,12 @@ export class Tarea {
   @Column({ type: 'timestamptz', nullable: true })
   recordatorioEnviadoEn?: Date | null;
 
+  @Column({ type: 'timestamptz', nullable: true, select: false })
+  recordatorioBloqueadoHasta?: Date | null;
+
+  @Column({ type: 'uuid', nullable: true, select: false })
+  recordatorioIntentoId?: string | null;
+
   @Column({ type: 'enum', enum: OrigenTarea, default: OrigenTarea.MANUAL })
   origen?: OrigenTarea;
 

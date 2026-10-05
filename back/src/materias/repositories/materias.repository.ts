@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Materia } from '../entities/materia.entity';
+import { PaginacionDto } from '../../paginacion.dto';
 
 @Injectable()
 export class MateriasRepository {
@@ -14,8 +15,8 @@ export class MateriasRepository {
     return this.repo.find();
   }
 
-  async findById(id: string): Promise<Materia | null> {
-    return this.repo.findOneBy({ id });
+  async findById(id: string, usuarioId: string): Promise<Materia | null> {
+    return this.repo.findOneBy({ id, usuarioId });
   }
 
   async create(data: Partial<Materia>): Promise<Materia> {
@@ -23,17 +24,26 @@ export class MateriasRepository {
     return this.repo.save(nueva);
   }
 
-  async update(id: string, data: Partial<Materia>): Promise<Materia | null> {
-    await this.repo.update(id, data);
-    return this.findById(id);
+  async update(
+    id: string,
+    data: Partial<Materia>,
+    usuarioId: string,
+  ): Promise<Materia | null> {
+    await this.repo.update({ id, usuarioId }, data);
+    return this.findById(id, usuarioId);
   }
 
-  async delete(id: string): Promise<boolean> {
-    const resultado = await this.repo.delete(id);
+  async delete(id: string, usuarioId: string): Promise<boolean> {
+    const resultado = await this.repo.delete({ id, usuarioId });
     return (resultado.affected ?? 0) > 0;
   }
 
-  async buscarPorUsuario(usuarioId: string) {
-    return this.repo.find({ where: { usuarioId } });
+  async buscarPorUsuario(usuarioId: string, paginacion = new PaginacionDto()) {
+    return this.repo.find({
+      where: { usuarioId },
+      take: paginacion.limit,
+      skip: paginacion.offset,
+      order: { nombre: 'ASC', id: 'ASC' },
+    });
   }
 }

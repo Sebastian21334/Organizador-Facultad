@@ -1,15 +1,41 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import helmet from 'helmet';
+import { allowedOrigins } from './security.config';
+import { SecurityExceptionFilter } from './security.filter';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  app.disable('x-powered-by');
+  if (process.env.TRUST_PROXY)
+    app.set(
+      'trust proxy',
+      process.env.TRUST_PROXY.split(',').map((value) => value.trim()),
+    );
+  app.use(helmet({ referrerPolicy: { policy: 'no-referrer' } }));
+  app.useBodyParser('json', { limit: '32kb' });
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+      validationError: { target: false, value: false },
+    }),
+  );
+  app.useGlobalFilters(new SecurityExceptionFilter());
+  app.use((_req, res, next) => {
+    res.setHeader('Cache-Control', 'no-store');
+    next();
+  });
+  app.enableShutdownHooks();
 
-  const allowedOrigins = process.env.FRONTEND_URLS?.split(',') ?? [];
   app.enableCors({
-    origin: allowedOrigins,
+    origin: allowedOrigins(),
     credentials: true,
+    methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token'],
   });
 
   await app.listen(process.env.PORT ?? 3000);
