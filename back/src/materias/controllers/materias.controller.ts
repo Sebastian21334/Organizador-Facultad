@@ -16,11 +16,26 @@ import { MateriasService } from '../services/materias.service';
 import { CrearMateriaDto } from '../dto/crear-materia.dto';
 import { ActualizarMateriaDto } from '../dto/actualizar-materia.dto';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { PlanEstudiosService } from '../services/plan-estudios.service';
+import { AnalizarPlanDto, ImportarPlanDto } from '../dto/plan-estudios.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('materias')
 export class MateriasController {
-  constructor(private readonly materiasService: MateriasService) {}
+  constructor(
+    private readonly materiasService: MateriasService,
+    private readonly planEstudios: PlanEstudiosService,
+  ) {}
+
+  @Post('plan/analizar')
+  analizarPlan(@Body() dto: AnalizarPlanDto, @Req() req) {
+    return this.planEstudios.analizar(dto.texto, req.user.userId);
+  }
+
+  @Post('plan/importar')
+  importarPlan(@Body() dto: ImportarPlanDto, @Req() req) {
+    return this.planEstudios.importar(dto.materias, req.user.userId);
+  }
 
   @Get()
   async obtenerTodas(@Req() req, @Query() paginacion: PaginacionDto) {

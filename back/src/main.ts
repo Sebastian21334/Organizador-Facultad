@@ -5,6 +5,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import helmet from 'helmet';
 import { allowedOrigins } from './security.config';
 import { SecurityExceptionFilter } from './security.filter';
+import { configurarBodyParsers } from './http-body-parsers';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -15,7 +16,7 @@ async function bootstrap() {
       process.env.TRUST_PROXY.split(',').map((value) => value.trim()),
     );
   app.use(helmet({ referrerPolicy: { policy: 'no-referrer' } }));
-  app.useBodyParser('json', { limit: '32kb' });
+  configurarBodyParsers(app);
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

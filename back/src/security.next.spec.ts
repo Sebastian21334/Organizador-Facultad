@@ -5,6 +5,7 @@ import {
   readJson,
   sessionCookieName,
 } from '../../Modulo chat/lib/security';
+import { SESSION_SECONDS } from './security.config';
 
 describe('Protecciones del proxy Next sin tráfico de red', () => {
   const before = {
@@ -60,6 +61,7 @@ describe('Protecciones del proxy Next sin tráfico de red', () => {
       secure: true,
       sameSite: 'lax',
       path: '/',
+      maxAge: SESSION_SECONDS,
     });
   });
   it('solo usa el backend configurado y no admite credenciales ni HTTP remoto en producción', () => {

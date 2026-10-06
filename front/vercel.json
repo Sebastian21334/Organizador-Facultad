@@ -1,0 +1,7 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [
+    { "source": "/api/:path*", "destination": "https://organizador-facultad.onrender.com/:path*" },
+    { "source": "/:path*", "destination": "/index.html" }
+  ]
+}

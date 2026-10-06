@@ -7,15 +7,17 @@ import { LoaderComponent } from '../../shared/components/loader.component';
 import { ErrorComponent } from '../../shared/components/error.component';
 import { ConfirmDialogService } from '../../shared/components/confirm-dialog.service';
 import { ToastService } from '../../core/services/toast.service';
+import { ImportarPlanComponent } from './importar-plan.component';
 
 @Component({
   selector: 'app-materias',
-  imports: [CommonModule, ReactiveFormsModule, LoaderComponent, ErrorComponent],
+  imports: [CommonModule, ReactiveFormsModule, LoaderComponent, ErrorComponent, ImportarPlanComponent],
   template: `
     <div class="materias-page">
       <h1 class="title-bar">Materias</h1>
 
       <div class="max-w-6xl mx-auto space-y-6 px-4 md:px-8 py-6">
+      <app-importar-plan [materiasExistentes]="materias()" (importado)="agregarImportadas($event)" />
       <section data-motion class="bg-[#FFFEFA] rounded-lg border border-[#D9D3C2] shadow-sm p-5">
         <h2 class="text-sm font-semibold text-[#1A2540] mb-4">Nueva materia</h2>
         <form [formGroup]="form" (ngSubmit)="crear()" class="grid gap-3 sm:grid-cols-2">
@@ -239,6 +241,10 @@ export class MateriasComponent implements OnInit {
   });
 
   ngOnInit(): void { this.cargar(); }
+
+  protected agregarImportadas(nuevas: Materia[]): void {
+    this.materias.update(lista => [...lista, ...nuevas.filter(n => !lista.some(m => m.id === n.id))]);
+  }
 
   protected cargar(): void {
     this.cargando.set(true);

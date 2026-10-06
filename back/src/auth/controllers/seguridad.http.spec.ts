@@ -180,6 +180,14 @@ describe('API de seguridad aislada con usuarios/repositorios/proveedor simulados
     expect(response.body).not.toHaveProperty('access_token');
     expect(response.headers['set-cookie'][0]).toContain('HttpOnly');
     expect(response.headers['set-cookie'][0]).toContain('SameSite=Lax');
+    expect(response.headers['set-cookie'][0]).toContain('Max-Age=604800');
+    const cookie = response.headers['set-cookie'][0].split(';')[0];
+    const payload = jwt.verify(cookie.slice(cookie.indexOf('=') + 1));
+    expect(payload.exp - payload.iat).toBe(7 * 24 * 60 * 60);
+    await request(app.getHttpServer())
+      .get('/auth/session')
+      .set('Cookie', cookie)
+      .expect(200);
   });
   it('los clientes servidor-a-servidor mantienen compatibilidad Bearer', async () => {
     const response = await request(app.getHttpServer())

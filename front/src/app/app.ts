@@ -23,10 +23,11 @@ import { ConfirmDialogService } from './shared/components/confirm-dialog.service
 import { ToastComponent } from './shared/components/toast.component';
 import { MotionDirective } from './shared/directives/motion.directive';
 import { LoaderComponent } from './shared/components/loader.component';
+import { ErrorComponent } from './shared/components/error.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, ConfirmDialogComponent, ToastComponent, LucideDynamicIcon, MotionDirective, LoaderComponent],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, ConfirmDialogComponent, ToastComponent, LucideDynamicIcon, MotionDirective, LoaderComponent, ErrorComponent],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
@@ -88,6 +89,14 @@ export class App {
       this.cerrarMenu();
       this.auth.logout();
     }
+  }
+
+  protected reintentarSesion(): void {
+    const destino = window.location.pathname + window.location.search + window.location.hash;
+    this.auth.ensureSession(true).subscribe({
+      next: (ok) => { void this.router.navigateByUrl(ok ? destino : '/'); },
+      error: () => {}, // El mensaje y el botón de reintento siguen visibles.
+    });
   }
 
   private calcularFullBleed(): boolean {

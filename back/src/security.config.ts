@@ -3,23 +3,30 @@ import type { Request, CookieOptions } from 'express';
 
 export const JWT_ISSUER = 'tempo-api';
 export const JWT_AUDIENCE = 'tempo-session';
-export const SESSION_SECONDS = 60 * 60 * 24;
+export const SESSION_SECONDS = 60 * 60 * 24 * 7;
 
 export function allowedOrigins(env = process.env): string[] {
   return [
     ...new Set(
-      [...(env.FRONTEND_URLS ?? '').split(','), env.FRONTEND_URL ?? '']
-        .map((value) => value.trim())
-        .filter(Boolean)
-        .map((value) => {
-          const url = new URL(value);
+      [
+        ...(env.FRONTEND_URLS ?? '').split(',').map(value => ({ value, key: 'FRONTEND_URLS' })),
+        { value: env.FRONTEND_URL ?? '', key: 'FRONTEND_URL' },
+      ]
+        .map(({ value, key }) => ({ value: value.trim(), key }))
+        .filter(({ value }) => Boolean(value))
+        .map(({ value, key }) => {
+          let url: URL;
+          try { url = new URL(value); }
+          catch {
+            throw new Error(`${key} debe incluir URLs completas con http:// o https://; por ejemplo https://organizador-facultad-chat.vercel.app`);
+          }
           if (
             !['http:', 'https:'].includes(url.protocol) ||
             url.username ||
             url.password
           )
             throw new Error(
-              'Los orígenes deben ser URLs HTTP(S) sin credenciales',
+              `${key} debe incluir URLs HTTP(S) sin credenciales`,
             );
           return url.origin;
         }),

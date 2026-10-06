@@ -1,0 +1,75 @@
+<section class="plan-card" aria-labelledby="plan-titulo">
+  <div class="plan-heading">
+    <div class="plan-icon" aria-hidden="true">↥</div>
+    <div>
+      <p class="eyebrow">CARGA AUTOMÁTICA</p>
+      <h2 id="plan-titulo">Cargá tu plan de estudios</h2>
+      <p class="intro">La IA identifica tus materias por año y cuatrimestre. Revisalas antes de agregarlas.</p>
+    </div>
+  </div>
+
+  @if (resultado(); as resumen) {
+    <p class="success" role="status">
+      {{ resumen.creadas.length === 1 ? 'Se agregó 1 materia.' : 'Se agregaron ' + resumen.creadas.length + ' materias.' }}
+      @if (resumen.omitidas.length) { {{ resumen.omitidas.length === 1 ? 'Se omitió 1 coincidencia' : 'Se omitieron ' + resumen.omitidas.length + ' coincidencias' }} para evitar duplicados. }
+    </p>
+  }
+
+  @if (!filas().length) {
+    <div class="source-tabs" role="group" aria-label="Cómo cargar el plan">
+      <button type="button" [class.active]="modo() === 'pdf'" [attr.aria-pressed]="modo() === 'pdf'" [disabled]="procesando()" (click)="cambiarModo('pdf')">Archivo PDF</button>
+      <button type="button" [class.active]="modo() === 'texto'" [attr.aria-pressed]="modo() === 'texto'" [disabled]="procesando()" (click)="cambiarModo('texto')">Pegar texto</button>
+    </div>
+    @if (modo() === 'pdf') {
+      <div class="file-box">
+        <label class="field-label" for="plan-pdf">Elegí el PDF de tu carrera</label>
+        <input id="plan-pdf" type="file" accept="application/pdf,.pdf" [disabled]="procesando()" (change)="elegirArchivo($event)" />
+        @if (archivo(); as pdf) { <p class="file-name">{{ pdf.name }}</p> }
+        <p class="hint">PDF con texto seleccionable · Hasta 10 MB y 50 páginas. No admite fotos ni páginas escaneadas.</p>
+      </div>
+    } @else {
+      <label class="field-label" for="plan-texto">Texto del plan de estudios</label>
+      <textarea id="plan-texto" class="field plan-text" rows="7" [maxlength]="maxTexto" [disabled]="procesando()" [ngModel]="texto()" (ngModelChange)="texto.set($event)" placeholder="Pegá las materias con sus encabezados de año y cuatrimestre…"></textarea>
+      <p class="hint">Incluí los títulos de año y cuatrimestre para mantener la organización del plan.</p>
+    }
+    <p class="privacy">Al analizar, el texto del plan se envía a la IA. Todavía no se guardarán materias.</p>
+    <div class="plan-actions">
+      <button type="button" class="primary" [disabled]="procesando() || (modo() === 'pdf' ? !archivo() : texto().trim().length < 20)" (click)="analizar()">{{ procesando() ? 'Analizando…' : 'Analizar plan' }}</button>
+      @if (procesando()) { <button type="button" class="secondary" (click)="cancelar()">Cancelar</button> }
+    </div>
+    @if (procesando()) { <p class="progress" role="status"><span class="spinner" aria-hidden="true"></span>{{ progreso() }}</p> }
+  } @else {
+    <div class="preview-heading">
+      <h3>Revisá las materias detectadas</h3>
+      <p>{{ filas().length }} detectadas · {{ seleccionadas().length }} para agregar · {{ omitidas() }} {{ omitidas() === 1 ? 'coincidencia' : 'coincidencias' }}</p>
+    </div>
+    <div class="preview-list">
+      @for (fila of vista(); track fila.id) {
+        <div class="preview-row" [class.omitted]="fila.existente || fila.repetida">
+          <input type="checkbox" class="selection" [checked]="fila.seleccionada && !fila.existente && !fila.repetida" [disabled]="guardando() || fila.existente || fila.repetida" [attr.aria-label]="'Agregar ' + fila.nombre" (change)="editar(fila.id, {seleccionada: $any($event.target).checked})" />
+          <label class="name-field"><span class="field-label">Materia</span><input class="field" [ngModel]="fila.nombre" (ngModelChange)="editar(fila.id, {nombre: $event})" [disabled]="guardando()" maxlength="150" [attr.aria-invalid]="!fila.nombre.trim()" /></label>
+          <label class="year-field"><span class="field-label">Año</span><input class="field" type="number" min="1" max="20" step="1" placeholder="Sin definir" [ngModel]="fila.anioCursado" (ngModelChange)="editar(fila.id, {anioCursado: $event})" [disabled]="guardando()" [attr.aria-invalid]="fila.invalida" /></label>
+          <label class="period-field"><span class="field-label">Cuatrimestre</span><select class="field" [ngModel]="fila.cuatrimestre || ''" (ngModelChange)="editar(fila.id, {cuatrimestre: $event || null})" [disabled]="guardando()"><option value="">Sin definir</option><option value="1">1.er cuatrimestre</option><option value="2">2.º cuatrimestre</option><option value="anual">Anual</option></select></label>
+          <span class="row-status" [class.invalid]="fila.invalida && !fila.existente && !fila.repetida">
+            @if (fila.existente) { Ya cargada }
+            @else if (fila.repetida) { Repetida en el plan }
+            @else if (fila.invalida) { Revisá nombre y año }
+            @else if (fila.incluida) { Se agregará }
+            @else { Sin seleccionar }
+          </span>
+        </div>
+      }
+    </div>
+    <p class="hint">Las coincidencias se omiten sin cambiar tus materias existentes. Los datos sin definir se pueden completar después. Las materias nuevas tendrán estado Regular.</p>
+    @if (hayInvalidas()) { <p class="error" role="alert">Corregí los nombres vacíos y los años inválidos de las materias seleccionadas antes de guardar.</p> }
+    @if (!seleccionadas().length && !hayInvalidas()) { <p class="hint">No hay materias nuevas seleccionadas para agregar.</p> }
+    <div class="plan-actions">
+      <button type="button" class="primary" [disabled]="guardando() || hayInvalidas() || !seleccionadas().length" (click)="guardar()">{{ guardando() ? 'Guardando…' : 'Agregar ' + seleccionadas().length + ' materias' }}</button>
+      <button type="button" class="secondary" [disabled]="guardando()" (click)="cancelar()">Volver a cargar</button>
+    </div>
+  }
+  @if (advertencias().length) {
+    <div class="warnings" role="status"><p>Para revisar</p><ul>@for (aviso of advertencias(); track $index) { <li>{{ aviso }}</li> }</ul></div>
+  }
+  @if (error()) { <p class="error" role="alert">{{ error() }}</p> }
+</section>

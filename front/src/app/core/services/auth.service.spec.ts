@@ -31,7 +31,7 @@ describe('Sesiones seguras del navegador (HTTP simulado, sin red)', () => {
     http = TestBed.inject(HttpTestingController); client = TestBed.inject(HttpClient); auth = TestBed.inject(AuthService);
     vi.clearAllMocks();
   });
-  afterEach(() => { http.verify(); TestBed.resetTestingModule(); localStorage.clear(); sessionStorage.clear(); });
+  afterEach(() => { vi.useRealTimers(); http.verify(); TestBed.resetTestingModule(); localStorage.clear(); sessionStorage.clear(); });
   async function iniciar() {
     await Promise.resolve();
     const req = http.expectOne(api + '/auth/session');
@@ -78,6 +78,24 @@ describe('Sesiones seguras del navegador (HTTP simulado, sin red)', () => {
       req.flush({});
     }
   });
+  it('usa cookie y CSRF con el proxy del mismo dominio en producción', async () => {
+    await iniciar();
+    const anterior = environment.apiUrl;
+    environment.apiUrl = '/api';
+    try {
+      client.patch('/tareas/id', { titulo: 'Parcial' }).subscribe();
+      const req = http.expectOne('/api/tareas/id');
+      expect(req.request.withCredentials).toBe(true);
+      expect(req.request.headers.get('X-CSRF-Token')).toBe(session.csrfToken);
+      expect(req.request.headers.has('Authorization')).toBe(false);
+      req.flush({});
+      client.get(anterior + '/tareas').subscribe();
+      const externo = http.expectOne(anterior + '/tareas');
+      expect(externo.request.withCredentials).toBe(false);
+      expect(externo.request.headers.has('X-CSRF-Token')).toBe(false);
+      externo.flush({});
+    } finally { environment.apiUrl = anterior; }
+  });
   it('el login no guarda el JWT y comprueba que el navegador recibió la cookie', async () => {
     await iniciar();
     auth.login('seba@example.com', 'una frase segura').subscribe();
@@ -85,6 +103,111 @@ describe('Sesiones seguras del navegador (HTTP simulado, sin red)', () => {
     http.expectOne(api + '/auth/session').flush(session);
     expect(localStorage.getItem('access_token')).toBeNull();
     expect(sessionStorage.getItem('access_token')).toBeNull();
+  });
+  it('espera el arranque del servidor aunque tarde más de 15 segundos', async () => {
+    vi.useFakeTimers();
+    await Promise.resolve();
+    const req = http.expectOne(api + '/auth/session');
+    await vi.advanceTimersByTimeAsync(20_000);
+    expect(auth.checkingSession()).toBe(true);
+    expect(auth.sessionError()).toBeNull();
+    req.flush(session);
+    expect(auth.isAuthenticated()).toBe(true);
+  });
+  it('comparte la comprobación y recupera la sesión tras un fallo temporal', async () => {
+    vi.useFakeTimers();
+    await iniciar();
+    const resultados: boolean[] = [];
+    auth.ensureSession(true).subscribe((ok) => resultados.push(ok));
+    auth.ensureSession(true).subscribe((ok) => resultados.push(ok));
+    http.expectOne(api + '/auth/session').flush({}, { status: 503, statusText: 'Unavailable' });
+    expect(auth.isAuthenticated()).toBe(true);
+    await vi.advanceTimersByTimeAsync(1_500);
+    http.expectOne(api + '/auth/session').flush(session);
+    expect(resultados).toEqual([true, true]);
+    expect(auth.sessionError()).toBeNull();
+  });
+  it('no borra una sesión comprobada por un fallo de conexión persistente', async () => {
+    vi.useFakeTimers();
+    await iniciar();
+    const error = vi.fn();
+    auth.ensureSession(true).subscribe({ error });
+    http.expectOne(api + '/auth/session').error(new ProgressEvent('error'));
+    await vi.advanceTimersByTimeAsync(1_500);
+    http.expectOne(api + '/auth/session').error(new ProgressEvent('error'));
+    expect(error).toHaveBeenCalled();
+    expect(auth.isAuthenticated()).toBe(true);
+    expect(auth.currentUserName()).toBe('Seba');
+    expect(auth.csrfToken()).toBe(session.csrfToken);
+    expect(navigate).not.toHaveBeenCalled();
+    expect(auth.sessionError()).toBeTruthy();
+    expect(auth.checkingSession()).toBe(false);
+  });
+  it('permite reintentar el arranque sin mandar al usuario al login por una caída del servidor', async () => {
+    vi.useFakeTimers();
+    let resultado: unknown;
+    (TestBed.runInInjectionContext(() => authGuard({} as any, {} as any)) as any).subscribe((value: unknown) => resultado = value);
+    await Promise.resolve();
+    http.expectOne(api + '/auth/session').flush({}, { status: 503, statusText: 'Unavailable' });
+    await vi.advanceTimersByTimeAsync(1_500);
+    http.expectOne(api + '/auth/session').flush({}, { status: 503, statusText: 'Unavailable' });
+    expect(resultado).toBe(false);
+    expect(auth.sessionError()).toBeTruthy();
+    auth.ensureSession().subscribe();
+    http.expectOne(api + '/auth/session').flush(session);
+    expect(auth.isAuthenticated()).toBe(true);
+    expect(auth.sessionError()).toBeNull();
+  });
+  it('no considera una contraseña actual incorrecta como una sesión vencida', async () => {
+    await iniciar();
+    const error = vi.fn();
+    auth.cambiarPassword('incorrecta', 'una frase nueva segura').subscribe({ error });
+    http.expectOne(api + '/auth/cambiar-password').flush({ message: 'La contraseña actual es incorrecta' }, { status: 401, statusText: 'Unauthorized' });
+    http.expectOne(api + '/auth/session').flush(session);
+    expect(error).toHaveBeenCalled();
+    expect(auth.isAuthenticated()).toBe(true);
+    expect(navigate).not.toHaveBeenCalled();
+  });
+  it('cierra una sesión si el servidor confirma que venció', async () => {
+    await iniciar();
+    client.get('/tareas').subscribe({ error: () => {} });
+    http.expectOne(api + '/tareas').flush({}, { status: 401, statusText: 'Unauthorized' });
+    http.expectOne(api + '/auth/session').flush({}, { status: 401, statusText: 'Unauthorized' });
+    expect(auth.isAuthenticated()).toBe(false);
+    expect(auth.csrfToken()).toBe('');
+    expect(navigate).toHaveBeenCalledWith(['/']);
+  });
+  it('un 401 no cierra la sesión si la comprobación falla por un corte de red', async () => {
+    vi.useFakeTimers();
+    await iniciar();
+    const error = vi.fn();
+    client.get('/mensajes').subscribe({ error });
+    http.expectOne(api + '/mensajes').flush({}, { status: 401, statusText: 'Unauthorized' });
+    http.expectOne(api + '/auth/session').error(new ProgressEvent('error'));
+    await vi.advanceTimersByTimeAsync(1_500);
+    http.expectOne(api + '/auth/session').error(new ProgressEvent('error'));
+    expect(error).toHaveBeenCalled();
+    expect(auth.isAuthenticated()).toBe(true);
+    expect(navigate).not.toHaveBeenCalled();
+  });
+  it('espera una comprobación pendiente antes del login para evitar carreras', async () => {
+    await Promise.resolve();
+    auth.login('seba@example.com', 'una frase segura').subscribe();
+    http.expectNone(api + '/auth/login');
+    http.expectOne(api + '/auth/session').flush({}, { status: 401, statusText: 'Unauthorized' });
+    http.expectOne(api + '/auth/login').flush({ mensaje: 'Sesión iniciada.' });
+    http.expectOne(api + '/auth/session').flush(session);
+    expect(auth.isAuthenticated()).toBe(true);
+  });
+  it('una comprobación anterior al logout no vuelve a activar la sesión', async () => {
+    await iniciar();
+    auth.ensureSession(true).subscribe();
+    const comprobacion = http.expectOne(api + '/auth/session');
+    auth.logout();
+    http.expectOne(api + '/auth/logout').flush({ mensaje: 'Sesiones cerradas.' });
+    comprobacion.flush(session);
+    expect(auth.isAuthenticated()).toBe(false);
+    expect(auth.csrfToken()).toBe('');
   });
   it('cierra la sesión también en el servidor y no finge éxito si no puede revocarla', async () => {
     await iniciar();

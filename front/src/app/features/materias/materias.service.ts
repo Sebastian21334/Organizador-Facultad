@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { listarPaginas } from '../../core/services/paginacion';
 import { Materia, CrearMateriaDto } from '../../core/models';
+import { MateriaPlan, VistaPlan, ResultadoImportacion } from './plan-estudios.model';
 
 @Injectable({ providedIn: 'root' })
 export class MateriasService {
@@ -22,5 +23,13 @@ export class MateriasService {
 
   eliminar(id: string): Observable<void> {
     return this.http.delete<void>(`/materias/${id}`);
+  }
+
+  analizarPlan(texto: string): Observable<VistaPlan> {
+    return this.http.post<VistaPlan>('/materias/plan/analizar', { texto });
+  }
+
+  importarPlan(materias: MateriaPlan[]): Observable<ResultadoImportacion> {
+    return this.http.post<ResultadoImportacion>('/materias/plan/importar', { materias });
   }
 }

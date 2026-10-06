@@ -70,6 +70,14 @@ describe('Configuración y errores seguros', () => {
       allowedOrigins({ FRONTEND_URL: 'https://tempo.example' }),
     ).not.toContain('https://tempo.example.atacante.example');
   });
+  it('identifica la variable sin protocolo con un mensaje útil, sin mostrar su contenido', () => {
+    expect(() => validateEnvironment({ ...config, FRONTEND_URLS: 'organizador-facultad-chat.vercel.app' }))
+      .toThrow(/FRONTEND_URLS.*https:\/\//);
+    expect(() => validateEnvironment({ ...config, FRONTEND_URL: 'tempo.example' }))
+      .toThrow(/FRONTEND_URL.*https:\/\//);
+    expect(() => allowedOrigins({ FRONTEND_URLS: 'https://usuario:secreto@tempo.example' }))
+      .toThrow('FRONTEND_URLS debe incluir URLs HTTP(S) sin credenciales');
+  });
   it('las cookies nunca son accesibles desde JavaScript', () => {
     expect(sessionCookieOptions()).toMatchObject({ httpOnly: true, path: '/' });
   });

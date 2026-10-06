@@ -1,7 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, catchError, map, of, shareReplay, switchMap, tap, throwError, timeout } from 'rxjs';
+import { Observable, catchError, finalize, map, of, retry, shareReplay, switchMap, tap, throwError, timeout, timer, TimeoutError } from 'rxjs';
 import { ToastService } from './toast.service';
 
 export interface AuthResponse { access_token?: string; mensaje?: string; }
@@ -22,34 +22,61 @@ export class AuthService {
   private readonly authenticated = signal(false);
   private readonly checking = signal(true);
   private readonly nombreUsuario = signal<string | null>(null);
+  private readonly restorationError = signal<string | null>(null);
   private ready = false;
   private restoring?: Observable<boolean>;
   private csrf = '';
   private loggingOut = false;
+  private sessionAttempt = 0;
   readonly isAuthenticated = this.authenticated.asReadonly();
   readonly currentUserName = this.nombreUsuario.asReadonly();
   readonly checkingSession = this.checking.asReadonly();
+  readonly sessionError = this.restorationError.asReadonly();
 
   constructor() {
     // Elimina únicamente las credenciales persistentes de la versión anterior.
     try { localStorage.removeItem('access_token'); sessionStorage.removeItem('access_token'); } catch { /* El almacenamiento puede estar deshabilitado. La sesión no depende de él. */ }
-    queueMicrotask(() => this.ensureSession().subscribe());
+    queueMicrotask(() => this.ensureSession().subscribe({ error: () => {} }));
   }
 
   ensureSession(force = false): Observable<boolean> {
+    if (this.restoring) return this.restoring;
     if (!force && this.ready) return of(this.authenticated());
-    if (!force && this.restoring) return this.restoring;
+    const attempt = ++this.sessionAttempt;
+    this.checking.set(true);
+    this.restorationError.set(null);
     this.restoring = this.http.get<SessionResponse>('/auth/session').pipe(
-      timeout(15_000),
+      // Render puede necesitar alrededor de un minuto para volver a arrancar.
+      timeout(75_000),
+      retry({ count: 1, delay: (error) =>
+        error instanceof TimeoutError || error.status === 0 || error.status >= 500
+          ? timer(1_500) : throwError(() => error) }),
       tap((perfil) => {
+        if (attempt !== this.sessionAttempt) return;
         this.csrf = perfil.csrfToken;
         this.authenticated.set(true);
         this.nombreUsuario.set(perfil.nombre?.trim().split(/\s+/)[0] ?? null);
         this.ready = true;
         this.checking.set(false);
       }),
-      map(() => true),
-      catchError(() => { this.clearSession(); return of(false); }),
+      map(() => this.authenticated()),
+      catchError((error) => {
+        if (attempt !== this.sessionAttempt) return of(this.authenticated());
+        if (error instanceof HttpErrorResponse && error.status === 401) {
+          this.clearSession();
+          return of(false);
+        }
+        // Una caída de red no demuestra que la cookie haya vencido.
+        this.ready = false;
+        const message = 'No pudimos comprobar tu sesión. Revisá tu conexión e intentá de nuevo.';
+        this.restorationError.set(message);
+        return throwError(() => new HttpErrorResponse({ status: 503, error: { message } }));
+      }),
+      finalize(() => {
+        if (attempt !== this.sessionAttempt) return;
+        this.restoring = undefined;
+        this.checking.set(false);
+      }),
       shareReplay({ bufferSize: 1, refCount: false }),
     );
     return this.restoring;
@@ -58,7 +85,10 @@ export class AuthService {
   csrfToken(): string { return this.csrf; }
 
   login(email: string, password: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>('/auth/login', { email, password }).pipe(
+    // Espera la comprobación inicial para que una respuesta vieja no borre el login nuevo.
+    return this.ensureSession().pipe(
+      catchError(() => of(false)),
+      switchMap(() => this.http.post<AuthResponse>('/auth/login', { email, password })),
       switchMap((respuesta) => this.ensureSession(true).pipe(switchMap((ok) => ok ? of(respuesta) :
         throwError(() => new HttpErrorResponse({ status: 401, error: { message: 'No pudimos guardar la sesión. Revisá que las cookies estén permitidas.' } }))))),
     );
@@ -97,7 +127,9 @@ export class AuthService {
     void this.router.navigate(['/']);
   }
   private clearSession(): void {
+    this.sessionAttempt++;
     this.authenticated.set(false); this.nombreUsuario.set(null); this.csrf = ''; this.ready = true; this.restoring = undefined;
+    this.restorationError.set(null);
     this.checking.set(false);
   }
 }

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 
 export const sessionCookieName = () => process.env.NODE_ENV === 'production' ? '__Host-tempo_chat' : 'tempo_chat'
-export const cookieOptions = () => ({ httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax' as const, path: '/', maxAge: 86400 })
+export const cookieOptions = () => ({ httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax' as const, path: '/', maxAge: 86400 * 7 })
 
 export function backendUrl(path: string): string {
   const base = new URL(process.env.BACKEND_URL || 'http://localhost:3000')

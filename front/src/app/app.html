@@ -87,6 +87,9 @@
 
   <main appMotion class="app-content" [class.app-content--full-bleed]="fullBleed()">
     @if (auth.checkingSession()) { <app-loader mensaje="Comprobando tu sesión…" /> }
+    @if (auth.sessionError()) {
+      <app-error [mensaje]="auth.sessionError()" [permitirReintento]="true" (reintentar)="reintentarSesion()" />
+    }
     <router-outlet />
   </main>
 </div>
