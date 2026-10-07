@@ -1,11 +1,14 @@
 import { Component, OnInit, computed, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { interval } from 'rxjs';
 import { TareasService } from '../tareas/tareas.service';
 import { Tarea, TipoTarea, EstadoTarea } from '../../core/models';
 import { LoaderComponent } from '../../shared/components/loader.component';
 import { ErrorComponent } from '../../shared/components/error.component';
 import { TareaBadgeComponent } from '../../shared/components/tarea-badge.component';
 import { RouterLink } from '@angular/router';
+import { TareaCalendarioDialogComponent } from './tarea-calendario-dialog.component';
 
 interface DiaCalendario {
   fecha: Date;
@@ -16,7 +19,7 @@ interface DiaCalendario {
 
 @Component({
   selector: 'app-calendario',
-  imports: [CommonModule, LoaderComponent, ErrorComponent, TareaBadgeComponent, RouterLink],
+  imports: [CommonModule, LoaderComponent, ErrorComponent, TareaBadgeComponent, RouterLink, TareaCalendarioDialogComponent],
   template: `
     <div class="calendario-page">
       <h1 class="title-bar">Calendario</h1>
@@ -73,6 +76,9 @@ interface DiaCalendario {
               <div class="space-y-1">
                 @for (t of dia.tareas; track t.id) {
                   <button
+                    type="button"
+                    [class.tarea-hecha]="t.estado === estadoHecha"
+                    [attr.aria-label]="t.titulo + (t.estado === estadoHecha ? ': hecha. Editar tarea' : ': editar tarea')"
                     (click)="seleccionarTarea(t)"
                     class="block w-full text-left px-1.5 py-1 rounded bg-[#EFEBDF] hover:bg-[#D9D3C2] truncate"
                     [title]="t.titulo"
@@ -106,42 +112,31 @@ interface DiaCalendario {
         </section>
       }
 
-      @if (tareaSeleccionada()) {
-        <div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4" (click)="cerrarDetalle()">
-          <div class="bg-[#FFFEFA] rounded-lg shadow-xl max-w-md w-full p-5 space-y-3" (click)="$event.stopPropagation()">
-            <div class="flex items-start justify-between">
-              <h2 class="text-lg font-display font-bold text-[#3A2A22]">{{ tareaSeleccionada()!.titulo }}</h2>
-              <button (click)="cerrarDetalle()" class="text-[#A39C87] hover:text-[#5B5748]">✕</button>
-            </div>
-            <div class="flex flex-wrap gap-2">
-              <app-tarea-badge [tipo]="tareaSeleccionada()!.tipo" [estado]="tareaSeleccionada()!.estado" />
-            </div>
-            <dl class="text-sm space-y-1.5">
-              <div>
-                <dt class="text-[#8C8570] inline">Materia: </dt>
-                <dd class="inline text-[#3A2A22]">{{ tareaSeleccionada()!.materia?.nombre ?? '—' }}</dd>
-              </div>
-              <div>
-                <dt class="text-[#8C8570] inline">Fecha límite: </dt>
-                <dd class="inline text-[#3A2A22]">{{ tareaSeleccionada()!.fechaLimite ? (tareaSeleccionada()!.fechaLimite | date: 'medium' : 'UTC' : 'es-AR') : '—' }}</dd>
-              </div>
-              <div>
-                <dt class="text-[#8C8570] inline">Descripción: </dt>
-                <dd class="inline text-[#3A2A22]">{{ tareaSeleccionada()!.descripcion ?? '—' }}</dd>
-              </div>
-            </dl>
-          </div>
-        </div>
+      @if (tareaSeleccionada(); as tarea) {
+        <app-tarea-calendario-dialog [tarea]="tarea" (cancelada)="cerrarDetalle()" (actualizada)="tareaActualizada()" />
       }
       </main>
       <aside class="upcoming-panel">
-        <div class="upcoming-title"><h2>Próximas fechas</h2><span>{{ tareasDelMes().length }} pendientes</span></div>
-        @for (t of tareasDelMes().slice(0, 3); track t.id) {
+        <section class="upcoming-section" aria-labelledby="proximas-title">
+        <div class="upcoming-title"><h2 id="proximas-title">Próximas fechas</h2><span>{{ tareasPendientes().length }} pendientes</span></div>
+        @for (t of tareasPendientes().slice(0, 3); track t.id) {
           <button class="upcoming-card" (click)="seleccionarTarea(t)">
             <span class="upcoming-date">{{ t.fechaLimite | date: 'd' : 'UTC' }}<small>{{ t.fechaLimite | date: 'MMM' : 'UTC' : 'es-AR' }}</small></span>
             <span class="upcoming-copy"><strong>{{ t.titulo }}</strong><small>{{ t.materia?.nombre ?? 'Sin materia' }}</small><em>{{ t.tipo }}</em></span>
           </button>
-        } @empty { <p class="empty-upcoming">No hay fechas pendientes.</p> }
+        } @empty { <p class="empty-upcoming">No hay próximas fechas pendientes.</p> }
+        </section>
+        <section class="overdue-section" aria-labelledby="vencidas-title">
+          <div class="upcoming-title"><h2 id="vencidas-title">Fechas vencidas</h2><span>{{ tareasVencidas().length }} pendientes</span></div>
+          <div class="overdue-list">
+            @for (t of tareasVencidas(); track t.id) {
+              <button type="button" class="upcoming-card overdue-card" (click)="seleccionarTarea(t)">
+                <span class="upcoming-date">{{ t.fechaLimite | date: 'd' : 'UTC' }}<small>{{ t.fechaLimite | date: 'MMM' : 'UTC' : 'es-AR' }}</small></span>
+                <span class="upcoming-copy"><strong>{{ t.titulo }}</strong><small>{{ t.materia?.nombre ?? 'Sin materia' }}</small><em>Vencida · {{ t.tipo }}</em></span>
+              </button>
+            } @empty { <p class="empty-upcoming">No hay tareas vencidas pendientes.</p> }
+          </div>
+        </section>
         <a routerLink="/tareas" class="all-tasks">Ver todas las tareas →</a>
       </aside>
       </div>
@@ -149,6 +144,7 @@ interface DiaCalendario {
     </div>
   `,
   styles: `
+    .tarea-hecha { text-decoration: line-through; opacity: .65; }
     .calendario-page { min-height: 100%; }
     .calendario-content { padding: 0 1.25rem 2.5rem; }
     .dias-semana-header {
@@ -198,6 +194,9 @@ interface DiaCalendario {
     .hoy-fondo { background:#f1dee1!important; }
     .hoy-texto { color:#6e1f2b; }
     .upcoming-panel { padding:1.1rem; }
+    .overdue-section { margin-top:1rem; padding-top:1rem; border-top:1px solid var(--border); }
+    .overdue-list { max-height:24rem; overflow-y:auto; }
+    .overdue-card { border-left:3px solid var(--error-text); }
     .upcoming-title { display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; }
     .upcoming-title h2 { margin:0; color:#3a2a22; font:700 1.2rem 'Fraunces',Georgia,serif; }
     .upcoming-title span { color:#8c8570; font-size:.75rem; }
@@ -248,18 +247,31 @@ interface DiaCalendario {
 })
 export class CalendarioComponent implements OnInit {
   private readonly tareasService = inject(TareasService);
+  private readonly ahora = signal(new Date());
 
   protected readonly cargando = signal(true);
   protected readonly error = signal<string | null>(null);
   protected readonly dias = signal<DiaCalendario[]>([]);
   protected readonly mesActual = signal(new Date());
   protected readonly vista = signal<'mes' | 'semana'>('mes');
+  protected readonly estadoHecha = EstadoTarea.HECHA;
   protected readonly tareaSeleccionada = signal<Tarea | null>(null);
 
   protected readonly diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
   protected readonly diasSemanaCortos = ['LUN', 'MAR', 'MIÉ', 'JUE', 'VIE', 'SÁB', 'DOM'];
   protected readonly tareasMes = signal<Tarea[]>([]);
   protected readonly tareasDelMes = computed(() => [...this.tareasMes()].sort((a, b) => new Date(a.fechaLimite!).getTime() - new Date(b.fechaLimite!).getTime()));
+  private readonly inicioHoy = computed(() => {
+    const ahora = this.ahora();
+    // Calendar dates use UTC fields, but today is the user's local calendar day.
+    return Date.UTC(ahora.getFullYear(), ahora.getMonth(), ahora.getDate());
+  });
+  protected readonly tareasPendientes = computed(() => this.tareasDelMes().filter((t) =>
+    t.estado !== EstadoTarea.HECHA && !!t.fechaLimite && new Date(t.fechaLimite).getTime() >= this.inicioHoy(),
+  ));
+  protected readonly tareasVencidas = computed(() => this.tareasDelMes().filter((t) =>
+    t.estado !== EstadoTarea.HECHA && !!t.fechaLimite && new Date(t.fechaLimite).getTime() < this.inicioHoy(),
+  ));
   protected readonly periodoLabel = computed(() => {
     const base = this.mesActual();
     if (this.vista() === 'mes') {
@@ -276,6 +288,11 @@ export class CalendarioComponent implements OnInit {
     const mes = new Intl.DateTimeFormat('es-AR', { month: 'long' }).format(this.mesActual());
     return `Fechas de ${mes}`;
   });
+
+  constructor() {
+    // Recompute upcoming dates when the day changes, even if the page stays open.
+    interval(60_000).pipe(takeUntilDestroyed()).subscribe(() => this.ahora.set(new Date()));
+  }
 
   ngOnInit(): void {
     this.cargar();
@@ -387,6 +404,11 @@ export class CalendarioComponent implements OnInit {
 
   protected seleccionarTarea(t: Tarea): void {
     this.tareaSeleccionada.set(t);
+  }
+
+  protected tareaActualizada(): void {
+    this.cerrarDetalle();
+    this.cargar();
   }
 
   protected cerrarDetalle(): void {

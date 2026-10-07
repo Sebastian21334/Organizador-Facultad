@@ -243,7 +243,7 @@ import { finalize } from 'rxjs';
                         {{ t.materia?.nombre ?? 'Sin materia' }}
 
                         @if (t.fechaLimite) {
-                          · {{ t.fechaLimite | date: 'dd/MM/yyyy' }}
+                          · {{ t.fechaLimite | date: 'dd/MM/yyyy' : 'UTC' }}
                         }
 
                       </p>
