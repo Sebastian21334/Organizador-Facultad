@@ -2,10 +2,11 @@ import { passwordBytes } from '../../core/services/password-policy';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../core/services/auth.service';
+import { PushPreferencesComponent } from '../../shared/components/push-preferences.component';
 
 @Component({
   selector: 'app-perfil',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, PushPreferencesComponent],
   template: `
     <main class="max-w-md mx-auto space-y-6 py-8">
       <section class="card">
@@ -83,6 +84,8 @@ import { AuthService } from '../../core/services/auth.service';
           </button>
         </form>
       </section>
+
+      <app-push-preferences />
 
       <section class="card">
         <p class="section-label">Seguridad</p>

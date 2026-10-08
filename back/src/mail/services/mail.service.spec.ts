@@ -1,6 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { MailService } from './mail.service';
 import { LimitesService } from '../../usuarios/services/limites.service';
+import { PushService } from '../../push/services/push.service';
 
 const mockBeginSend = jest.fn();
 const mockPollUntilDone = jest.fn();
@@ -17,6 +18,7 @@ describe('Envío de correos de Tempo (proveedor simulado)', () => {
     FRONTEND_URL: process.env.FRONTEND_URL,
   };
   let service: MailService;
+  const push = { enviarAUsuario: jest.fn() };
 
   beforeEach(() => {
     process.env.ACS_CONNECTION_STRING = 'conexion-simulada';
@@ -28,9 +30,13 @@ describe('Envío de correos de Tempo (proveedor simulado)', () => {
     mockPollUntilDone.mockReset().mockResolvedValue({ status: 'Succeeded' });
     jest.spyOn(Logger.prototype, 'error').mockImplementation(() => {});
     jest.spyOn(Logger.prototype, 'log').mockImplementation(() => {});
-    service = new MailService({
-      consumir: jest.fn().mockResolvedValue(undefined),
-    } as unknown as LimitesService);
+    push.enviarAUsuario.mockReset().mockResolvedValue(undefined);
+    service = new MailService(
+      {
+        consumir: jest.fn().mockResolvedValue(undefined),
+      } as unknown as LimitesService,
+      push as unknown as PushService,
+    );
   });
 
   afterEach(() => jest.restoreAllMocks());
@@ -93,5 +99,53 @@ describe('Envío de correos de Tempo (proveedor simulado)', () => {
     await expect(
       service.enviarResetPassword('seba@example.com', 'Seba', 'token'),
     ).rejects.toThrow('sin conexión');
+  });
+
+  it('dispara push al usuario con el resumen del correo, y un fallo no afecta el envío', async () => {
+    push.enviarAUsuario.mockRejectedValueOnce(
+      new Error('proveedor push caído'),
+    );
+    await expect(
+      service.enviarRecordatorio(
+        'seba@example.com',
+        {
+          nombre: 'Seba',
+          titulo: 'Parcial',
+          materia: 'Física',
+          fechaLimite: new Date('2026-10-09T17:00:00Z'),
+        },
+        'usuario',
+      ),
+    ).resolves.toEqual({ status: 'Succeeded' });
+    expect(push.enviarAUsuario).toHaveBeenCalledWith(
+      'usuario',
+      expect.objectContaining({
+        titulo: 'Recordatorio: Parcial · Tempo',
+        texto: expect.stringContaining('Parcial · Física'),
+        url: '/tareas',
+      }),
+    );
+    expect(mockBeginSend).toHaveBeenCalledTimes(1);
+  });
+
+  it('no espera a un proveedor push lento para confirmar el correo', async () => {
+    push.enviarAUsuario.mockReturnValue(new Promise(() => {}));
+    await expect(
+      service.enviarRecordatorio(
+        'seba@example.com',
+        {
+          nombre: 'Seba',
+          titulo: 'Parcial',
+          fechaLimite: new Date('2026-10-09T17:00:00Z'),
+        },
+        'usuario',
+      ),
+    ).resolves.toEqual({ status: 'Succeeded' });
+  });
+
+  it('no envía tokens de verificación ni de recuperación por push', async () => {
+    await service.enviarVerificacionEmail('seba@example.com', 'Seba', 'token');
+    await service.enviarResetPassword('seba@example.com', 'Seba', 'token');
+    expect(push.enviarAUsuario).not.toHaveBeenCalled();
   });
 });

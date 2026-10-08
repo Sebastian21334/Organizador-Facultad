@@ -12,6 +12,7 @@ import {
   crearEmailRecordatorio,
 } from '../templates/tempo-email';
 import type { RecordatorioEmail } from '../templates/tempo-email';
+import { PushService } from '../../push/services/push.service';
 
 @Injectable()
 export class MailService {
@@ -20,7 +21,10 @@ export class MailService {
   private readonly senderAddress: string;
   private activos = 0;
 
-  constructor(private readonly limites: LimitesService) {
+  constructor(
+    private readonly limites: LimitesService,
+    private readonly push: PushService,
+  ) {
     const connectionString = process.env.ACS_CONNECTION_STRING;
     const senderAddress = process.env.ACS_SENDER_ADDRESS;
 
@@ -123,8 +127,30 @@ export class MailService {
     );
   }
 
-  async enviarRecordatorio(destinatario: string, tarea: RecordatorioEmail) {
+  async enviarRecordatorio(
+    destinatario: string,
+    tarea: RecordatorioEmail,
+    usuarioId?: string,
+  ) {
     const correo = crearEmailRecordatorio(process.env.FRONTEND_URL, tarea);
+    if (usuarioId) {
+      const fecha = new Intl.DateTimeFormat('es-AR', {
+        timeZone: 'America/Argentina/Buenos_Aires',
+        dateStyle: 'short',
+        timeStyle: 'short',
+        hour12: false,
+      }).format(tarea.fechaLimite);
+      // Se dispara en el mismo flujo, sin esperar push ni alterar la confirmación del correo.
+      void this.push
+        .enviarAUsuario(usuarioId, {
+          titulo: correo.asunto,
+          texto: `${tarea.titulo}${tarea.materia ? ' · ' + tarea.materia : ''}. Vence ${fecha} (hora de Argentina).`,
+          url: '/tareas',
+        })
+        .catch(() =>
+          this.logger.warn('El push falló; el correo sigue su flujo.'),
+        );
+    }
     return this.enviarMail(
       destinatario,
       correo.asunto,

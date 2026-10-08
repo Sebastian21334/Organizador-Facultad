@@ -10,6 +10,7 @@ import { UsuariosModule } from './usuarios/usuarios.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ContactoModule } from './contacto/contacto.module';
+import { PushModule } from './push/push.module';
 import { APP_GUARD } from '@nestjs/core';
 import { SeguridadGuard } from './auth/guards/seguridad.guard';
 import { databaseSsl, validateEnvironment } from './security.config';
@@ -18,6 +19,7 @@ import { databaseSsl, validateEnvironment } from './security.config';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: ['.env', '.env.vapid.local'],
       validate: validateEnvironment,
     }),
     TypeOrmModule.forRootAsync({
@@ -47,6 +49,7 @@ import { databaseSsl, validateEnvironment } from './security.config';
     AuthModule,
     UsuariosModule,
     ContactoModule,
+    PushModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: SeguridadGuard }],

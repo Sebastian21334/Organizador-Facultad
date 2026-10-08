@@ -4,6 +4,8 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { Router } from '@angular/router';
 import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest';
 import { AuthService } from './auth.service';
+import { PushNotificationsService } from './push-notifications.service';
+import { map, of } from 'rxjs';
 import { ToastService } from './toast.service';
 import { authInterceptor } from '../interceptors/auth.interceptor';
 import { apiUrlInterceptor } from '../interceptors/api-url.interceptor';
@@ -19,14 +21,17 @@ describe('Sesiones seguras del navegador (HTTP simulado, sin red)', () => {
   let client: HttpClient;
   const navigate = vi.fn().mockResolvedValue(true);
   const toast = { error: vi.fn(), success: vi.fn() };
+  const push = { beforeLogout: vi.fn(() => of(undefined as void)) };
   const api = environment.apiUrl;
   const session = { nombre: 'Seba González', recordatorioEmailHabilitado: false, recordatorioMinutos: null, csrfToken: 'csrf-de-prueba' };
   beforeEach(() => {
+    push.beforeLogout.mockReset().mockReturnValue(of(undefined));
     localStorage.setItem('access_token', 'jwt-de-la-version-anterior');
     TestBed.configureTestingModule({
       providers: [provideHttpClient(withInterceptors([apiUrlInterceptor, authInterceptor])), provideHttpClientTesting(),
         { provide: Router, useValue: { navigate, createUrlTree: (commands: string[]) => commands.join('') } },
-        { provide: ToastService, useValue: toast }],
+        { provide: ToastService, useValue: toast },
+        { provide: PushNotificationsService, useValue: push }],
     });
     http = TestBed.inject(HttpTestingController); client = TestBed.inject(HttpClient); auth = TestBed.inject(AuthService);
     vi.clearAllMocks();
@@ -226,6 +231,31 @@ describe('Sesiones seguras del navegador (HTTP simulado, sin red)', () => {
     http.expectOne(api + '/tareas?limit=100&offset=0').flush(Array.from({ length: 100 }, (_, i) => i));
     http.expectOne(api + '/tareas?limit=100&offset=100').flush([100]);
     expect(items).toHaveLength(101);
+  });
+  it('elimina el dispositivo con cookie y CSRF antes de revocar la sesión', async () => {
+    await iniciar();
+    push.beforeLogout.mockImplementation(() => client.delete('/push/subscriptions', {
+      body: { endpoint: 'https://fcm.googleapis.com/fcm/send/dispositivo' },
+    }).pipe(map(() => undefined)));
+    auth.logout();
+    http.expectNone(api + '/auth/logout');
+    const baja = http.expectOne(api + '/push/subscriptions');
+    expect(baja.request.withCredentials).toBe(true);
+    expect(baja.request.headers.get('X-CSRF-Token')).toBe('csrf-de-prueba');
+    baja.flush({ mensaje: 'Desactivadas' });
+    http.expectOne(api + '/auth/logout').flush({ mensaje: 'Sesiones cerradas.' });
+    expect(auth.isAuthenticated()).toBe(false);
+  });
+  it('si la baja push falla, conserva la sesión para poder reintentar', async () => {
+    await iniciar();
+    push.beforeLogout.mockImplementation(() => client.delete('/push/subscriptions', {
+      body: { endpoint: 'https://fcm.googleapis.com/fcm/send/dispositivo' },
+    }).pipe(map(() => undefined)));
+    auth.logout();
+    http.expectOne(api + '/push/subscriptions').flush({}, { status: 503, statusText: 'Unavailable' });
+    http.expectNone(api + '/auth/logout');
+    expect(auth.isAuthenticated()).toBe(true);
+    expect(toast.error).toHaveBeenCalled();
   });
   it('la política de contraseña mide bytes Unicode, no solo caracteres', async () => {
     await iniciar();

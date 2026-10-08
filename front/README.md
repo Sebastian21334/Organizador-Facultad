@@ -1,5 +1,7 @@
 # OrganizadorFacultad
 
+La PWA, la invitación de instalación, las notificaciones y las pruebas de producción/local están documentadas en [PWA.md](PWA.md).
+
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.1.4.
 
 ## Development server

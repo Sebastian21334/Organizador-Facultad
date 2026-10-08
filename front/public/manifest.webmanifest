@@ -1,0 +1,28 @@
+{
+  "id": "/",
+  "name": "Tempo · Organizador de Facultad",
+  "short_name": "Tempo",
+  "description": "Tus materias, tareas y calendario universitario en un solo lugar.",
+  "lang": "es-AR",
+  "theme_color": "#6e1f2b",
+  "background_color": "#ede4d3",
+  "display": "standalone",
+  "start_url": "/",
+  "scope": "/",
+  "icons": [
+    { "src": "icons/icon-192x192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    {
+      "src": "icons/icon-maskable-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icons/icon-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

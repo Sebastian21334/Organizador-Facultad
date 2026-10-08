@@ -87,7 +87,7 @@ export class TareasService implements OnModuleInit, OnModuleDestroy {
             fechaLimite: tarea.fechaLimite,
             materia: tarea.materia?.nombre,
             tipo: tarea.tipo,
-          });
+          }, tarea.usuarioId);
           await this.tareasRepository.marcarRecordatorioEnviado(
             tarea.id!,
             intentoId,

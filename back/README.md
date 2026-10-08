@@ -27,6 +27,8 @@
 
 ## Project setup
 
+La configuración, migración, endpoints y pruebas de notificaciones push están documentados en [PUSH.md](PUSH.md).
+
 ```bash
 $ npm install
 ```

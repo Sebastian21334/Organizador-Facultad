@@ -3,6 +3,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, catchError, finalize, map, of, retry, shareReplay, switchMap, tap, throwError, timeout, timer, TimeoutError } from 'rxjs';
 import { ToastService } from './toast.service';
+import { PushNotificationsService } from './push-notifications.service';
 
 export interface AuthResponse { access_token?: string; mensaje?: string; }
 export interface MessageResponse { mensaje: string; }
@@ -19,6 +20,7 @@ export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
   private readonly toast = inject(ToastService);
+  private readonly push = inject(PushNotificationsService);
   private readonly authenticated = signal(false);
   private readonly checking = signal(true);
   private readonly nombreUsuario = signal<string | null>(null);
@@ -113,7 +115,7 @@ export class AuthService {
   logout(): void {
     if (this.loggingOut) return;
     this.loggingOut = true;
-    this.http.post<MessageResponse>('/auth/logout', {}).subscribe({
+    this.push.beforeLogout().pipe(switchMap(() => this.http.post<MessageResponse>('/auth/logout', {}))).subscribe({
       next: () => { this.loggingOut = false; this.expireSession(); },
       error: (error: HttpErrorResponse) => {
         this.loggingOut = false;

@@ -6,7 +6,7 @@ export const apiUrlInterceptor: HttpInterceptorFn = (
   req: HttpRequest<unknown>,
   next: HttpHandlerFn,
 ) => {
-  if (/^\/(auth|materias|tareas|mensajes|contacto)(\/|\?|$)/.test(req.url)) {
+  if (/^\/(auth|materias|tareas|mensajes|contacto|push)(\/|\?|$)/.test(req.url)) {
     const cloned = req.clone({
       url: `${environment.apiUrl}${req.url}`,
     });
