@@ -13,7 +13,7 @@ import { TareaCalendarioDialogComponent } from './tarea-calendario-dialog.compon
 
 registerLocaleData(localeEsAr);
 
-describe('Edición de tareas desde el calendario', () => {
+describe('Detalle, agenda y edición de tareas desde el calendario', () => {
   let fixture: ComponentFixture<CalendarioComponent>;
   let service: { listarCalendario: ReturnType<typeof vi.fn>; actualizar: ReturnType<typeof vi.fn> };
   let tarea: Tarea;
@@ -54,7 +54,7 @@ describe('Edición de tareas desde el calendario', () => {
     fixture = TestBed.createComponent(CalendarioComponent);
     (fixture.componentInstance as any).mesActual.set(new Date(2026, 9, 7));
     fixture.detectChanges();
-    fixture.nativeElement.querySelector('.calendar-cell button').click();
+    fixture.nativeElement.querySelector('.calendar-task-buttons button').click();
     fixture.detectChanges();
     dialog = fixture.debugElement.query(By.directive(TareaCalendarioDialogComponent)).componentInstance;
   });
@@ -66,7 +66,27 @@ describe('Edición de tareas desde el calendario', () => {
     fixture.detectChanges();
   }
 
+  function editar() {
+    fixture.nativeElement.querySelector('.edit-button').click();
+    fixture.detectChanges();
+  }
+
+  it('abre primero la información sin formulario y permite volver desde la edición sin guardar', () => {
+    expect(fixture.nativeElement.querySelector('form')).toBeNull();
+    expect(fixture.nativeElement.querySelector('dialog').textContent).toContain('Capítulo 1');
+    expect(fixture.nativeElement.querySelector('dialog').textContent).toContain('7 oct 2026');
+    expect(fixture.nativeElement.querySelector('.complete').textContent).toContain('Marcar como hecha');
+    editar();
+    dialog.form.patchValue({ titulo: 'Cambio sin guardar' });
+    fixture.nativeElement.querySelector('.back-button').click(); fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('form')).toBeNull();
+    expect(service.actualizar).not.toHaveBeenCalled();
+    editar();
+    expect(dialog.form.controls.titulo.value).toBe(tarea.titulo);
+  });
+
   it('abre la tarea presionada y guarda sus campos sin alterar la hora ni los recordatorios', () => {
+    editar();
     expect(dialog.form.getRawValue()).toMatchObject({ titulo: tarea.titulo, fechaLimite: '2026-10-07T00:00' });
     dialog.form.patchValue({ titulo: '  Informe final  ', descripcion: '', tipo: TipoTarea.TP, estado: EstadoTarea.EN_PROGRESO });
     const actualizada = { ...tarea, titulo: 'Informe final', descripcion: '', tipo: TipoTarea.TP, estado: EstadoTarea.EN_PROGRESO };
@@ -77,7 +97,7 @@ describe('Edición de tareas desde el calendario', () => {
       titulo: 'Informe final', descripcion: '', tipo: TipoTarea.TP, estado: EstadoTarea.EN_PROGRESO,
     });
     expect(fixture.nativeElement.querySelector('dialog')).toBeNull();
-    expect(fixture.nativeElement.querySelector('.calendar-cell button').textContent).toContain('Informe final');
+    expect(fixture.nativeElement.querySelector('.calendar-task-buttons button').textContent).toContain('Informe final');
   });
 
   it('marca como hecha y actualiza la celda y la lista de pendientes', () => {
@@ -87,7 +107,7 @@ describe('Edición de tareas desde el calendario', () => {
     fixture.nativeElement.querySelector('.complete').click();
     fixture.detectChanges();
     expect(service.actualizar).toHaveBeenCalledWith(tarea.id, { estado: EstadoTarea.HECHA });
-    expect(fixture.nativeElement.querySelector('.calendar-cell button').classList.contains('tarea-hecha')).toBe(true);
+    expect(fixture.nativeElement.querySelector('.calendar-task-buttons button').classList.contains('tarea-hecha')).toBe(true);
     expect(fixture.nativeElement.querySelector('.upcoming-title').textContent).toContain('0 pendientes');
     expect(fixture.nativeElement.querySelector('.upcoming-card')).toBeNull();
   });
@@ -125,13 +145,14 @@ describe('Edición de tareas desde el calendario', () => {
   });
 
   it('mueve la tarea de día y la quita del período cuando pasa al mes siguiente', () => {
+    editar();
     dialog.form.patchValue({ fechaLimite: '2026-11-03T14:30' });
     service.actualizar.mockReturnValue(of({ ...tarea, fechaLimite: '2026-11-03T14:30:00.000Z' }));
     service.listarCalendario.mockReturnValue(of([]));
     guardar();
     expect(service.actualizar.mock.calls[0][1].fechaLimite).toBe('2026-11-03T14:30:00.000Z');
     expect(service.listarCalendario).toHaveBeenCalledTimes(2);
-    expect(fixture.nativeElement.querySelector('.calendar-cell button')).toBeNull();
+    expect(fixture.nativeElement.querySelector('.calendar-task-buttons button')).toBeNull();
     (fixture.componentInstance as any).periodoSiguiente();
     expect(service.listarCalendario.mock.lastCall?.[0].toISOString()).toBe('2026-11-01T00:00:00.000Z');
   });
@@ -154,6 +175,7 @@ describe('Edición de tareas desde el calendario', () => {
   });
 
   it('rechaza títulos vacíos y fechas vacías antes de guardar', () => {
+    editar();
     dialog.form.patchValue({ titulo: '   ' }); guardar();
     expect(service.actualizar).not.toHaveBeenCalled();
     dialog.form.patchValue({ titulo: 'Informe', fechaLimite: '' }); guardar();
@@ -161,6 +183,7 @@ describe('Edición de tareas desde el calendario', () => {
   });
 
   it('conserva los cambios si falla el guardado y permite reintentar', () => {
+    editar();
     dialog.form.patchValue({ titulo: 'Informe corregido' });
     service.actualizar.mockReturnValue(throwError(() => new Error('Sin conexión')));
     guardar();
@@ -174,6 +197,7 @@ describe('Edición de tareas desde el calendario', () => {
   });
 
   it('evita envíos duplicados y cerrar mientras guarda; cancelar no modifica la tarea', () => {
+    editar();
     const respuesta = new Subject<Tarea>();
     service.actualizar.mockReturnValue(respuesta);
     guardar(); dialog.guardar(); dialog.marcarHecha(); dialog.cerrar();
@@ -183,5 +207,45 @@ describe('Edición de tareas desde el calendario', () => {
     fixture.nativeElement.querySelector('.close-button').click(); fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('dialog')).toBeNull();
     expect(service.actualizar).toHaveBeenCalledTimes(1);
+  });
+
+  it('muestra los títulos completos del día elegido y un estado vacío para los días sin tareas', () => {
+    dialog.cerrar();
+    const tituloLargo = 'Segunda entrega del trabajo práctico de programación y documentación completa';
+    const otra = { ...tarea, id: 'otra', titulo: tituloLargo, fechaLimite: '2026-10-08T00:00:00.000Z' };
+    service.listarCalendario.mockReturnValue(of([tarea, otra]));
+    (fixture.componentInstance as any).cargar(); fixture.detectChanges();
+    const dia = (numero: number) => Array.from(fixture.nativeElement.querySelectorAll('.calendar-day-select'))
+      .find((button: any) => button.getAttribute('aria-label').includes(`${numero} de octubre`)) as HTMLButtonElement;
+    dia(8).click(); fixture.detectChanges();
+    const agenda = fixture.nativeElement.querySelector('#calendar-day-agenda');
+    expect(agenda.textContent).toContain(tituloLargo);
+    expect(agenda.textContent).not.toContain(tarea.titulo);
+    expect(dia(8).getAttribute('aria-pressed')).toBe('true');
+    agenda.querySelector('.day-task').click(); fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('dialog h2').textContent).toBe(tituloLargo);
+    fixture.nativeElement.querySelector('.close-button').click(); fixture.detectChanges();
+    dia(9).click(); fixture.detectChanges();
+    expect(agenda.textContent).toContain('No hay tareas para este día.');
+  });
+
+  it('conserva el detalle y permite reintentar si falla marcar como hecha', () => {
+    service.actualizar.mockReturnValue(throwError(() => new Error('Sin conexión')));
+    fixture.nativeElement.querySelector('.complete').click(); fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('form')).toBeNull();
+    expect(fixture.nativeElement.querySelector('[role="alert"]').textContent).toContain('No se pudo marcar');
+    expect(dialog.tarea().estado).toBe(EstadoTarea.PENDIENTE);
+    service.actualizar.mockReturnValue(of({ ...tarea, estado: EstadoTarea.HECHA }));
+    fixture.nativeElement.querySelector('.complete').click(); fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('dialog')).toBeNull();
+  });
+
+  it('navega desde un día 31 sin saltarse el mes siguiente y selecciona un día del nuevo período', () => {
+    dialog.cerrar();
+    const component = fixture.componentInstance as any;
+    component.mesActual.set(new Date(2026, 0, 31));
+    component.periodoSiguiente(); fixture.detectChanges();
+    expect(service.listarCalendario.mock.lastCall?.[0].toISOString()).toBe('2026-02-01T00:00:00.000Z');
+    expect(component.fechaSeleccionada().getMonth()).toBe(1);
   });
 });

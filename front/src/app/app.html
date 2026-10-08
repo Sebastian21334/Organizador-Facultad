@@ -85,13 +85,23 @@
     </aside>
   }
 
-  <main appMotion class="app-content" [class.app-content--full-bleed]="fullBleed()">
-    @if (auth.checkingSession()) { <app-loader mensaje="Comprobando tu sesión…" /> }
+  <main appMotion class="app-content" [class.app-content--full-bleed]="fullBleed()" [class.app-content--loading]="auth.checkingSession()">
+    @if (auth.checkingSession()) {
+      <section class="session-loading" aria-labelledby="session-loading-title">
+        <div class="session-loading-card">
+          <p class="session-loading-brand">Tempo</p>
+          <h1 id="session-loading-title">Estamos preparando tu espacio</h1>
+          <p class="session-loading-description">Estamos conectando para cargar tus materias y tareas.</p>
+          <app-loader mensaje="Gracias por esperar…" />
+          <p class="session-loading-note">La conexión inicial puede tardar un poco.</p>
+        </div>
+      </section>
+    }
     @if (auth.sessionError()) {
       <app-error [mensaje]="auth.sessionError()" [permitirReintento]="true" (reintentar)="reintentarSesion()" />
     }
     <router-outlet />
-    @if (!auth.isAuthenticated()) {
+    @if (!auth.checkingSession() && !auth.isAuthenticated()) {
       <footer class="py-6 text-center"><a routerLink="/instalar" class="underline">Instalar app</a></footer>
     }
   </main>
@@ -99,4 +109,6 @@
 
 <app-confirm-dialog />
 <app-toasts />
-<app-install-prompt />
+@if (!auth.checkingSession()) {
+  <app-install-prompt />
+}

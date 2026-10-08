@@ -8,6 +8,8 @@ import { AuthService } from '../../core/services/auth.service';
 import { LoaderComponent } from '../../shared/components/loader.component';
 import { ErrorComponent } from '../../shared/components/error.component';
 import { TareaBadgeComponent } from '../../shared/components/tarea-badge.component';
+import { AgendaDiaComponent } from '../../shared/components/agenda-dia.component';
+import { LucideDynamicIcon, LucideCalendarDays } from '@lucide/angular';
 
 interface DiaSemana {
   fecha: Date;
@@ -19,7 +21,7 @@ interface DiaSemana {
 @Component({
   selector: 'app-inicio',
   host: { '[class.inicio-preview]': 'vistaPrevia()' },
-  imports: [CommonModule, RouterLink, LoaderComponent, ErrorComponent, TareaBadgeComponent],
+  imports: [CommonModule, RouterLink, LoaderComponent, ErrorComponent, TareaBadgeComponent, AgendaDiaComponent, LucideDynamicIcon],
   template: `
     <div class="inicio-page">
       @if (cargando()) {
@@ -54,45 +56,32 @@ interface DiaSemana {
           <div class="inicio-dashboard">
             <div class="inicio-dashboard-inner">
               <!-- Franja semanal -->
-              <section class="bg-[#6E1F2B] rounded-lg p-4">
-                <p class="text-xs font-mono uppercase tracking-wide text-[#EFEBDF] text-center mb-3">Esta semana</p>
-                <div class="grid grid-cols-7 gap-2">
-                  @for (dia of semana(); track dia.fecha.getTime()) {
-                    <div class="text-center">
-                      <p
-                        class="text-xs font-mono uppercase mb-1.5"
-                        [class.dia-hoy-label]="dia.esHoy"
-                        [class.dia-label]="!dia.esHoy"
-                      >
-                        {{ dia.label }}
-                      </p>
-                      <div
-                        class="rounded-md min-h-[88px] p-1.5 flex flex-col items-center justify-center gap-1"
-                        [class.dia-hoy-fondo]="dia.esHoy"
-                        [class.dia-fondo]="!dia.esHoy"
-                      >
-                        @if (dia.tareas.length === 0) {
-                          <span class="text-[#D9D3C2] text-sm">·</span>
-                        } @else {
-                          @for (t of dia.tareas.slice(0, 2); track t.id) {
-                            <button
-                              (click)="seleccionarTarea(t)"
-                              class="w-full truncate text-[11px] leading-tight px-1.5 py-1 rounded"
-                              [class.tarea-hoy]="dia.esHoy"
-                              [class.tarea-normal]="!dia.esHoy"
-                              [title]="t.titulo"
-                            >
-                              {{ t.titulo }}
-                            </button>
-                          }
-                          @if (dia.tareas.length > 2) {
-                            <span class="text-[10px] text-[#9BA6C4]">+{{ dia.tareas.length - 2 }}</span>
-                          }
-                        }
-                      </div>
-                    </div>
+              <section class="weekly-overview" aria-labelledby="weekly-title">
+                <header class="weekly-heading">
+                  <div>
+                    <p class="dashboard-eyebrow">Tu organización</p>
+                    <h2 id="weekly-title">Esta semana</h2>
+                    <p class="weekly-summary">{{ tareasSemanaPendientes() }} {{ tareasSemanaPendientes() === 1 ? 'tarea pendiente' : 'tareas pendientes' }}</p>
+                  </div>
+                  <a routerLink="/calendario" class="weekly-calendar-link" aria-label="Abrir calendario completo">
+                    <svg [lucideIcon]="calendarIcon" [size]="20" aria-hidden="true"></svg>
+                  </a>
+                </header>
+                <div class="weekly-days" aria-label="Elegir un día de esta semana">
+                  @for (dia of semana(); track dia.fecha.getTime(); let i = $index) {
+                    <button type="button" class="weekly-day" [class.is-selected]="dia.fecha.getTime() === diaSemanaSeleccionado().fecha.getTime()"
+                      [attr.aria-pressed]="dia.fecha.getTime() === diaSemanaSeleccionado().fecha.getTime()"
+                      [attr.aria-current]="dia.esHoy ? 'date' : null"
+                      [attr.aria-label]="(dia.fecha | date: 'fullDate' : undefined : 'es-AR') + ': ' + dia.tareas.length + ' tareas'"
+                      aria-controls="weekly-day-agenda" (click)="fechaSemanaSeleccionada.set(dia.fecha)">
+                      <span class="weekly-day-label">{{ diasSemanaIniciales[i] }}</span>
+                      <strong>{{ dia.fecha | date: 'd' }}</strong>
+                      <span class="weekly-day-dot" [class.has-tasks]="dia.tareas.length > 0" aria-hidden="true"></span>
+                    </button>
                   }
                 </div>
+                <app-agenda-dia id="weekly-day-agenda" [fecha]="diaSemanaSeleccionado().fecha" [tareas]="diaSemanaSeleccionado().tareas" [esHoy]="diaSemanaSeleccionado().esHoy" (seleccionar)="seleccionarTarea($event)" />
+                <a routerLink="/calendario" class="weekly-footer-link">Ver calendario completo <span aria-hidden="true">→</span></a>
               </section>
 
                <!-- Resumen académico -->
@@ -238,12 +227,23 @@ interface DiaSemana {
     .academic-progress-ring small { font: .65rem var(--font-body); }
     .academic-progress-link { color: #6e1f2b; font-size: .75rem; font-weight: 600; text-decoration: none; white-space: nowrap; }
     .academic-progress-link:hover { transform: translateX(3px); }
-    .dia-label { color: #9BA6C4; }
-    .dia-hoy-label { color: #F0C9BC; }
-    .dia-fondo { background-color: #FFFEFA; }
-    .dia-hoy-fondo { background-color: #F1DEE1; border: 2px solid #6E1F2B; }
-    .tarea-normal { background-color: #EFEBDF; color: #3A2A22; }
-    .tarea-hoy { background-color: #B3401A; color: #FFFEFA; }
+    .weekly-overview { padding: 1.25rem; background: var(--card-strong); border: 1px solid var(--border); border-radius: .9rem; }
+    .weekly-heading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; }
+    .weekly-heading h2 { font: 700 1.2rem var(--font-display); }
+    .weekly-summary { margin: .25rem 0 0; color: var(--muted); font-size: .75rem; }
+    .weekly-calendar-link { display: grid; place-items: center; width: 2.5rem; height: 2.5rem; border-radius: .65rem; background: var(--bg-subtle); color: var(--accent); }
+    .weekly-days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: .3rem; padding-bottom: 1.25rem; margin-bottom: 1.25rem; border-bottom: 1px solid var(--border); }
+    .weekly-day { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .35rem; min-width: 0; min-height: 4.5rem; padding: .55rem .1rem; border: 1px solid transparent; border-radius: .65rem; background: var(--bg-subtle); color: var(--ink); cursor: pointer; }
+    .weekly-day:hover { border-color: var(--accent-border); }
+    .weekly-day.is-selected { background: var(--accent); color: #fff; }
+    .weekly-day-label { color: var(--muted); font-size: .65rem; }
+    .is-selected .weekly-day-label { color: inherit; }
+    .weekly-day strong { font-size: .95rem; }
+    .weekly-day-dot { width: .3rem; height: .3rem; border-radius: 50%; background: var(--warning-text); visibility: hidden; }
+    .weekly-day-dot.has-tasks { visibility: visible; }
+    .is-selected .weekly-day-dot { background: #f0c9bc; }
+    .weekly-footer-link { display: flex; justify-content: center; gap: .5rem; margin-top: 1.1rem; color: var(--accent); font-size: .75rem; text-decoration: none; }
+    @media (max-width: 480px) { .weekly-overview { padding: 1rem .75rem; } }
 
     .tarea-row {
       display: flex;
@@ -293,6 +293,9 @@ export class InicioComponent implements OnInit {
   protected readonly tareas = signal<Tarea[]>([]);
   protected readonly materias = signal<Materia[]>([]);
   protected readonly tareaSeleccionada = signal<Tarea | null>(null);
+  protected readonly calendarIcon = LucideCalendarDays;
+  protected readonly fechaSemanaSeleccionada = signal(new Date(new Date().setHours(0, 0, 0, 0)));
+  protected readonly diasSemanaIniciales = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
 
   protected readonly hoy = new Date();
   protected readonly materiasAprobadas = computed(() => this.materias().filter((m) => m.estado === EstadoMateria.APROBADO).length);
@@ -357,6 +360,11 @@ export class InicioComponent implements OnInit {
       };
     });
   });
+
+  protected readonly diaSemanaSeleccionado = computed(() => this.semana().find((dia) =>
+    dia.fecha.getTime() === this.fechaSemanaSeleccionada().getTime()) ?? this.semana().find((dia) => dia.esHoy)!);
+  protected readonly tareasSemanaPendientes = computed(() => this.semana().reduce((total, dia) =>
+    total + dia.tareas.filter((tarea) => tarea.estado !== EstadoTarea.HECHA).length, 0));
 
   protected readonly saludo = computed(() => {
     if (this.vistaPrevia()) return 'Hola, Seba';

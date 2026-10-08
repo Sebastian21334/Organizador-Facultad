@@ -9,6 +9,7 @@ import { ErrorComponent } from '../../shared/components/error.component';
 import { TareaBadgeComponent } from '../../shared/components/tarea-badge.component';
 import { RouterLink } from '@angular/router';
 import { TareaCalendarioDialogComponent } from './tarea-calendario-dialog.component';
+import { AgendaDiaComponent } from '../../shared/components/agenda-dia.component';
 
 interface DiaCalendario {
   fecha: Date;
@@ -19,7 +20,7 @@ interface DiaCalendario {
 
 @Component({
   selector: 'app-calendario',
-  imports: [CommonModule, LoaderComponent, ErrorComponent, TareaBadgeComponent, RouterLink, TareaCalendarioDialogComponent],
+  imports: [CommonModule, LoaderComponent, ErrorComponent, TareaBadgeComponent, RouterLink, TareaCalendarioDialogComponent, AgendaDiaComponent],
   template: `
     <div class="calendario-page">
       <h1 class="title-bar">Calendario</h1>
@@ -69,16 +70,25 @@ interface DiaCalendario {
               [class]="dia.esDelMesActual ? 'bg-[#FFFEFA] border-[#D9D3C2]' : 'bg-[#F5F2E9] border-[#EFEBDF] text-[#A39C87]'"
               [class.hoy-borde]="dia.esHoy"
               [class.hoy-fondo]="dia.esHoy"
+              [class.dia-seleccionado]="dia.fecha.getTime() === fechaSeleccionada().getTime()"
+              [class.extra-week]="i >= cantidadDiasMovil()"
             >
-              <div class="font-medium mb-1" [class.hoy-texto]="dia.esHoy">
+              <button type="button" class="calendar-day-select" (click)="seleccionarDia(dia.fecha)"
+                [attr.aria-label]="(dia.fecha | date: 'fullDate' : undefined : 'es-AR') + ': ' + dia.tareas.length + ' tareas'"
+                [attr.aria-pressed]="dia.fecha.getTime() === fechaSeleccionada().getTime()"
+                [attr.aria-current]="dia.esHoy ? 'date' : null" aria-controls="calendar-day-agenda">
+                <span>{{ dia.fecha | date: 'd' }}</span>
+                @if (dia.tareas.length) { <span class="day-count">{{ dia.tareas.length }}</span> }
+              </button>
+              <div class="calendar-day-number font-medium mb-1" [class.hoy-texto]="dia.esHoy">
                 {{ dia.fecha | date: 'd' }}
               </div>
-              <div class="space-y-1">
+              <div class="calendar-task-buttons space-y-1">
                 @for (t of dia.tareas; track t.id) {
                   <button
                     type="button"
                     [class.tarea-hecha]="t.estado === estadoHecha"
-                    [attr.aria-label]="t.titulo + (t.estado === estadoHecha ? ': hecha. Editar tarea' : ': editar tarea')"
+                    [attr.aria-label]="'Ver detalle de ' + t.titulo + (t.estado === estadoHecha ? ': hecha' : '')"
                     (click)="seleccionarTarea(t)"
                     class="block w-full text-left px-1.5 py-1 rounded bg-[#EFEBDF] hover:bg-[#D9D3C2] truncate"
                     [title]="t.titulo"
@@ -90,6 +100,8 @@ interface DiaCalendario {
             </div>
           }
         </div>
+
+        <app-agenda-dia id="calendar-day-agenda" class="calendar-day-agenda" [fecha]="fechaSeleccionada()" [tareas]="tareasDelDia()" [esHoy]="diaSeleccionadoEsHoy()" (seleccionar)="seleccionarTarea($event)" />
 
         <section class="month-tasks">
           <h2>{{ tituloFechas() }}</h2>
@@ -147,15 +159,6 @@ interface DiaCalendario {
     .tarea-hecha { text-decoration: line-through; opacity: .65; }
     .calendario-page { min-height: 100%; }
     .calendario-content { padding: 0 1.25rem 2.5rem; }
-    .dias-semana-header {
-      background: #EFEBDF;
-      border: 1px solid #D9D3C2;
-      border-radius: 0.5rem;
-      margin-bottom: 0.25rem;
-    }
-    .hoy-borde { border-color: #6E1F2B; border-width: 2px; }
-    .hoy-fondo { background-color: #F1DEE1; }
-    .hoy-texto { color: #6E1F2B; }
     .month-tasks { background: #FAF6EE; border: 1px solid #D8CBAE; border-radius: 0.65rem; padding: 1.1rem; }
     .month-task { display: flex; align-items: center; gap: 0.85rem; width: 100%; padding: 0.8rem 0; text-align: left; }
     .month-task:hover { background: #F1DEE1; }
@@ -170,8 +173,7 @@ interface DiaCalendario {
     .dia-nombre-corto { display: none; }
     .calendar-heading { display:flex; justify-content:space-between; align-items:end; gap:1rem; padding:1.4rem .4rem 1.2rem; }
     .calendar-eyebrow { color:#8c8570; font:600 .72rem/1 'JetBrains Mono',monospace; letter-spacing:.16em; }
-    .calendar-heading h1 { margin:.45rem 0 .15rem; color:#3a2a22; font:700 2.25rem/1 'Fraunces',Georgia,serif; }
-    .calendar-heading p { margin:0; color:#7a6f66; font-size:.95rem; }
+    .calendar-heading p { margin:0; color:var(--muted); font-size:.95rem; }
     .calendar-actions { display:flex; align-items:center; gap:1rem; }
     .view-toggle { display:flex; padding:.2rem; background:#efebe1; border:1px solid #d9d3c2; border-radius:.55rem; }
     .view-toggle button { border:0; color:#7a6f66; background:transparent; padding:.55rem 1.1rem; border-radius:.4rem; }
@@ -186,37 +188,31 @@ interface DiaCalendario {
     .dias-semana-header { border:0; background:transparent; color:#7a6f66; margin:0; }
     .dias-semana-header > div { padding:.65rem .2rem; }
     .calendar-grid { border:1px solid #d9d3c2; border-radius:.45rem; overflow:hidden; }
-    .calendar-cell { min-height:92px; border-right:1px solid #d9d3c2; border-bottom:1px solid #d9d3c2; background:#fffefa; color:#3a2a22; border-radius:0!important; }
+    .calendar-cell { min-height:92px; border-right:1px solid #d9d3c2; border-bottom:1px solid #d9d3c2; border-radius:0!important; }
     .calendar-cell:nth-child(7n) { border-right:0; }
+    .calendar-day-select, .calendar-day-agenda { display: none; }
     .week-view .calendar-cell { min-height:260px; }
-    .calendar-cell[class*="F5F2E9"] { background:#f5f2e9; color:#a39c87; }
     .hoy-borde { border:2px solid #6e1f2b!important; }
     .hoy-fondo { background:#f1dee1!important; }
     .hoy-texto { color:#6e1f2b; }
-    .upcoming-panel { padding:1.1rem; }
     .overdue-section { margin-top:1rem; padding-top:1rem; border-top:1px solid var(--border); }
     .overdue-list { max-height:24rem; overflow-y:auto; }
     .overdue-card { border-left:3px solid var(--error-text); }
     .upcoming-title { display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; }
     .upcoming-title h2 { margin:0; color:#3a2a22; font:700 1.2rem 'Fraunces',Georgia,serif; }
-    .upcoming-title span { color:#8c8570; font-size:.75rem; }
+    .upcoming-title span { color:var(--muted); font-size:.75rem; }
     .upcoming-card { display:flex; width:100%; text-align:left; padding:0; margin-bottom:.65rem; overflow:hidden; border:1px solid #d9d3c2; border-radius:.65rem; background:#faf6ee; color:#3a2a22; }
     .upcoming-date { display:flex; flex-direction:column; align-items:center; justify-content:center; width:4rem; background:#efebe1; color:#6e1f2b; font-size:1.25rem; font-weight:700; }
     .upcoming-date small { font-size:.65rem; text-transform:uppercase; }
     .upcoming-copy { display:grid; gap:.25rem; padding:.8rem; min-width:0; }
     .upcoming-copy strong { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-    .upcoming-copy small { color:#7a6f66; }
+    .upcoming-copy small { color:var(--muted); }
     .upcoming-copy em { justify-self:start; font-style:normal; font-size:.65rem; color:#6e1f2b; background:#f3dfe2; border:1px solid #e2c2c7; border-radius:.3rem; padding:.18rem .42rem; }
     .all-tasks { display:block; text-align:center; padding:1rem 0; color:#6e1f2b; border-top:1px solid #d9d3c2; text-decoration:none; font-size:.85rem; }
-    .empty-upcoming { color:#7a6f66; font-size:.85rem; padding:1rem 0; }
+    .empty-upcoming { color:var(--muted); font-size:.85rem; padding:1rem 0; }
     :host-context(.dark) .calendar-eyebrow { color:#8793aa; }
-    :host-context(.dark) .calendar-heading h1,
     :host-context(.dark) .calendar-toolbar strong,
     :host-context(.dark) .upcoming-title h2 { color:#f4f6fb; }
-    :host-context(.dark) .calendar-heading p,
-    :host-context(.dark) .upcoming-title span,
-    :host-context(.dark) .upcoming-copy small,
-    :host-context(.dark) .empty-upcoming { color:#9aa6b8; }
     :host-context(.dark) .view-toggle,
     :host-context(.dark) .calendar-main,
     :host-context(.dark) .upcoming-panel { background:linear-gradient(145deg,#171d25,#121820); border-color:#2d3745; }
@@ -236,12 +232,35 @@ interface DiaCalendario {
     :host-context(.dark) .upcoming-copy em { color:#b9c0ff; background:#252d48; border-color:#46528d; }
     :host-context(.dark) .all-tasks { color:#9da7ff; border-color:#2d3745; }
     @media (max-width: 900px) { .calendar-layout { grid-template-columns:1fr; } .upcoming-panel { order:2; } }
-    @media (max-width: 600px) { .calendar-heading { align-items:flex-start; flex-direction:column; } .calendar-actions { width:100%; justify-content:space-between; } .calendar-heading h1 { font-size:1.9rem; } .calendar-cell { min-height:70px; } .week-view .calendar-cell { min-height:150px; } }
+    @media (max-width: 600px) { .calendar-heading { align-items:flex-start; flex-direction:column; } .calendar-actions { width:100%; justify-content:space-between; } }
     @media (max-width: 480px) {
       .calendario-content { padding: 0 .75rem 1.5rem; }
-      .dias-semana-header > div { gap: 0.15rem; }
-      .dia-nombre-largo { display: none; }
+    }
+    @media (max-width: 767px) {
+      .calendar-heading { padding: 1rem .25rem; gap: .75rem; }
+      .calendar-heading p { font-size: .85rem; }
+      .calendar-actions { gap: .6rem; }
+      .view-toggle button { padding: .55rem .85rem; }
+      .new-task { padding: .65rem .8rem; white-space: nowrap; font-size: .8rem; }
+      .calendar-main { padding: .75rem; }
+      .calendar-toolbar { display: grid; grid-template-columns: 2rem minmax(0, 1fr) 2rem; gap: .4rem; position: relative; padding-top: 2rem; }
+      .calendar-toolbar strong { min-width: 0; text-align: center; font: 600 1.05rem var(--font-body); }
+      .calendar-toolbar button { width: 2rem; height: 2rem; background: transparent; border: 0; color: var(--accent); }
+      .calendar-toolbar .today-button { position: absolute; top: 0; right: 0; height: 1.6rem; font-size: .7rem; border: 1px solid var(--border); }
+      .dia-punto, .dia-nombre-largo, .calendar-day-number, .calendar-task-buttons, .month-tasks, .calendar-cell.extra-week { display: none; }
       .dia-nombre-corto { display: inline; }
+      .dias-semana-header { font-size: .6rem; letter-spacing: 0; }
+      .calendar-grid { gap: .2rem; border: 0; overflow: visible; }
+      .calendar-cell, .week-view .calendar-cell { min-height: 0; padding: 0; border: 1px solid var(--border); border-radius: .4rem!important; }
+      .calendar-cell:nth-child(7n) { border-right: 1px solid var(--border); }
+      .calendar-cell.hoy-borde { border-width: 1px!important; }
+      .calendar-cell.hoy-fondo { background: var(--card-strong)!important; }
+      .calendar-cell.dia-seleccionado { border: 2px solid var(--accent)!important; background: var(--accent-soft)!important; color: var(--accent); }
+      .calendar-day-select { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: .25rem; width: 100%; min-height: 3.3rem; padding: .4rem .15rem; border: 0; border-radius: .3rem; background: transparent; color: inherit; font-size: .72rem; cursor: pointer; }
+      .day-count { padding: .05rem .4rem; border-radius: 1rem; background: var(--bg-subtle); color: var(--ink-secondary); font-size: .6rem; line-height: 1.2; }
+      .dia-seleccionado .day-count { background: var(--accent); color: white; }
+      .calendar-day-agenda { display: block; border-top: 1px solid var(--border); margin-top: 1.25rem; padding-top: 1.25rem; }
+      .upcoming-copy strong { white-space: normal; overflow-wrap: anywhere; }
     }
   `,
 })
@@ -256,6 +275,17 @@ export class CalendarioComponent implements OnInit {
   protected readonly vista = signal<'mes' | 'semana'>('mes');
   protected readonly estadoHecha = EstadoTarea.HECHA;
   protected readonly tareaSeleccionada = signal<Tarea | null>(null);
+  protected readonly fechaSeleccionada = signal(this.diaLocal(new Date()));
+  protected readonly tareasDelDia = computed(() => [...(this.dias().find((dia) => dia.fecha.getTime() === this.fechaSeleccionada().getTime())?.tareas ?? [])]
+    .sort((a, b) => new Date(a.fechaLimite!).getTime() - new Date(b.fechaLimite!).getTime()));
+  protected readonly diaSeleccionadoEsHoy = computed(() => this.fechaSeleccionada().getTime() === this.diaLocal(this.ahora()).getTime());
+  protected readonly cantidadDiasMovil = computed(() => {
+    if (this.vista() === 'semana') return 7;
+    const base = this.mesActual();
+    const primerDia = new Date(base.getFullYear(), base.getMonth(), 1);
+    const diasDelMes = new Date(base.getFullYear(), base.getMonth() + 1, 0).getDate();
+    return Math.ceil(((primerDia.getDay() + 6) % 7 + diasDelMes) / 7) * 7;
+  });
 
   protected readonly diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
   protected readonly diasSemanaCortos = ['LUN', 'MAR', 'MIÉ', 'JUE', 'VIE', 'SÁB', 'DOM'];
@@ -365,11 +395,16 @@ export class CalendarioComponent implements OnInit {
       });
     }
     this.dias.set(celdas);
+    const seleccionEnPeriodo = celdas.some((dia) => dia.esDelMesActual && dia.fecha.getTime() === this.fechaSeleccionada().getTime());
+    if (!seleccionEnPeriodo) {
+      this.fechaSeleccionada.set(celdas.find((dia) => dia.esHoy && dia.esDelMesActual)?.fecha
+        ?? celdas.find((dia) => dia.esDelMesActual)!.fecha);
+    }
   }
 
   protected periodoAnterior(): void {
     const d = new Date(this.mesActual());
-    if (this.vista() === 'mes') d.setMonth(d.getMonth() - 1);
+    if (this.vista() === 'mes') { d.setDate(1); d.setMonth(d.getMonth() - 1); }
     else d.setDate(d.getDate() - 7);
     this.mesActual.set(d);
     this.cargar();
@@ -377,7 +412,7 @@ export class CalendarioComponent implements OnInit {
 
   protected periodoSiguiente(): void {
     const d = new Date(this.mesActual());
-    if (this.vista() === 'mes') d.setMonth(d.getMonth() + 1);
+    if (this.vista() === 'mes') { d.setDate(1); d.setMonth(d.getMonth() + 1); }
     else d.setDate(d.getDate() + 7);
     this.mesActual.set(d);
     this.cargar();
@@ -385,6 +420,7 @@ export class CalendarioComponent implements OnInit {
 
   protected irAHoy(): void {
     this.mesActual.set(new Date());
+    this.fechaSeleccionada.set(this.diaLocal(new Date()));
     this.cargar();
   }
 
@@ -400,6 +436,18 @@ export class CalendarioComponent implements OnInit {
     const offset = (inicio.getDay() + 6) % 7;
     inicio.setDate(inicio.getDate() - offset);
     return inicio;
+  }
+
+  private diaLocal(fecha: Date): Date {
+    return new Date(fecha.getFullYear(), fecha.getMonth(), fecha.getDate());
+  }
+
+  protected seleccionarDia(fecha: Date): void {
+    this.fechaSeleccionada.set(this.diaLocal(fecha));
+    if (this.vista() === 'mes' && (fecha.getMonth() !== this.mesActual().getMonth() || fecha.getFullYear() !== this.mesActual().getFullYear())) {
+      this.mesActual.set(new Date(fecha.getFullYear(), fecha.getMonth(), 1));
+      this.cargar();
+    }
   }
 
   protected seleccionarTarea(t: Tarea): void {
