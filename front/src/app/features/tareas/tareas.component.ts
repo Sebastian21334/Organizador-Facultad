@@ -13,6 +13,7 @@ import { AuthService } from '../../core/services/auth.service';
 import { TareaManualFormComponent } from './tarea-manual-form.component';
 import { ToastService } from '../../core/services/toast.service';
 import { finalize } from 'rxjs';
+import { fechaHoraLocal, fechaLocalAIso } from '../../core/services/fechas';
 
 @Component({
   selector: 'app-tareas',
@@ -34,7 +35,7 @@ import { finalize } from 'rxjs';
             <p class="tareas-eyebrow">Organización</p>
             <p class="tareas-intro">Administrá tus actividades, entregas y parciales.</p>
           </div>
-          <button type="button" class="nueva-tarea-btn" (click)="alternarFormulario()" [attr.aria-expanded]="mostrarFormulario()">
+          <button type="button" class="nueva-tarea-btn" (click)="alternarFormulario()" [disabled]="guardandoNueva() || cargando()" [attr.aria-expanded]="mostrarFormulario()">
             {{ mostrarFormulario() ? 'Cerrar' : '＋ Nueva tarea' }}
           </button>
         </header>
@@ -44,11 +45,21 @@ import { finalize } from 'rxjs';
         @if (mostrarFormulario()) {
           <app-tarea-manual-form
             [materias]="materias()"
+            [bloqueado]="cargando()"
             (creada)="tareaCreada($event)"
-            (cancelar)="mostrarFormulario.set(false)"
+            (guardandoCambio)="guardandoNueva.set($event)"
+            (cancelar)="alternarFormulario()"
           />
         }
 
+        @if (errorMaterias()) {
+          <app-error [mensaje]="errorMaterias()" [permitirReintento]="true" (reintentar)="cargarMaterias()" />
+        }
+
+        @if (cargandoPerfil()) {
+          <app-loader mensaje="Cargando tareas..." />
+        } @else {
+        <!-- El aviso y los filtros aparecen juntos, con la preferencia confirmada. -->
         @if (mostrarAvisoRecordatorios()) {
           <section class="recordatorio-aviso" aria-labelledby="recordatorio-aviso-titulo">
             <div>
@@ -86,7 +97,7 @@ import { finalize } from 'rxjs';
               <option value="">Todos</option>
 
               @for (e of estados; track e) {
-                <option [value]="e">{{ e }}</option>
+                <option [value]="e">{{ e === 'en_progreso' ? 'En progreso' : (e | titlecase) }}</option>
               }
             </select>
           </label>
@@ -184,7 +195,7 @@ import { finalize } from 'rxjs';
                       </select>
 
                       <input
-                        type="date"
+                        type="datetime-local"
                         [(ngModel)]="edicion.fechaLimite"
                         aria-label="Fecha límite"
                         class="filtro-select"
@@ -243,7 +254,7 @@ import { finalize } from 'rxjs';
                         {{ t.materia?.nombre ?? 'Sin materia' }}
 
                         @if (t.fechaLimite) {
-                          · {{ t.fechaLimite | date: 'dd/MM/yyyy' : 'UTC' }}
+                          · {{ t.fechaLimite | date: 'dd/MM/yyyy HH:mm' }}
                         }
 
                       </p>
@@ -298,6 +309,7 @@ import { finalize } from 'rxjs';
             }
 
           </ul>
+        }
         }
 
       </div>
@@ -780,7 +792,10 @@ export class TareasComponent implements OnInit {
   protected readonly materias = signal<Materia[]>([]);
   protected readonly tareasFiltradas = signal<Tarea[]>([]);
   protected readonly mostrarAvisoRecordatorios = signal(false);
+  protected readonly cargandoPerfil = signal(true);
   protected readonly mostrarFormulario = signal(false);
+  protected readonly guardandoNueva = signal(false);
+  protected readonly errorMaterias = signal<string | null>(null);
 
   protected filtroEstado = '';
   protected filtroMateria = '';
@@ -815,20 +830,18 @@ export class TareasComponent implements OnInit {
 
   ngOnInit(): void {
     this.cargar();
-    this.auth.getPerfil().subscribe({
+    this.auth.getPerfil().pipe(finalize(() => this.cargandoPerfil.set(false))).subscribe({
       next: (perfil) => this.mostrarAvisoRecordatorios.set(!perfil.recordatorioEmailHabilitado),
       error: () => this.mostrarAvisoRecordatorios.set(false),
     });
   }
 
   protected cargar(): void {
+    if (this.guardandoNueva() || this.operando().length) return;
     this.cargando.set(true);
     this.error.set(null);
 
-    this.materiasService.listar().subscribe({
-      next: (materias) => this.materias.set(materias),
-      error: () => this.materias.set([]),
-    });
+    this.cargarMaterias();
 
     this.tareasService.listar().subscribe({
       next: (tareas) => {
@@ -841,6 +854,14 @@ export class TareasComponent implements OnInit {
         this.error.set('No se pudieron cargar las tareas.');
         this.cargando.set(false);
       },
+    });
+  }
+
+  protected cargarMaterias(): void {
+    this.errorMaterias.set(null);
+    this.materiasService.listar().subscribe({
+      next: (materias) => this.materias.set(materias),
+      error: () => this.errorMaterias.set('No se pudieron cargar las materias. Podés seguir consultando tus tareas y reintentar.'),
     });
   }
 
@@ -879,10 +900,12 @@ export class TareasComponent implements OnInit {
   }
 
   protected alternarFormulario(): void {
+    if (this.guardandoNueva() || this.cargando()) return;
     this.mostrarFormulario.update((visible) => !visible);
   }
 
   protected tareaCreada(tarea: Tarea): void {
+    this.guardandoNueva.set(false);
     this.tareas.update((lista) => [tarea, ...lista]);
     this.busqueda = '';
     this.filtroMateria = '';
@@ -916,9 +939,7 @@ export class TareasComponent implements OnInit {
     this.edicion = {
       titulo: tarea.titulo,
       materiaId: tarea.materia?.id,
-      fechaLimite: tarea.fechaLimite
-        ? this.aInputDate(tarea.fechaLimite)
-        : '',
+      fechaLimite: fechaHoraLocal(tarea.fechaLimite),
       tipo: tarea.tipo,
     };
   }
@@ -930,20 +951,23 @@ export class TareasComponent implements OnInit {
   protected guardarEdicion(tarea: Tarea): void {
     if (this.operando().includes(tarea.id)) return;
     const titulo = this.edicion.titulo.trim();
-    if (!titulo) { this.toast.error('Escribí un título para la tarea.'); return; }
+    if (!titulo || titulo.length > 200) { this.toast.error('Escribí un título de hasta 200 caracteres para la tarea.'); return; }
+    const fecha = this.edicion.fechaLimite ? fechaLocalAIso(this.edicion.fechaLimite) : null;
+    if (this.edicion.fechaLimite && !fecha) { this.toast.error('Revisá la fecha y hora límite.'); return; }
+    const fechaCambio = fechaHoraLocal(tarea.fechaLimite) !== this.edicion.fechaLimite;
     this.operando.update((ids) => [...ids, tarea.id]);
     this.tareasService
       .actualizar(tarea.id, {
         titulo,
-        materiaId: this.edicion.materiaId,
-        fechaLimite: this.edicion.fechaLimite || undefined,
+        materiaId: this.edicion.materiaId || null,
+        ...(fechaCambio ? { fechaLimite: fecha } : {}),
         tipo: this.edicion.tipo,
       })
       .pipe(finalize(() => this.finalizarOperacion(tarea.id)))
       .subscribe({
         next: (actualizada) => {
           this.reemplazarEnLista(actualizada);
-          this.tareaEnEdicion.set(null);
+          if (this.tareaEnEdicion() === tarea.id) this.tareaEnEdicion.set(null);
           this.toast.success('Cambios de la tarea guardados.');
         },
 
@@ -1003,12 +1027,6 @@ export class TareasComponent implements OnInit {
 
   private finalizarOperacion(id: string): void {
     this.operando.update((ids) => ids.filter((item) => item !== id));
-  }
-
-  private aInputDate(fecha: Date | string): string {
-    const d = new Date(fecha);
-
-    return d.toISOString().slice(0, 10);
   }
 
 }

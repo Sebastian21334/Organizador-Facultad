@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, input, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ToastService } from '../../core/services/toast.service';
@@ -10,7 +10,11 @@ import { ToastService } from '../../core/services/toast.service';
     <section class="contact" id="contacto" aria-labelledby="contact-title">
       <div class="contact-copy">
         <p class="eyebrow">Estamos del otro lado</p>
-        <h2 id="contact-title">¿Algo no funciona?<br>Contame.</h2>
+        @if (enPortada()) {
+          <h2 id="contact-title">¿Algo no funciona?<br>Contame.</h2>
+        } @else {
+          <h1 id="contact-title">¿Algo no funciona?<br>Contame.</h1>
+        }
         <p>Si tenés un problema, una duda o una idea para mejorar Tempo, dejá tu mensaje. Te respondo por mail.</p>
         <a [href]="'mailto:' + email">{{ email }} <span aria-hidden="true">↗</span></a>
         <small>No incluyas contraseñas ni datos sensibles.</small>
@@ -44,7 +48,7 @@ import { ToastService } from '../../core/services/toast.service';
     :host { display: block; }
     .contact { display: grid; grid-template-columns: .9fr 1.1fr; gap: 70px; max-width: 1176px; margin: auto; padding: 90px 32px; color: var(--ink); }
     .eyebrow { color: var(--accent); font: 600 .68rem 'JetBrains Mono',monospace; text-transform: uppercase; letter-spacing: .12em; }
-    h2 { font: 700 clamp(2.3rem,4vw,3.3rem)/1.06 var(--font-display); margin: 20px 0; }
+    h1, h2 { font: 700 clamp(2.3rem,4vw,3.3rem)/1.06 var(--font-display); margin: 20px 0; }
     .contact-copy>p:not(.eyebrow) { color: var(--muted); max-width: 36ch; font-size: .9rem; line-height: 1.8; }
     .contact-copy>a { display: inline-block; margin: 24px 0 14px; color: var(--accent); font-size: .8rem; overflow-wrap: anywhere; }
     .contact-copy>small { display: block; color: var(--muted); font-size: .72rem; }
@@ -67,6 +71,7 @@ import { ToastService } from '../../core/services/toast.service';
   `,
 })
 export class ContactoComponent {
+  readonly enPortada = input(false);
   private readonly fb = inject(FormBuilder);
   private readonly http = inject(HttpClient);
   private readonly toast = inject(ToastService);

@@ -1,0 +1,68 @@
+const runtime = require('./qa-runtime.cjs');
+const { chromium } = runtime.require('playwright');
+const axe = runtime.require('axe-core');
+const fs = require('node:fs');
+const path = require('node:path');
+const assert = require('node:assert/strict');
+const out = runtime.output;
+const findings = { date: new Date().toISOString(), environment: 'Next producción con API ficticia local; Origin de POST sustituido por Playwright para probar la política HTTPS sin debilitarla.', screens: [], checks: [], errors: [] };
+const reset = async (mode='normal',count=120) => { const response=await fetch('http://127.0.0.1:4301/__qa/reset',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({mode,count})});assert.equal(response.status,200); };
+(async()=>{
+ const browser=await chromium.launch({executablePath:runtime.chromePath,headless:true});
+ try {
+ for(const size of [{name:'movil',width:390,height:844},{name:'tablet',width:768,height:1024},{name:'escritorio',width:1440,height:900}]) {
+  await reset();
+  const context=await browser.newContext({viewport:{width:size.width,height:size.height},timezoneId:'America/Argentina/Buenos_Aires'});
+  const page=await context.newPage();
+  page.on('pageerror',error=>findings.errors.push({size:size.name,message:error.message}));
+  await page.route('**/_vercel/**',route=>route.fulfill({status:200,contentType:'application/javascript',body:''}));
+  await page.route('**/api/**',async route=>{const response=await route.fetch({headers:{...route.request().headers(),origin:'https://chat-qa.example'}});await route.fulfill({response});});
+  const shot=async name=>{await page.screenshot({path:path.join(out,`${size.name}-${name}.png`),fullPage:true});findings.screens.push(`${size.name}-${name}.png`);};
+  const audit=async name=>{await page.evaluate(axe.source);const result=await page.evaluate(()=>axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa','wcag22aa']}}));const overflow=await page.evaluate(()=>({width:innerWidth,document:document.documentElement.scrollWidth,height:innerHeight,documentHeight:document.documentElement.scrollHeight}));findings.checks.push({size:size.name,screen:name,overflow,violations:result.violations.map(v=>({id:v.id,impact:v.impact,description:v.description,nodes:v.nodes.map(n=>n.target)}))});if(name!=='login')assert.ok(overflow.documentHeight<=overflow.height+1,'vertical overflow');assert.ok(overflow.document<=overflow.width,`${size.name} overflow ${name}`);};
+  await page.goto('http://127.0.0.1:3001/login');
+  await page.getByLabel('Email',{exact:true}).waitFor();
+  await shot('login');await audit('login');
+  await page.keyboard.press('Tab');assert.equal(await page.locator('#email').evaluate(el=>el===document.activeElement),true);
+  await page.getByLabel('Email',{exact:true}).fill('qa@example.test');await page.getByLabel('Contraseña',{exact:true}).fill('incorrecta');
+  await page.getByRole('button',{name:'Iniciar sesión',exact:true}).click();await page.getByText('Credenciales inválidas',{exact:true}).waitFor();await shot('login-error');
+  await page.getByLabel('Contraseña',{exact:true}).fill('password-de-prueba');await page.getByRole('button',{name:'Iniciar sesión',exact:true}).click();
+  await page.waitForURL('**/chat');await page.getByRole('log').waitFor();await page.getByText('Cargando tus apuntes…').waitFor({state:'hidden'});
+  assert.equal(await page.locator('.message-row.user').count(),50);
+  assert.match(await page.locator('.message-row.user').first().innerText(),/Mensaje 71:/);
+  await shot('historial');await audit('historial');
+  await page.getByRole('button',{name:'Cargar mensajes anteriores',exact:true}).click();
+  await page.waitForFunction(()=>document.querySelectorAll('.message-row.user').length===100);
+  await page.getByRole('button',{name:'Cargar mensajes anteriores',exact:true}).click();
+  await page.waitForFunction(()=>document.querySelectorAll('.message-row.user').length===120);
+  assert.match(await page.locator('.message-row.user').first().innerText(),/Mensaje 1:/);
+  await reset('normal');
+  await page.getByLabel('Escribí un mensaje',{exact:true}).fill('Repasar estructuras de datos para el parcial');
+  await page.getByRole('button',{name:'Enviar mensaje',exact:true}).click();
+  await page.getByText('Repasar estructuras de datos para el parcial',{exact:true}).last().waitFor();
+  await page.waitForFunction(()=>document.querySelectorAll('.typing').length===0);
+  assert.equal(await page.getByLabel('Escribí un mensaje',{exact:true}).inputValue(),'');await shot('tarea-creada');
+  await reset('send-error');
+  const input=page.getByLabel('Escribí un mensaje',{exact:true});await input.fill('Mensaje que debe conservarse');
+  await page.getByRole('button',{name:'Enviar mensaje',exact:true}).click();
+  await page.getByText(/El mensaje quedó disponible para copiar o editar/).waitFor();assert.equal(await input.inputValue(),'Mensaje que debe conservarse');
+  await shot('envio-error');await audit('envio-error');
+  await input.fill('Primer borrador');await page.getByRole('button',{name:'Enviar mensaje',exact:true}).click();await input.fill('Borrador nuevo mientras espero');
+  await page.getByText(/El mensaje quedó disponible para copiar o editar/).waitFor();assert.equal(await input.inputValue(),'Borrador nuevo mientras espero');
+  await reset('logout-error');await page.getByRole('button',{name:'Cerrar sesión',exact:true}).click();await page.getByText(/La sesión sigue abierta/).waitFor();assert.ok(page.url().endsWith('/chat'));await shot('logout-error');
+  await reset('expired');await input.fill('Texto cuando vence la sesión');await page.getByRole('button',{name:'Enviar mensaje',exact:true}).click();await page.getByRole('link',{name:'Volver a iniciar sesión'}).waitFor();assert.equal(await input.inputValue(),'Texto cuando vence la sesión');await shot('sesion-vencida');
+  await reset('history-error');await page.reload();await page.getByRole('button',{name:'Reintentar carga'}).waitFor();await shot('historial-error');
+  await reset('normal',0);await page.getByRole('button',{name:'Reintentar carga'}).click();await page.getByRole('heading',{name:'¿Qué tenés para hoy?'}).waitFor();await shot('vacio');await audit('vacio');
+  await reset('slow-history');await page.reload();await page.getByText('Cargando tus apuntes…').waitFor();await shot('cargando');await page.getByRole('log').waitFor();
+  await page.emulateMedia({reducedMotion:'reduce'});
+  await input.fill('Mensaje sin movimiento');await page.getByRole('button',{name:'Enviar mensaje',exact:true}).click();
+  const motion=await page.locator('.typing span').first().evaluate(el=>getComputedStyle(el).animationName);assert.equal(motion,'none');
+  await page.waitForFunction(()=>document.querySelectorAll('.typing').length===0);
+  await input.focus();const outline=await input.evaluate(el=>getComputedStyle(el.parentElement).outlineWidth);assert.equal(outline,'3px');
+  await reset();await page.getByRole('button',{name:'Cerrar sesión',exact:true}).click();await page.waitForURL('**/login');
+  findings.checks.push({size:size.name,flows:'login inválido/válido, historial 3 páginas, envío, borradores conservados, 401, logout fallido/exitoso, error/reintento, vacío, carga, teclado, reduced-motion',passed:true});
+  await context.close();
+ }
+ fs.writeFileSync(path.join(out,'qa-resultados.json'),JSON.stringify(findings,null,2));
+ console.log(JSON.stringify({screens:findings.screens.length,checks:findings.checks.length,violations:findings.checks.filter(x=>x.violations?.length),errors:findings.errors},null,2));
+ }catch(error){fs.writeFileSync(path.join(out,'qa-resultados-parcial.json'),JSON.stringify({...findings,failure:error.stack},null,2));throw error;}finally{await browser.close();}
+})();

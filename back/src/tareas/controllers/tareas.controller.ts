@@ -92,8 +92,15 @@ export class TareasController {
       id,
       {
         ...resto,
-        ...(fechaLimite ? { fechaLimite: new Date(fechaLimite) } : {}),
-        ...(materiaId ? { materia: { id: materiaId } as Materia } : {}),
+        ...(fechaLimite !== undefined
+          ? { fechaLimite: fechaLimite === null ? null : new Date(fechaLimite) }
+          : {}),
+        ...(materiaId !== undefined
+          ? {
+              materia:
+                materiaId === null ? null : ({ id: materiaId } as Materia),
+            }
+          : {}),
         ...(recordatorioMinutos !== undefined ? { recordatorioMinutos } : {}),
       },
       req.user.userId,

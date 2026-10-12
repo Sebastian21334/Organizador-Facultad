@@ -1,100 +1,38 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# API de Tempo
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Backend NestJS, TypeORM y PostgreSQL del organizador universitario. Conserva módulos de autenticación, usuarios, materias, tareas, mensajes, IA, correo, contacto y push. Cada módulo separa controllers HTTP, servicios de aplicación y repositorios.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Compilar
 
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Project setup
-
-La configuración, migración, endpoints y pruebas de notificaciones push están documentados en [PUSH.md](PUSH.md).
-
-```bash
-$ npm install
+```sh
+npm ci
+npm run build
 ```
 
-## Compile and run the project
+Los archivos de pruebas y la configuración de Jest se eliminaron por pedido del usuario el 10 de octubre de 2026. Ya no hay comandos de tests configurados. Los informes de `../docs` conservan los resultados históricos anteriores a esa eliminación.
 
-```bash
-# development
-$ npm run start
+## Ejecutar la API
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+```sh
+npm run start:dev
+# Después de compilar:
+npm run start:prod
 ```
 
-## Run tests
+Puerto predeterminado: 3000. La configuración se valida al iniciar. Son obligatorias las variables `DB_HOST`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`, `JWT_SECRET`, `FRONTEND_URL`, `NODE_ENV`, `AZURE_OPENAI_API_KEY`, `AZURE_OPENAI_ENDPOINT`, `AZURE_OPENAI_DEPLOYMENT`, `ACS_CONNECTION_STRING` y `ACS_SENDER_ADDRESS`. También se admite `DB_PORT`. El secreto JWT requiere al menos 32 bytes aleatorios. No guardar secretos reales en Git ni copiarlos a reportes.
 
-```bash
-# unit tests
-$ npm run test
+Producción requiere HTTPS en los orígenes públicos y TLS verificado en PostgreSQL. `FRONTEND_URLS` agrega orígenes permitidos; `COOKIE_SAME_SITE=none` sólo se admite en producción con cookies seguras. Configurar `TRUST_PROXY` únicamente con rangos/IPs de proxies conocidos. Push es opcional: consultar [PUSH.md](PUSH.md).
 
-# e2e tests
-$ npm run test:e2e
+**Antes de usar una base nueva:** las migraciones presentes amplían tablas que ya existían; no incluyen la creación inicial completa del esquema. Obtener/documentar ese baseline antes de ejecutar `npm run migration:run`. No activar `synchronize` en una base con datos para compensar esta ausencia.
 
-# test coverage
-$ npm run test:cov
-```
+Al iniciar la aplicación se activa el procesamiento periódico de recordatorios. Para revisiones visuales usar una API de pruebas aislada, sin credenciales o datos de producción.
 
-## Deployment
+## Contratos relevantes
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+- Las consultas/escrituras privadas usan el usuario de la sesión. El navegador usa cookies HttpOnly y CSRF; los clientes servidor a servidor admiten Bearer.
+- PATCH distingue omisión (`undefined`: conservar) y `null` (quitar) para `fechaLimite`, `materiaId` y anticipación opcional del recordatorio. Título y estado no admiten null.
+- Las fechas API son instantes ISO. La interfaz presenta la hora local. Una fecha extraída por IA sin horario vence a las 23:59:59.999 del día indicado en Argentina; no se reinterpretan históricos automáticamente.
+- Los listados aceptan `limit` de 1 a 100 y `offset` de 0 a 10000. Mensajes llegan del más reciente al más antiguo; el cliente invierte cada página para mostrarlos como conversación.
+- La resolución IA utiliza materias existentes del propietario y pide aclaración si los niveles o candidatos son ambiguos. La respuesta del modelo se valida antes de crear datos.
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+La investigación y el detalle de cambios están en `../docs/ui-ux-guidelines.md`, `../docs/auditoria-back-chat.md` y `../docs/CAMBIOS.md`.

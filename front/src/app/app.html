@@ -1,20 +1,25 @@
-<div class="app-shell">
+<div class="app-shell" [class.app-shell--reserva-privada]="reservarNavegacion()">
+  <a class="skip-link" href="#main-content" (click)="saltarAlContenido($event)" [attr.inert]="esMovil() && menuAbierto() ? '' : null">Saltar al contenido</a>
+  @if (reservarNavegacion()) {
+    <div class="mobile-topbar mobile-topbar--placeholder" aria-hidden="true" inert></div>
+  }
   @if (auth.isAuthenticated()) {
     <!-- Barra superior compacta, visible solo en mobile -->
-    <header class="mobile-topbar">
+    <header class="mobile-topbar" [attr.inert]="esMovil() && menuAbierto() ? '' : null">
       <button
+        #menuToggle
         type="button"
         class="menu-toggle"
         (click)="toggleMenu()"
         [attr.aria-expanded]="menuAbierto()"
-        aria-label="Abrir menú de navegación"
+        [attr.aria-label]="menuAbierto() ? 'Cerrar menú de navegación' : 'Abrir menú de navegación'"
         aria-controls="app-sidebar-drawer"
       >
         <svg [lucideIcon]="menuIcon" [size]="22" aria-hidden="true"></svg>
       </button>
 
-      <a class="brand-block brand-block--compact" routerLink="/inicio" aria-label="Tempo, ir a Inicio">
-        <span class="brand-mark">T</span>
+      <a class="brand-block brand-block--compact" routerLink="/inicio" title="Ir a Inicio">
+        <span class="brand-mark" aria-hidden="true">T</span>
         <span class="brand-name">Tempo</span>
       </a>
       <button
@@ -33,15 +38,21 @@
     }
 
     <aside
+      #sidebar
       id="app-sidebar-drawer"
       class="app-sidebar"
       [class.app-sidebar--open]="menuAbierto()"
+      [attr.inert]="esMovil() && !menuAbierto() ? '' : null"
+      [attr.role]="esMovil() ? 'dialog' : null"
+      [attr.aria-modal]="esMovil() && menuAbierto() ? true : null"
+      (keydown)="navegarMenu($event)"
       aria-label="Navegación principal"
     >
-      <a class="brand-block" routerLink="/inicio" (click)="cerrarMenu()" aria-label="Tempo, ir a Inicio">
-        <span class="brand-mark">T</span>
+      <button type="button" class="drawer-close" (click)="cerrarMenu()" aria-label="Cerrar menú de navegación">Cerrar <span aria-hidden="true">×</span></button>
+      <a class="brand-block" routerLink="/inicio" (click)="cerrarMenu()" title="Ir a Inicio">
+        <span class="brand-mark" aria-hidden="true">T</span>
         <span class="brand-name">Tempo</span>
-        <span class="brand-slogan">Organizá tu vida universitaria.</span>
+        <span class="brand-slogan" aria-hidden="true">Organizá tu vida universitaria.</span>
       </a>
 
       <nav class="sidebar-nav" aria-label="Navegación principal">
@@ -49,6 +60,7 @@
           <a
             [routerLink]="item.path"
             routerLinkActive="active"
+            ariaCurrentWhenActive="page"
             [routerLinkActiveOptions]="{ exact: item.path === '/' }"
             class="nav-item"
             [attr.aria-label]="item.label"
@@ -85,7 +97,7 @@
     </aside>
   }
 
-  <main appMotion class="app-content" [class.app-content--full-bleed]="fullBleed()" [class.app-content--loading]="auth.checkingSession()">
+  <main #contenido id="main-content" tabindex="-1" appMotion class="app-content" [attr.inert]="esMovil() && menuAbierto() ? '' : null" [class.app-content--full-bleed]="fullBleed()" [class.app-content--loading]="auth.checkingSession()">
     @if (auth.checkingSession()) {
       <section class="session-loading" aria-labelledby="session-loading-title">
         <div class="session-loading-card">
@@ -101,14 +113,14 @@
       <app-error [mensaje]="auth.sessionError()" [permitirReintento]="true" (reintentar)="reintentarSesion()" />
     }
     <router-outlet />
-    @if (!auth.checkingSession() && !auth.isAuthenticated()) {
+    @if (navegacionInicialLista() && !auth.checkingSession() && !auth.isAuthenticated()) {
       <footer class="py-6 text-center"><a routerLink="/instalar" class="underline">Instalar app</a></footer>
     }
   </main>
 </div>
 
 <app-confirm-dialog />
-<app-toasts />
+<app-toasts [attr.inert]="esMovil() && menuAbierto() ? '' : null" />
 @if (!auth.checkingSession()) {
   <app-install-prompt />
 }

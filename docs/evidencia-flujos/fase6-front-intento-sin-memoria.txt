@@ -1,0 +1,615 @@
+
+> organizador-facultad@0.0.0 test
+> ng test --watch=false
+
+> Building...
+√ Building...
+Application bundle generation complete. [6.143 seconds] - 2026-10-10T01:40:13.384Z
+
+
+ RUN  v4.1.11 C:/Users/Sebastian Gonzalez/Desktop/proyectos/Proyecto organizador universidad/front
+
+
+<--- Last few GCs --->
+
+[8164:0000015CF5E3C000]     6320 ms: Scavenge 76.3 (117.1) -> 60.5 (187.8) MB, pooled: 0 MB, 11.66 / 0.02 ms  (average mu = 0.990, current mu = 0.987) task; 
+
+
+<--- Last few GCs --->
+
+[11656:000001ED498B6000]     5083 ms: Scavenge 78.2 (111.0) -> 62.2 (186.5) MB, pooled: 0 MB, 33.96 / 0.02 ms  (average mu = 0.998, current mu = 0.998) allocation failure; 
+[11656:000001ED498B6000]     5162 ms: Mark-Compact 84.3 (186.8) -> 48.5 (190.3) MB, pooled: 0 MB, 26.09 / 0.01 ms  (+ 32.4 ms in 196 steps since start of marking, biggest step 17.7 ms, walltime since start of marking 62 ms) (average mu = 0.991, current mu
+FATAL ERROR: Zone Allocation failed - process out of memory
+----- Native stack trace -----
+
+FATAL ERROR: Zone Allocation failed - process out of memory
+----- Native stack trace -----
+
+[vitest-pool]: Failed to terminate forks worker for test files C:/Users/Sebastian Gonzalez/Desktop/proyectos/Proyecto organizador universidad/front/src/app/core/services/theme.service.spec.ts. Error: The child process was torn down or never initialized. This is a bug in Vitest.
+    at ForksPoolWorker.get fork [as fork] (file:///C:/Users/Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3196:26)
+    at ForksPoolWorker.off (file:///C:/Users/Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3145:8)
+    at PoolRunner.stop (file:///C:/Users/Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3025:16)
+    at Pool.schedule (file:///C:/Users/Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3551:35)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+[vitest-pool]: Failed to terminate forks worker for test files C:/Users/Sebastian Gonzalez/Desktop/proyectos/Proyecto organizador universidad/front/src/app/core/services/pwa-platform.service.spec.ts. Error: The child process was torn down or never initialized. This is a bug in Vitest.
+    at ForksPoolWorker.get fork [as fork] (file:///C:/Users/Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3196:26)
+    at ForksPoolWorker.off (file:///C:/Users/Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3145:8)
+    at PoolRunner.stop (file:///C:/Users/Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3025:16)
+    at Pool.schedule (file:///C:/Users/Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3551:35)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+[vitest-pool]: Failed to terminate forks worker for test files C:/Users/Sebastian Gonzalez/Desktop/proyectos/Proyecto organizador universidad/front/src/app/core/services/paginacion.spec.ts. Error: The child process was torn down or never initialized. This is a bug in Vitest.
+    at ForksPoolWorker.get fork [as fork] (file:///C:/Users/Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3196:26)
+    at ForksPoolWorker.off (file:///C:/Users/Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3145:8)
+    at PoolRunner.stop (file:///C:/Users/Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3025:16)
+    at Pool.schedule (file:///C:/Users/Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3551:35)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+[vitest-pool]: Failed to terminate forks worker for test files C:/Users/Sebastian Gonzalez/Desktop/proyectos/Proyecto organizador universidad/front/src/app/features/materias/pdf-plan.service.spec.ts. Error: The child process was torn down or never initialized. This is a bug in Vitest.
+    at ForksPoolWorker.get fork [as fork] (file:///C:/Users/Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3196:26)
+    at ForksPoolWorker.off (file:///C:/Users/Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3145:8)
+    at PoolRunner.stop (file:///C:/Users/Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3025:16)
+    at Pool.schedule (file:///C:/Users/Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3551:35)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+[vitest-pool]: Failed to terminate forks worker for test files C:/Users/Sebastian Gonzalez/Desktop/proyectos/Proyecto organizador universidad/front/src/app/core/services/fechas.spec.ts. Error: The child process was torn down or never initialized. This is a bug in Vitest.
+    at ForksPoolWorker.get fork [as fork] (file:///C:/Users/Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3196:26)
+    at ForksPoolWorker.off (file:///C:/Users/Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3145:8)
+    at PoolRunner.stop (file:///C:/Users/Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3025:16)
+    at Pool.schedule (file:///C:/Users/Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3551:35)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+[vitest-pool]: Failed to terminate forks worker for test files C:/Users/Sebastian Gonzalez/Desktop/proyectos/Proyecto organizador universidad/front/src/app/core/services/password-policy.spec.ts. Error: The child process was torn down or never initialized. This is a bug in Vitest.
+    at ForksPoolWorker.get fork [as fork] (file:///C:/Users/Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3196:26)
+    at ForksPoolWorker.off (file:///C:/Users/Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3145:8)
+    at PoolRunner.stop (file:///C:/Users/Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3025:16)
+    at Pool.schedule (file:///C:/Users/Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3551:35)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+<--- Last few GCs --->
+
+[6012:000001B71F7E3000]     5632 ms: Scavenge 77.3 (110.0) -> 62.0 (186.5) MB, pooled: 0 MB, 406.90 / 0.02 ms  (average mu = 0.998, current mu = 0.998) allocation failure; 
+[6012:000001B71F7E3000]     5763 ms: Mark-Compact 86.8 (186.5) -> 48.6 (190.0) MB, pooled: 0 MB, 10.05 / 0.01 ms  (+ 1.1 ms in 7 steps since start of marking, biggest step 0.5 ms, walltime since start of marking 98 ms) (average mu = 0.997, current mu = 0.
+FATAL ERROR: MarkCompactCollector: young object promotion failed Allocation failed - JavaScript heap out of memory
+----- Native stack trace -----
+
+
+<--- Last few GCs --->
+
+[9912:00000214966FD000]     6336 ms: Scavenge 76.2 (117.6) -> 60.5 (187.6) MB, pooled: 0 MB, 9.49 / 0.02 ms  (average mu = 0.994, current mu = 0.990) task; 
+
+FATAL ERROR: Zone Allocation failed - process out of memory
+----- Native stack trace -----
+
+
+<--- Last few GCs --->
+
+[9912:00000214966FD000]     6336 ms: Scavenge 76.2 (117.6) -> 60.5 (187.6) MB, pooled: 0 MB, 9.49 / 0.02 ms  (average mu = 0.994, current mu = 0.990) task; 
+
+FATAL ERROR: Zone Allocation failed - process out of memory
+----- Native stack trace -----
+
+ 1: 00007FF6C2E7403F 
+ 2: 00007FF6C3ABFAA7 
+ 3: 00007FF6C3439986 
+ 4: 00007FF6C2FFD444 
+ 5: 00007FF6C46B8C77 
+ 6: 00007FF6C46B7919 
+ 7: 00007FF6C46B2DC7 
+ 8: 00007FF6C46B1F51 
+ 9: 00007FF6C46AEA9E 
+10: 00007FF6C46AE589 
+11: 00007FF6C46AE044 
+12: 00007FF6C46AD5D1 
+13: 00007FF6C46AD32F 
+14: 00007FF6C44BB0F6 
+15: 00007FF6C44B3966 
+16: 00007FF6C44B2DE0 
+17: 00007FF6C3A3376F 
+18: 00007FF6C39F87FD 
+19: 00007FF6C39F84F5 
+20: 00007FF6C42A0C5F 
+21: 00007FF6C2DC2E0E 
+22: 00007FF6C3B14A36 
+23: 00007FF6C4D75A73 
+24: 00007FFB337CCD87 
+25: 00007FFB3476CAEC 
+
+<--- Last few GCs --->
+
+[23756:0000018BD2B34000]     6223 ms: Scavenge 76.3 (117.1) -> 60.0 (186.8) MB, pooled: 0 MB, 6.57 / 0.02 ms  (average mu = 0.990, current mu = 0.984) task; 
+
+FATAL ERROR: Zone Allocation failed - process out of memory
+----- Native stack trace -----
+
+ 1: 00007FF6C2E7403F 
+ 2: 00007FF6C3ABFAA7 
+ 3: 00007FF6C3439986 
+ 4: 00007FF6C326315B 
+ 5: 00007FF6C3263836 
+ 6: 00007FF6C325DD74 
+ 7: 00007FF6C3265E2E 
+ 8: 00007FF6C3268B9E 
+ 9: 00007FF6C3312BA2 
+10: 00007FF6C3311990 
+11: 00007FF6C330F78A 
+12: 00007FF6C3A3376F 
+13: 00007FF6C331126B 
+14: 00007FF6C42A0C5F 
+15: 00007FF6C2DC2E0E 
+16: 00007FF6C3B14A36 
+17: 00007FF6C4D75A73 
+18: 00007FFB337CCD87 
+19: 00007FFB3476CAEC 
+
+<--- Last few GCs --->
+
+[12492:000001EE11292000]     6135 ms: Scavenge 77.6 (117.1) -> 60.7 (187.3) MB, pooled: 0 MB, 8.35 / 0.02 ms  (average mu = 0.997, current mu = 0.997) task; 
+
+FATAL ERROR: MarkCompactCollector: young object promotion failed Allocation failed - JavaScript heap out of memory
+----- Native stack trace -----
+
+
+<--- Last few GCs --->
+
+[12492:000001EE11292000]     6135 ms: Scavenge 77.6 (117.1) -> 60.7 (187.3) MB, pooled: 0 MB, 8.35 / 0.02 ms  (average mu = 0.997, current mu = 0.997) task; 
+
+FATAL ERROR: MarkCompactCollector: young object promotion failed Allocation failed - JavaScript heap out of memory
+----- Native stack trace -----
+
+
+<--- Last few GCs --->
+
+[12492:000001EE11292000]     6135 ms: Scavenge 77.6 (117.1) -> 60.7 (187.3) MB, pooled: 0 MB, 8.35 / 0.02 ms  (average mu = 0.997, current mu = 0.997) task; 
+
+FATAL ERROR: MarkCompactCollector: young object promotion failed Allocation failed - JavaScript heap out of memory
+----- Native stack trace -----
+
+
+<--- Last few GCs --->
+
+[12492:000001EE11292000]     6135 ms: Scavenge 77.6 (117.1) -> 60.7 (187.3) MB, pooled: 0 MB, 8.35 / 0.02 ms  (average mu = 0.997, current mu = 0.997) task; 
+
+FATAL ERROR: MarkCompactCollector: young object promotion failed Allocation failed - JavaScript heap out of memory
+----- Native stack trace -----
+
+ 1: 00007FF6C2E7403F 
+ 2: 00007FF6C3ABFAA7 
+ 3: 00007FF6C38C04D7 
+ 4: 00007FF6C389FDEE 
+ 5: 00007FF6C38954AD 
+ 6: 00007FF6C389515C 
+ 7: 00007FF6C3894DA1 
+ 8: 00007FF6C38A7298 
+ 9: 00007FF6C42A0C5F 
+10: 00007FF6C2DC2E0E 
+11: 00007FF6C3B14A36 
+12: 00007FF6C4D75A73 
+13: 00007FFB337CCD87 
+14: 00007FFB3476CAEC 
+ 1: 00007FF6C2E7403F 
+ 2: 00007FF6C3ABFAA7 
+ 3: 00007FF6C38C04D7 
+ 4: 00007FF6C389FDEE 
+ 5: 00007FF6C38954AD 
+ 6: 00007FF6C389515C 
+ 7: 00007FF6C3894DA1 
+ 8: 00007FF6C38A7088 
+ 9: 00007FF6C42A040D 
+10: 00007FF6C42A08B2 
+11: 00007FF6C3897DE4 
+12: 00007FF6C387F50D 
+13: 00007FF6C3879584 
+14: 00007FF6C38C28DA 
+15: 00007FF6C38C1F06 
+16: 00007FF6C38D2E52 
+17: 00007FF6C38D297B 
+18: 00007FF6C4D5A2AD 
+19: 00007FF6C38BDFA0 
+20: 00007FF6C38C5EC0 
+21: 00007FF6C373B194 
+22: 00007FF6C3AE71EE 
+23: 00007FF6C2EB7685 
+24: 000001EE4998F64D 
+
+<--- Last few GCs --->
+
+[18056:0000020BF7055000]     6287 ms: Scavenge 76.2 (117.6) -> 60.4 (187.6) MB, pooled: 0 MB, 10.16 / 0.02 ms  (average mu = 0.990, current mu = 0.985) task; 
+
+FATAL ERROR: Zone Allocation failed - process out of memory
+----- Native stack trace -----
+
+
+<--- Last few GCs --->
+
+[20892:000001BFF885F000]     5113 ms: Scavenge 76.9 (109.8) -> 62.0 (186.5) MB, pooled: 0 MB, 84.47 / 0.02 ms  (average mu = 0.979, current mu = 0.979) allocation failure; 
+[20892:000001BFF885F000]     5184 ms: Mark-Compact 86.0 (186.5) -> 48.5 (189.5) MB, pooled: 0 MB, 32.18 / 0.08 ms  (+ 0.3 ms in 9 steps since start of marking, biggest step 0.1 ms, walltime since start of marking 48 ms) (average mu = 0.985, current mu = 0
+FATAL ERROR: MarkCompactCollector: young object promotion failed Allocation failed - JavaScript heap out of memory
+----- Native stack trace -----
+
+
+<--- Last few GCs --->
+
+[20892:000001BFF885F000]     5113 ms: Scavenge 76.9 (109.8) -> 62.0 (186.5) MB, pooled: 0 MB, 84.47 / 0.02 ms  (average mu = 0.979, current mu = 0.979) allocation failure; 
+[20892:000001BFF885F000]     5184 ms: Mark-Compact 86.0 (186.5) -> 48.5 (189.5) MB, pooled: 0 MB, 32.18 / 0.08 ms  (+ 0.3 ms in 9 steps since start of marking, biggest step 0.1 ms, walltime since start of marking 48 ms) (average mu = 0.985, current mu = 0
+FATAL ERROR: MarkCompactCollector: young object promotion failed Allocation failed - JavaScript heap out of memory
+----- Native stack trace -----
+
+ 1: 00007FF6C2E7403F 
+ 2: 00007FF6C3ABFAA7 
+ 3: 00007FF6C38C04D7 
+ 4: 00007FF6C389FDEE 
+ 5: 00007FF6C38954AD 
+ 6: 00007FF6C389515C 
+ 7: 00007FF6C3894DA1 
+ 8: 00007FF6C38A7298 
+ 9: 00007FF6C42A0C5F 
+10: 00007FF6C2DC2E0E 
+11: 00007FF6C3B14A36 
+12: 00007FF6C4D75A73 
+13: 00007FFB337CCD87 
+14: 00007FFB3476CAEC 
+ 1: 00007FF6C2E7403F 
+ 2: 00007FF6C3ABFAA7 
+ 3: 00007FF6C3439986 
+ 4: 00007FF6C328BE3C 
+ 5: 00007FF6C328C11F 
+ 6: 00007FF6C32C4E4A 
+ 7: 00007FF6C329AB0B 
+ 8: 00007FF6C329A6E2 
+ 9: 00007FF6C329C695 
+10: 00007FF6C329BB3E 
+11: 00007FF6C32AF0A1 
+12: 00007FF6C3283F05 
+13: 00007FF6C329F632 
+14: 00007FF6C32B0CF6 
+15: 00007FF6C32B1AF7 
+16: 00007FF6C32C5ECA 
+17: 00007FF6C329AB0B 
+18: 00007FF6C329A6E2 
+19: 00007FF6C329C695 
+20: 00007FF6C329BB3E 
+21: 00007FF6C32AF0A1 
+22: 00007FF6C3283F05 
+23: 00007FF6C329F632 
+24: 00007FF6C32B0CF6 
+25: 00007FF6C32B1AF7 
+26: 00007FF6C32C5ECA 
+27: 00007FF6C329AB0B 
+28: 00007FF6C3312C76 
+29: 00007FF6C3311990 
+30: 00007FF6C330F78A 
+31: 00007FF6C3A3376F 
+32: 00007FF6C331126B 
+33: 00007FF6C42A0C5F 
+34: 00007FF6C2DC2E0E 
+35: 00007FF6C3B14A36 
+36: 00007FF6C4D75A73 
+37: 00007FFB337CCD87 BaseThreadInitThunk+23
+38: 00007FFB3476CAEC 
+ 1: 00007FF6C2E7403F 
+ 2: 00007FF6C3ABFAA7 
+ 3: 00007FF6C3439986 
+ 4: 00007FF6C3576435 
+ 5: 00007FF6C358215C 
+ 6: 00007FF6C356DCE2 
+ 7: 00007FF6C3566A68 
+ 8: 00007FF6C3566161 
+ 9: 00007FF6C3565B4A 
+10: 00007FF6C3561179 
+11: 00007FF6C3A3D4EF 
+12: 00007FF6C3A441F4 
+13: 00007FF6C3A3F294 
+14: 00007FF6C3A3ED76 
+15: 00007FF6C3AC84DF 
+16: 00007FF6C3AC8ACE 
+17: 00007FF6C2ED70C2 
+18: 00007FF6C2ED666B 
+19: 00007FF6C3A9EB69 
+20: 00007FF6C3A9E558 
+21: 00007FF6C3A9DD9A 
+22: 0000015CAFE7753A 
+ 1: 00007FF6C2E7403F 
+ 2: 00007FF6C3ABFAA7 
+ 3: 00007FF6C38C04D7 
+ 4: 00007FF6C389FDEE 
+ 5: 00007FF6C38954AD 
+ 6: 00007FF6C389515C 
+ 7: 00007FF6C3894DA1 
+ 8: 00007FF6C38A7298 
+ 9: 00007FF6C42A0C5F 
+10: 00007FF6C2DC2E0E 
+11: 00007FF6C3B14A36 
+12: 00007FF6C4D75A73 
+13: 00007FFB337CCD87 
+14: 00007FFB3476CAEC 
+ 1: 00007FF6C2E7403F 
+ 2: 00007FF6C3ABFAA7 
+ 3: 00007FF6C3439986 
+ 4: 00007FF6C425EC0E 
+ 5: 00007FF6C42379C4 
+ 6: 00007FF6C4239027 
+ 7: 00007FF6C426BBB1 
+ 8: 00007FF6C328BC58 
+ 9: 00007FF6C32CFCD4 
+10: 00007FF6C32D05F3 
+11: 00007FF6C32C5AB2 
+12: 00007FF6C329AB0B 
+13: 00007FF6C3312C76 
+14: 00007FF6C3311990 
+15: 00007FF6C330F78A 
+16: 00007FF6C3A3376F 
+17: 00007FF6C331126B 
+18: 00007FF6C42A0C5F 
+19: 00007FF6C2DC2E0E 
+20: 00007FF6C3B14A36 
+21: 00007FF6C4D75A73 
+22: 00007FFB337CCD87 BaseThreadInitThunk+23
+23: 00007FFB3476CAEC 
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 15 unhandled errors during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-pool]: Worker forks emitted error.
+ ❯ EventEmitter.onTaskError ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3526:21
+ ❯ EventEmitter.emit node:events:509:28
+ ❯ ChildProcess.emitUnexpectedExit ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3092:22
+ ❯ ChildProcess.emit node:events:509:28
+ ❯ Process.ChildProcess._handle.onexit node:internal/child_process:295:12
+
+Caused by: Error: Worker exited unexpectedly
+ ❯ ChildProcess.emitUnexpectedExit ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3090:33
+ ❯ ChildProcess.emit node:events:509:28
+ ❯ Process.ChildProcess._handle.onexit node:internal/child_process:295:12
+
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-pool]: Worker forks emitted error.
+ ❯ EventEmitter.onTaskError ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3526:21
+ ❯ EventEmitter.emit node:events:509:28
+ ❯ ChildProcess.emitUnexpectedExit ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3092:22
+ ❯ ChildProcess.emit node:events:509:28
+ ❯ Process.ChildProcess._handle.onexit node:internal/child_process:295:12
+
+Caused by: Error: Worker exited unexpectedly
+ ❯ ChildProcess.emitUnexpectedExit ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3090:33
+ ❯ ChildProcess.emit node:events:509:28
+ ❯ Process.ChildProcess._handle.onexit node:internal/child_process:295:12
+
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-pool]: Worker forks emitted error.
+ ❯ EventEmitter.onTaskError ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3526:21
+ ❯ EventEmitter.emit node:events:509:28
+ ❯ ChildProcess.emitUnexpectedExit ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3092:22
+ ❯ ChildProcess.emit node:events:509:28
+ ❯ Process.ChildProcess._handle.onexit node:internal/child_process:295:12
+
+Caused by: Error: Worker exited unexpectedly
+ ❯ ChildProcess.emitUnexpectedExit ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3090:33
+ ❯ ChildProcess.emit node:events:509:28
+ ❯ Process.ChildProcess._handle.onexit node:internal/child_process:295:12
+
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-pool]: Worker forks emitted error.
+ ❯ EventEmitter.onTaskError ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3526:21
+ ❯ EventEmitter.emit node:events:509:28
+ ❯ ChildProcess.emitUnexpectedExit ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3092:22
+ ❯ ChildProcess.emit node:events:509:28
+ ❯ Process.ChildProcess._handle.onexit node:internal/child_process:295:12
+
+Caused by: Error: Worker exited unexpectedly
+ ❯ ChildProcess.emitUnexpectedExit ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3090:33
+ ❯ ChildProcess.emit node:events:509:28
+ ❯ Process.ChildProcess._handle.onexit node:internal/child_process:295:12
+
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-pool]: Worker forks emitted error.
+ ❯ EventEmitter.onTaskError ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3526:21
+ ❯ EventEmitter.emit node:events:509:28
+ ❯ ChildProcess.emitUnexpectedExit ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3092:22
+ ❯ ChildProcess.emit node:events:509:28
+ ❯ Process.ChildProcess._handle.onexit node:internal/child_process:295:12
+
+Caused by: Error: Worker exited unexpectedly
+ ❯ ChildProcess.emitUnexpectedExit ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3090:33
+ ❯ ChildProcess.emit node:events:509:28
+ ❯ Process.ChildProcess._handle.onexit node:internal/child_process:295:12
+
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-pool]: Worker forks emitted error.
+ ❯ EventEmitter.onTaskError ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3526:21
+ ❯ EventEmitter.emit node:events:509:28
+ ❯ ChildProcess.emitUnexpectedExit ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3092:22
+ ❯ ChildProcess.emit node:events:509:28
+ ❯ Process.ChildProcess._handle.onexit node:internal/child_process:295:12
+
+Caused by: Error: Worker exited unexpectedly
+ ❯ ChildProcess.emitUnexpectedExit ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3090:33
+ ❯ ChildProcess.emit node:events:509:28
+ ❯ Process.ChildProcess._handle.onexit node:internal/child_process:295:12
+
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-pool]: Worker forks emitted error.
+ ❯ EventEmitter.onTaskError ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3526:21
+ ❯ EventEmitter.emit node:events:509:28
+ ❯ ChildProcess.emitUnexpectedExit ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3092:22
+ ❯ ChildProcess.emit node:events:509:28
+ ❯ Process.ChildProcess._handle.onexit node:internal/child_process:295:12
+
+Caused by: Error: Worker exited unexpectedly
+ ❯ ChildProcess.emitUnexpectedExit ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3090:33
+ ❯ ChildProcess.emit node:events:509:28
+ ❯ Process.ChildProcess._handle.onexit node:internal/child_process:295:12
+
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-pool]: Worker forks emitted error.
+ ❯ EventEmitter.onTaskError ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3526:21
+ ❯ EventEmitter.emit node:events:509:28
+ ❯ ChildProcess.emitUnexpectedExit ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3092:22
+ ❯ ChildProcess.emit node:events:509:28
+ ❯ Process.ChildProcess._handle.onexit node:internal/child_process:295:12
+
+Caused by: Error: Worker exited unexpectedly
+ ❯ ChildProcess.emitUnexpectedExit ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3090:33
+ ❯ ChildProcess.emit node:events:509:28
+ ❯ Process.ChildProcess._handle.onexit node:internal/child_process:295:12
+
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-pool]: Worker forks emitted error.
+ ❯ EventEmitter.onTaskError ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3526:21
+ ❯ EventEmitter.emit node:events:509:28
+ ❯ ChildProcess.emitUnexpectedExit ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3092:22
+ ❯ ChildProcess.emit node:events:509:28
+ ❯ Process.ChildProcess._handle.onexit node:internal/child_process:295:12
+
+Caused by: Error: Worker exited unexpectedly
+ ❯ ChildProcess.emitUnexpectedExit ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3090:33
+ ❯ ChildProcess.emit node:events:509:28
+ ❯ Process.ChildProcess._handle.onexit node:internal/child_process:295:12
+
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-pool]: Failed to start forks worker for test files C:/Users/Sebastian Gonzalez/Desktop/proyectos/Proyecto organizador universidad/front/src/app/core/services/theme.service.spec.ts.
+ ❯ ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3532:94
+ ❯ processTicksAndRejections node:internal/process/task_queues:104:5
+ ❯ Pool.schedule ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3532:5
+
+Caused by: Error: spawn UNKNOWN
+ ❯ ChildProcess.spawn node:internal/child_process:441:11
+ ❯ spawn node:child_process:796:9
+ ❯ fork node:child_process:174:10
+ ❯ ForksPoolWorker.start ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3151:18
+ ❯ ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:2966:119
+ ❯ Traces.$ ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/traces.DT5aQ62U.js:142:27
+ ❯ PoolRunner.start ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:2966:23
+ ❯ Pool.schedule ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3532:18
+ ❯ Pool.schedule ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3559:15
+ ❯ processTicksAndRejections node:internal/process/task_queues:104:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { errno: -4094, code: 'UNKNOWN', syscall: 'spawn' }
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-pool]: Failed to start forks worker for test files C:/Users/Sebastian Gonzalez/Desktop/proyectos/Proyecto organizador universidad/front/src/app/core/services/pwa-platform.service.spec.ts.
+ ❯ ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3532:94
+ ❯ processTicksAndRejections node:internal/process/task_queues:104:5
+ ❯ Pool.schedule ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3532:5
+
+Caused by: Error: spawn UNKNOWN
+ ❯ ChildProcess.spawn node:internal/child_process:441:11
+ ❯ spawn node:child_process:796:9
+ ❯ fork node:child_process:174:10
+ ❯ ForksPoolWorker.start ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3151:18
+ ❯ ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:2966:119
+ ❯ Traces.$ ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/traces.DT5aQ62U.js:142:27
+ ❯ PoolRunner.start ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:2966:23
+ ❯ Pool.schedule ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3532:18
+ ❯ Pool.schedule ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3559:15
+ ❯ processTicksAndRejections node:internal/process/task_queues:104:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { errno: -4094, code: 'UNKNOWN', syscall: 'spawn' }
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-pool]: Failed to start forks worker for test files C:/Users/Sebastian Gonzalez/Desktop/proyectos/Proyecto organizador universidad/front/src/app/core/services/paginacion.spec.ts.
+ ❯ ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3532:94
+ ❯ processTicksAndRejections node:internal/process/task_queues:104:5
+ ❯ Pool.schedule ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3532:5
+
+Caused by: Error: spawn UNKNOWN
+ ❯ ChildProcess.spawn node:internal/child_process:441:11
+ ❯ spawn node:child_process:796:9
+ ❯ fork node:child_process:174:10
+ ❯ ForksPoolWorker.start ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3151:18
+ ❯ ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:2966:119
+ ❯ Traces.$ ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/traces.DT5aQ62U.js:142:27
+ ❯ PoolRunner.start ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:2966:23
+ ❯ Pool.schedule ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3532:18
+ ❯ Pool.schedule ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3559:15
+ ❯ processTicksAndRejections node:internal/process/task_queues:104:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { errno: -4094, code: 'UNKNOWN', syscall: 'spawn' }
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-pool]: Failed to start forks worker for test files C:/Users/Sebastian Gonzalez/Desktop/proyectos/Proyecto organizador universidad/front/src/app/features/materias/pdf-plan.service.spec.ts.
+ ❯ ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3532:94
+ ❯ processTicksAndRejections node:internal/process/task_queues:104:5
+ ❯ Pool.schedule ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3532:5
+
+Caused by: Error: spawn UNKNOWN
+ ❯ ChildProcess.spawn node:internal/child_process:441:11
+ ❯ spawn node:child_process:796:9
+ ❯ fork node:child_process:174:10
+ ❯ ForksPoolWorker.start ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3151:18
+ ❯ ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:2966:119
+ ❯ Traces.$ ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/traces.DT5aQ62U.js:142:27
+ ❯ PoolRunner.start ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:2966:23
+ ❯ Pool.schedule ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3532:18
+ ❯ Pool.schedule ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3559:15
+ ❯ processTicksAndRejections node:internal/process/task_queues:104:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { errno: -4094, code: 'UNKNOWN', syscall: 'spawn' }
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-pool]: Failed to start forks worker for test files C:/Users/Sebastian Gonzalez/Desktop/proyectos/Proyecto organizador universidad/front/src/app/core/services/fechas.spec.ts.
+ ❯ ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3532:94
+ ❯ processTicksAndRejections node:internal/process/task_queues:104:5
+ ❯ Pool.schedule ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3532:5
+
+Caused by: Error: spawn UNKNOWN
+ ❯ ChildProcess.spawn node:internal/child_process:441:11
+ ❯ spawn node:child_process:796:9
+ ❯ fork node:child_process:174:10
+ ❯ ForksPoolWorker.start ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3151:18
+ ❯ ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:2966:119
+ ❯ Traces.$ ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/traces.DT5aQ62U.js:142:27
+ ❯ PoolRunner.start ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:2966:23
+ ❯ Pool.schedule ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3532:18
+ ❯ Pool.schedule ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3559:15
+ ❯ processTicksAndRejections node:internal/process/task_queues:104:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { errno: -4094, code: 'UNKNOWN', syscall: 'spawn' }
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-pool]: Failed to start forks worker for test files C:/Users/Sebastian Gonzalez/Desktop/proyectos/Proyecto organizador universidad/front/src/app/core/services/password-policy.spec.ts.
+ ❯ ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3532:94
+ ❯ processTicksAndRejections node:internal/process/task_queues:104:5
+ ❯ Pool.schedule ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3532:5
+
+Caused by: Error: spawn UNKNOWN
+ ❯ ChildProcess.spawn node:internal/child_process:441:11
+ ❯ spawn node:child_process:796:9
+ ❯ fork node:child_process:174:10
+ ❯ ForksPoolWorker.start ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3151:18
+ ❯ ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:2966:119
+ ❯ Traces.$ ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/traces.DT5aQ62U.js:142:27
+ ❯ PoolRunner.start ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:2966:23
+ ❯ Pool.schedule ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3532:18
+ ❯ Pool.schedule ../../../../../Sebastian%20Gonzalez/Desktop/proyectos/Proyecto%20organizador%20universidad/front/node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:3559:15
+ ❯ processTicksAndRejections node:internal/process/task_queues:104:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { errno: -4094, code: 'UNKNOWN', syscall: 'spawn' }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+
+ Test Files  2 passed (11)
+      Tests  23 passed (55)
+     Errors  15 errors
+   Start at  22:40:15
+   Duration  8.42s (transform 12.40s, setup 10.29s, import 8.98s, tests 763ms, environment 31.67s)
+
+[vitest-pool]: Timeout terminating forks worker for test files C:/Users/Sebastian Gonzalez/Desktop/proyectos/Proyecto organizador universidad/front/src/app/core/services/theme.service.spec.ts.
+[vitest-pool]: Timeout terminating forks worker for test files C:/Users/Sebastian Gonzalez/Desktop/proyectos/Proyecto organizador universidad/front/src/app/core/services/pwa-platform.service.spec.ts.
+[vitest-pool]: Timeout terminating forks worker for test files C:/Users/Sebastian Gonzalez/Desktop/proyectos/Proyecto organizador universidad/front/src/app/core/services/paginacion.spec.ts.
+[vitest-pool]: Timeout terminating forks worker for test files C:/Users/Sebastian Gonzalez/Desktop/proyectos/Proyecto organizador universidad/front/src/app/features/materias/pdf-plan.service.spec.ts.
+[vitest-pool]: Timeout terminating forks worker for test files C:/Users/Sebastian Gonzalez/Desktop/proyectos/Proyecto organizador universidad/front/src/app/core/services/fechas.spec.ts.
+[vitest-pool]: Timeout terminating forks worker for test files C:/Users/Sebastian Gonzalez/Desktop/proyectos/Proyecto organizador universidad/front/src/app/core/services/password-policy.spec.ts.

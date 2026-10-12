@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "checks": [
+    "Manifiesto sin ICO pesado",
+    "Fuentes locales en caché",
+    "Service worker real controla la página",
+    "Fuentes disponibles sin red",
+    "Sin caché de respuestas privadas"
+  ],
+  "fonts": [
+    "/fonts/fraunces-latin-standard-normal.woff2",
+    "/fonts/jetbrains-mono-latin-wght-normal.woff2",
+    "/fonts/sora-latin-wght-normal.woff2"
+  ],
+  "sizes": [
+    67304,
+    40404,
+    33652
+  ],
+  "cachedResourceCount": 41,
+  "scope": "Recursos estáticos. La sesión y los datos del usuario requieren la API; no se afirma funcionamiento privado offline."
+}

@@ -9,6 +9,8 @@ import {
   TipoTarea,
 } from '../../core/models';
 import { TareasService } from './tareas.service';
+import { fechaHoraOpcional, fechaLocalAIso } from '../../core/services/fechas';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-tarea-manual-form',
@@ -21,21 +23,23 @@ import { TareasService } from './tareas.service';
           <h2 id="manual-title">Crear una nueva tarea</h2>
           <p>Completá los datos sin usar el asistente de IA.</p>
         </div>
-        <button type="button" class="close-button" (click)="cancelar.emit()" aria-label="Cerrar formulario">×</button>
+        <button type="button" class="close-button" [disabled]="guardando()" (click)="cancelar.emit()" aria-label="Cerrar formulario">×</button>
       </div>
 
-      <form [formGroup]="form" (ngSubmit)="crear()" class="manual-form">
+      <form [formGroup]="form" (ngSubmit)="crear()" [attr.aria-busy]="guardando()">
+        <fieldset class="manual-form" [disabled]="guardando() || bloqueado()">
         <label class="field-group field-wide">
           <span>Título <b>*</b></span>
-          <input formControlName="titulo" class="field" maxlength="200" placeholder="Ej.: Entregar informe de laboratorio" />
+          <input formControlName="titulo" class="field" maxlength="200" [attr.aria-invalid]="form.controls.titulo.touched && form.controls.titulo.invalid" aria-describedby="manual-title-error" placeholder="Ej.: Entregar informe de laboratorio" />
           @if (form.controls.titulo.touched && form.controls.titulo.invalid) {
-            <small>Ingresá un título para la tarea.</small>
+            <small id="manual-title-error">Ingresá un título de hasta 200 caracteres.</small>
           }
         </label>
 
         <label class="field-group field-wide">
           <span>Descripción</span>
-          <textarea formControlName="descripcion" class="field" rows="3" placeholder="Agregá indicaciones, temas o detalles importantes"></textarea>
+          <textarea formControlName="descripcion" class="field" rows="3" maxlength="4000" [attr.aria-invalid]="form.controls.descripcion.touched && form.controls.descripcion.invalid" aria-describedby="manual-description-error" placeholder="Agregá indicaciones, temas o detalles importantes"></textarea>
+          @if (form.controls.descripcion.touched && form.controls.descripcion.invalid) { <small id="manual-description-error">La descripción admite hasta 4000 caracteres.</small> }
         </label>
 
         <label class="field-group">
@@ -68,7 +72,8 @@ import { TareasService } from './tareas.service';
 
         <label class="field-group">
           <span>Fecha y hora límite</span>
-          <input formControlName="fechaLimite" type="datetime-local" class="field" />
+          <input formControlName="fechaLimite" type="datetime-local" class="field" [attr.aria-invalid]="form.controls.fechaLimite.touched && form.controls.fechaLimite.invalid" aria-describedby="manual-date-error" />
+          @if (form.controls.fechaLimite.touched && form.controls.fechaLimite.invalid) { <small id="manual-date-error">Ingresá una fecha y hora válidas, o dejalas sin definir.</small> }
         </label>
 
         <label class="field-group field-wide">
@@ -91,10 +96,11 @@ import { TareasService } from './tareas.service';
 
         <div class="form-actions field-wide">
           <button type="button" class="button-secondary" (click)="cancelar.emit()" [disabled]="guardando()">Cancelar</button>
-          <button type="submit" class="button-primary" [disabled]="guardando()">
+          <button type="submit" class="button-primary" [disabled]="guardando() || bloqueado()">
             {{ guardando() ? 'Creando tarea...' : 'Crear tarea' }}
           </button>
         </div>
+        </fieldset>
       </form>
     </section>
   `,
@@ -105,7 +111,7 @@ import { TareasService } from './tareas.service';
     h2 { font-size: 1.35rem; }
     .manual-card-header p:last-child { margin: .3rem 0 0; color: var(--muted); font-size: .82rem; }
     .close-button { display: grid; place-items: center; flex: 0 0 auto; width: 2.25rem; height: 2.25rem; border: 1px solid var(--border); border-radius: .65rem; background: transparent; color: var(--muted); font-size: 1.4rem; cursor: pointer; }
-    .manual-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+    .manual-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; border: 0; padding: 0; margin: 0; min-width: 0; }
     .field-group { display: flex; flex-direction: column; gap: .38rem; min-width: 0; }
     .field-group > span { color: var(--ink-secondary); font-size: .75rem; font-weight: 600; }
     .field-group b { color: var(--accent); }
@@ -132,8 +138,10 @@ export class TareaManualFormComponent {
   private readonly tareasService = inject(TareasService);
 
   readonly materias = input.required<Materia[]>();
+  readonly bloqueado = input(false);
   readonly creada = output<Tarea>();
   readonly cancelar = output<void>();
+  readonly guardandoCambio = output<boolean>();
 
   protected readonly guardando = signal(false);
   protected readonly error = signal<string | null>(null);
@@ -154,16 +162,16 @@ export class TareaManualFormComponent {
 
   protected readonly form = this.fb.nonNullable.group({
     titulo: ['', [Validators.required, Validators.maxLength(200)]],
-    descripcion: [''],
+    descripcion: ['', Validators.maxLength(4000)],
     materiaId: [''],
     tipo: [TipoTarea.TAREA],
     estado: [EstadoTarea.PENDIENTE],
-    fechaLimite: [''],
+    fechaLimite: ['', fechaHoraOpcional],
     recordatorioMinutos: this.fb.control<number | null>(null),
   });
 
   protected crear(): void {
-    if (this.guardando()) return;
+    if (this.guardando() || this.bloqueado()) return;
     this.form.controls.titulo.setValue(this.form.controls.titulo.value.trim());
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -172,6 +180,7 @@ export class TareaManualFormComponent {
 
     const value = this.form.getRawValue();
     this.guardando.set(true);
+    this.guardandoCambio.emit(true);
     this.error.set(null);
 
     this.tareasService.crear({
@@ -180,17 +189,15 @@ export class TareaManualFormComponent {
       materiaId: value.materiaId || undefined,
       tipo: value.tipo,
       estado: value.estado,
-      fechaLimite: value.fechaLimite ? new Date(value.fechaLimite).toISOString() : undefined,
+      fechaLimite: value.fechaLimite ? fechaLocalAIso(value.fechaLimite)! : undefined,
       recordatorioMinutos: value.fechaLimite ? value.recordatorioMinutos : null,
       origen: OrigenTarea.MANUAL,
-    }).subscribe({
+    }).pipe(finalize(() => { this.guardando.set(false); this.guardandoCambio.emit(false); })).subscribe({
       next: (tarea) => {
-        this.guardando.set(false);
         const materia = this.materias().find((item) => item.id === value.materiaId);
         this.creada.emit({ ...tarea, materia: materia ?? tarea.materia });
       },
       error: () => {
-        this.guardando.set(false);
         this.error.set('No se pudo crear la tarea. Revisá los datos e intentá nuevamente.');
       },
     });

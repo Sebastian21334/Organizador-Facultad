@@ -1,0 +1,82 @@
+[
+  {
+    "name": "Primera visita android en portada: sin modal, acceso manual e instrucciones accesibles",
+    "passed": true
+  },
+  {
+    "name": "Primera visita android en inicio: sin modal, acceso manual e instrucciones accesibles",
+    "passed": true
+  },
+  {
+    "name": "Primera visita ios en portada: sin modal, acceso manual e instrucciones accesibles",
+    "passed": true
+  },
+  {
+    "name": "Primera visita ios en inicio: sin modal, acceso manual e instrucciones accesibles",
+    "passed": true
+  },
+  {
+    "name": "La sesión pendiente reserva la posición del contenido en los tres tamaños",
+    "passed": true
+  },
+  {
+    "name": "Drawer móvil: foco inicial, Tab/Shift+Tab, Escape, fondo inerte y retorno",
+    "passed": true
+  },
+  {
+    "name": "Saltar al contenido conserva ruta y enfoca el contenido sin recarga",
+    "passed": true
+  },
+  {
+    "name": "Alta manual convierte 22:30 Argentina al instante correcto de API",
+    "passed": true
+  },
+  {
+    "name": "Editar título conserva fecha y precisión sin reenviarla",
+    "passed": true
+  },
+  {
+    "name": "Borrar campos opcionales, completar y eliminar tarea con confirmación",
+    "passed": true
+  },
+  {
+    "name": "Calendario: diálogo nativo con Escape/retorno y cambio a semana",
+    "passed": true
+  },
+  {
+    "name": "Materias: crear, editar y revisar/importar plan con respuesta IA simulada",
+    "passed": true
+  },
+  {
+    "name": "Chat: error conserva borrador y reintento permite continuar",
+    "passed": true
+  },
+  {
+    "name": "Estados vacio verificados en Inicio, Calendario, Tareas, Materias y Mensajes",
+    "passed": true
+  },
+  {
+    "name": "Estados error verificados en Inicio, Calendario, Tareas, Materias y Mensajes",
+    "passed": true
+  },
+  {
+    "name": "Reintentar recupera el historial después del error",
+    "passed": true
+  },
+  {
+    "name": "Carga visible antes de presentar los datos sin bloquear la recuperación",
+    "passed": true
+  },
+  {
+    "name": "Reflow 320 px + espaciado WCAG + reduced-motion en seis pantallas privadas",
+    "passed": true
+  },
+  {
+    "name": "Navegación móvil reinicia scroll y lleva foco al contenido",
+    "passed": true
+  },
+  {
+    "name": "Enlaces internos de la portada desplazan a la sección solicitada",
+    "passed": true
+  }
+]

@@ -1,6 +1,6 @@
 <div class="landing" id="inicio">
   <header>
-    <a class="brand" href="#inicio" aria-label="Tempo, ir al inicio"><i>T</i><strong>Tempo</strong></a>
+    <a class="brand" href="#inicio" title="Ir al inicio"><i aria-hidden="true">T</i><strong>Tempo</strong></a>
     <nav aria-label="Navegación de la portada">
       <a href="#como-funciona">Cómo funciona</a>
       <a href="#herramientas">Herramientas</a>
@@ -19,7 +19,7 @@
     </div>
   </header>
 
-  <main>
+  <div>
     <section class="hero">
       <div class="hero-copy">
         <p class="eyebrow"><span></span> Hecho para estudiantes</p>
@@ -41,7 +41,7 @@
       <div class="section-title"><p class="eyebrow"><span></span> Menos caos, más claridad</p><h2>Vos estudiá.<br><em>Tempo ordena el resto.</em></h2></div>
       <div class="steps">
         <article><span>01</span><i aria-hidden="true">☰</i><h3>Cargá tus materias</h3><p>Armá tu espacio académico y seguí el progreso de cada cursada.</p></article>
-        <article><span>02</span><i aria-hidden="true">✦</i><h3>Contáselo a la IA</h3><p>Escribí “Parcial de Redes el martes a las 14” y Tempo interpreta el mensaje para crear la tarea. También podés cargarla manualmente.</p></article>
+        <article><span>02</span><i aria-hidden="true">✦</i><h3>Contáselo a la IA</h3><p>Escribí “Parcial de Redes el martes” y Tempo interpreta el mensaje para crear la tarea. También podés cargarla manualmente con un horario preciso.</p></article>
         <article><span>03</span><i aria-hidden="true">✉</i><h3>Recibí un aviso a tiempo</h3><p>Activá los recordatorios por email desde tu perfil y elegí la anticipación. Tempo te avisa automáticamente antes del vencimiento.</p></article>
       </div>
     </section>
@@ -57,7 +57,7 @@
     </section>
 
     <section class="final"><i aria-hidden="true">T</i><h2>Tu próximo semestre<br>puede sentirse <em>distinto.</em></h2><p>Empezá hoy. Es gratis.</p><a routerLink="/register" class="primary button-primary">Crear mi cuenta <span aria-hidden="true">→</span></a></section>
-    <app-contacto />
-  </main>
+    <app-contacto [enPortada]="true" />
+  </div>
   <footer><a class="brand" href="#inicio"><i>T</i><strong>Tempo</strong></a><p>Organizá tu vida universitaria.</p><a href="#contacto">Ayuda y contacto</a><p>© 2026 Tempo</p></footer>
 </div>

@@ -6,6 +6,7 @@ import { EstadoTarea, Tarea, TipoTarea } from '../../core/models';
 import { ToastService } from '../../core/services/toast.service';
 import { LucideDynamicIcon, LucideBell, LucideBookOpen, LucideCalendarDays, LucideCheck, LucideClock, LucidePencil, LucideX } from '@lucide/angular';
 import { TareasService } from '../tareas/tareas.service';
+import { fechaHoraLocal, fechaHoraOpcional, fechaLocalAIso } from '../../core/services/fechas';
 
 @Component({
   selector: 'app-tarea-calendario-dialog',
@@ -26,8 +27,8 @@ import { TareasService } from '../tareas/tareas.service';
       @if (!editando()) {
         <dl class="task-details">
           <div class="detail-item wide"><svg [lucideIcon]="bookIcon" [size]="18" aria-hidden="true"></svg><div><dt>Materia</dt><dd>{{ tarea().materia?.nombre ?? 'Sin materia asignada' }}</dd></div></div>
-          <div class="detail-item"><svg [lucideIcon]="calendarIcon" [size]="18" aria-hidden="true"></svg><div><dt>Fecha límite</dt><dd>{{ tarea().fechaLimite ? (tarea().fechaLimite | date: 'd MMM y' : 'UTC' : 'es-AR') : 'Sin fecha' }}</dd></div></div>
-          <div class="detail-item"><svg [lucideIcon]="clockIcon" [size]="18" aria-hidden="true"></svg><div><dt>Hora límite</dt><dd>{{ tarea().fechaLimite ? (tarea().fechaLimite | date: "HH:mm' hs'" : 'UTC' : 'es-AR') : 'Sin horario' }}</dd></div></div>
+          <div class="detail-item"><svg [lucideIcon]="calendarIcon" [size]="18" aria-hidden="true"></svg><div><dt>Fecha límite</dt><dd>{{ tarea().fechaLimite ? (tarea().fechaLimite | date: 'd MMM y' : undefined : 'es-AR') : 'Sin fecha' }}</dd></div></div>
+          <div class="detail-item"><svg [lucideIcon]="clockIcon" [size]="18" aria-hidden="true"></svg><div><dt>Hora límite</dt><dd>{{ tarea().fechaLimite ? (tarea().fechaLimite | date: "HH:mm' hs'" : undefined : 'es-AR') : 'Sin horario' }}</dd></div></div>
           <div class="detail-item wide"><svg [lucideIcon]="bellIcon" [size]="18" aria-hidden="true"></svg><div><dt>Recordatorio</dt><dd>{{ recordatorioEtiqueta() }}</dd></div></div>
         </dl>
         <section class="task-description"><h3>Descripción</h3><p>{{ tarea().descripcion?.trim() || 'Esta tarea no tiene una descripción.' }}</p></section>
@@ -61,10 +62,10 @@ import { TareasService } from '../tareas/tareas.service';
             </select>
           </label>
           <label class="wide">Fecha y hora límite
-            <input class="field" type="datetime-local" formControlName="fechaLimite" required />
-            <small>La fecha y hora coinciden con las que muestra el calendario.</small>
+            <input class="field" type="datetime-local" formControlName="fechaLimite" [attr.aria-invalid]="form.controls.fechaLimite.touched && form.controls.fechaLimite.invalid" aria-describedby="dialog-date-help" />
+            <small id="dialog-date-help">Hora local. Podés dejarla vacía si todavía no hay una fecha límite.</small>
             @if (form.controls.fechaLimite.touched && form.controls.fechaLimite.invalid) {
-              <small class="error">Ingresá una fecha y hora límite.</small>
+              <small class="error">Ingresá una fecha y hora válidas.</small>
             }
           </label>
         </fieldset>
@@ -161,7 +162,7 @@ export class TareaCalendarioDialogComponent implements OnInit, AfterViewInit {
     descripcion: ['', Validators.maxLength(4000)],
     tipo: [TipoTarea.TAREA],
     estado: [EstadoTarea.PENDIENTE],
-    fechaLimite: ['', Validators.required],
+    fechaLimite: ['', fechaHoraOpcional],
   });
 
   ngOnInit(): void {
@@ -175,7 +176,7 @@ export class TareaCalendarioDialogComponent implements OnInit, AfterViewInit {
       descripcion: tarea.descripcion ?? '',
       tipo: tarea.tipo,
       estado: tarea.estado,
-      fechaLimite: tarea.fechaLimite ? new Date(tarea.fechaLimite).toISOString().slice(0, 16) : '',
+      fechaLimite: fechaHoraLocal(tarea.fechaLimite),
     });
   }
 
@@ -218,13 +219,13 @@ export class TareaCalendarioDialogComponent implements OnInit, AfterViewInit {
     const value = this.form.getRawValue();
     // Preserve the exact timestamp when only other fields change, including seconds.
     const fechaOriginal = this.tarea().fechaLimite;
-    const fechaSinCambios = fechaOriginal && new Date(fechaOriginal).toISOString().slice(0, 16) === value.fechaLimite;
+    const fechaSinCambios = fechaHoraLocal(fechaOriginal) === value.fechaLimite;
     this.actualizar({
       titulo: value.titulo,
       descripcion: value.descripcion.trim(),
       tipo: value.tipo,
       estado: value.estado,
-      ...(fechaSinCambios ? {} : { fechaLimite: new Date(`${value.fechaLimite}Z`).toISOString() }),
+      ...(fechaSinCambios ? {} : { fechaLimite: fechaLocalAIso(value.fechaLimite) }),
     });
   }
 

@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
@@ -42,6 +42,7 @@ import { AuthService } from '../../core/services/auth.service';
           </div>
         } @else {
           <form (ngSubmit)="submit()" [formGroup]="form" class="space-y-4">
+            <p class="text-xs text-[#5E534B]">El correo electrónico es obligatorio.</p>
             <div>
               <label for="email" class="block text-xs font-semibold uppercase tracking-wider text-[#5E534B] mb-1.5">
                 Correo electrónico
@@ -54,9 +55,12 @@ import { AuthService } from '../../core/services/auth.service';
                 [class.field-error]="form.controls.email.invalid && form.controls.email.touched"
                 placeholder="ejemplo@facultad.edu.ar"
                 autocomplete="email"
+                required
+                [attr.aria-invalid]="form.controls.email.invalid && form.controls.email.touched"
+                [attr.aria-describedby]="form.controls.email.invalid && form.controls.email.touched ? 'email-error' : null"
               />
               @if (form.controls.email.invalid && form.controls.email.touched) {
-                <p class="field-error-msg flex items-center gap-1 mt-1.5">
+                <p id="email-error" class="field-error-msg flex items-center gap-1 mt-1.5">
                   <svg class="w-3.5 h-3.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
                   </svg>
@@ -119,6 +123,8 @@ import { AuthService } from '../../core/services/auth.service';
   `,
 })
 export class ForgotPasswordComponent {
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+  private readonly changeDetector = inject(ChangeDetectorRef);
   private readonly formBuilder = inject(FormBuilder);
   private readonly auth = inject(AuthService);
   protected readonly form = this.formBuilder.nonNullable.group({ email: ['', [Validators.required, Validators.email]] });
@@ -127,8 +133,11 @@ export class ForgotPasswordComponent {
   protected readonly success = signal<string | null>(null);
 
   protected submit(): void {
+    if (this.loading() || this.success()) return;
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+      this.changeDetector.detectChanges();
+      this.host.nativeElement.querySelector<HTMLElement>('input[aria-invalid="true"]')?.focus();
       return;
     }
     this.loading.set(true);

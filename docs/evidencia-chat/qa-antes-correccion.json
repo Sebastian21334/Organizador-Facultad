@@ -1,0 +1,237 @@
+{
+  "date": "2026-10-10T00:46:48.587Z",
+  "environment": "Next producción con API ficticia local; Origin de POST sustituido por Playwright para probar la política HTTPS sin debilitarla.",
+  "screens": [
+    "movil-login.png",
+    "movil-login-error.png",
+    "movil-historial.png",
+    "movil-tarea-creada.png",
+    "movil-envio-error.png",
+    "movil-logout-error.png",
+    "movil-sesion-vencida.png",
+    "movil-historial-error.png",
+    "movil-vacio.png",
+    "movil-cargando.png",
+    "tablet-login.png",
+    "tablet-login-error.png",
+    "tablet-historial.png",
+    "tablet-tarea-creada.png",
+    "tablet-envio-error.png",
+    "tablet-logout-error.png",
+    "tablet-sesion-vencida.png",
+    "tablet-historial-error.png",
+    "tablet-vacio.png",
+    "tablet-cargando.png",
+    "escritorio-login.png",
+    "escritorio-login-error.png",
+    "escritorio-historial.png",
+    "escritorio-tarea-creada.png",
+    "escritorio-envio-error.png",
+    "escritorio-logout-error.png",
+    "escritorio-sesion-vencida.png",
+    "escritorio-historial-error.png",
+    "escritorio-vacio.png",
+    "escritorio-cargando.png"
+  ],
+  "checks": [
+    {
+      "size": "movil",
+      "screen": "login",
+      "overflow": {
+        "width": 390,
+        "document": 390
+      },
+      "violations": []
+    },
+    {
+      "size": "movil",
+      "screen": "historial",
+      "overflow": {
+        "width": 390,
+        "document": 390
+      },
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodes": [
+            [
+              ".user.message-row:nth-child(1) > .avatar[aria-hidden=\"true\"]"
+            ],
+            [
+              ".user.message-row:nth-child(3) > .avatar[aria-hidden=\"true\"]"
+            ],
+            [
+              ".user.message-row:nth-child(5) > .avatar[aria-hidden=\"true\"]"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "size": "movil",
+      "screen": "envio-error",
+      "overflow": {
+        "width": 390,
+        "document": 390
+      },
+      "violations": []
+    },
+    {
+      "size": "movil",
+      "screen": "vacio",
+      "overflow": {
+        "width": 390,
+        "document": 390
+      },
+      "violations": []
+    },
+    {
+      "size": "movil",
+      "flows": "login inválido/válido, historial 3 páginas, envío, borradores conservados, 401, logout fallido/exitoso, error/reintento, vacío, carga, teclado, reduced-motion",
+      "passed": true
+    },
+    {
+      "size": "tablet",
+      "screen": "login",
+      "overflow": {
+        "width": 768,
+        "document": 768
+      },
+      "violations": []
+    },
+    {
+      "size": "tablet",
+      "screen": "historial",
+      "overflow": {
+        "width": 768,
+        "document": 768
+      },
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodes": [
+            [
+              ".user.message-row:nth-child(1) > .avatar[aria-hidden=\"true\"]"
+            ],
+            [
+              ".user.message-row:nth-child(1) > .message-content > .bubble.user-bubble"
+            ],
+            [
+              ".user.message-row:nth-child(3) > .avatar[aria-hidden=\"true\"]"
+            ],
+            [
+              ".user.message-row:nth-child(3) > .message-content > .bubble.user-bubble"
+            ],
+            [
+              ".user.message-row:nth-child(5) > .avatar[aria-hidden=\"true\"]"
+            ],
+            [
+              ".user.message-row:nth-child(5) > .message-content > .bubble.user-bubble"
+            ],
+            [
+              ".user.message-row:nth-child(7) > .avatar[aria-hidden=\"true\"]"
+            ],
+            [
+              ".user.message-row:nth-child(7) > .message-content > .bubble.user-bubble"
+            ],
+            [
+              ".user.message-row:nth-child(9) > .avatar[aria-hidden=\"true\"]"
+            ],
+            [
+              ".user.message-row:nth-child(9) > .message-content > .bubble.user-bubble"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "size": "tablet",
+      "screen": "envio-error",
+      "overflow": {
+        "width": 768,
+        "document": 768
+      },
+      "violations": []
+    },
+    {
+      "size": "tablet",
+      "screen": "vacio",
+      "overflow": {
+        "width": 768,
+        "document": 768
+      },
+      "violations": []
+    },
+    {
+      "size": "tablet",
+      "flows": "login inválido/válido, historial 3 páginas, envío, borradores conservados, 401, logout fallido/exitoso, error/reintento, vacío, carga, teclado, reduced-motion",
+      "passed": true
+    },
+    {
+      "size": "escritorio",
+      "screen": "login",
+      "overflow": {
+        "width": 1440,
+        "document": 1440
+      },
+      "violations": []
+    },
+    {
+      "size": "escritorio",
+      "screen": "historial",
+      "overflow": {
+        "width": 1440,
+        "document": 1440
+      },
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "nodes": [
+            [
+              ".user.message-row:nth-child(1) > .avatar[aria-hidden=\"true\"]"
+            ],
+            [
+              ".user.message-row:nth-child(3) > .avatar[aria-hidden=\"true\"]"
+            ],
+            [
+              ".user.message-row:nth-child(5) > .avatar[aria-hidden=\"true\"]"
+            ],
+            [
+              ".user.message-row:nth-child(7) > .avatar[aria-hidden=\"true\"]"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "size": "escritorio",
+      "screen": "envio-error",
+      "overflow": {
+        "width": 1440,
+        "document": 1440
+      },
+      "violations": []
+    },
+    {
+      "size": "escritorio",
+      "screen": "vacio",
+      "overflow": {
+        "width": 1440,
+        "document": 1440
+      },
+      "violations": []
+    },
+    {
+      "size": "escritorio",
+      "flows": "login inválido/válido, historial 3 páginas, envío, borradores conservados, 401, logout fallido/exitoso, error/reintento, vacío, carga, teclado, reduced-motion",
+      "passed": true
+    }
+  ],
+  "errors": []
+}

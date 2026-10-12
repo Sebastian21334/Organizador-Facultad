@@ -10,6 +10,7 @@ import {
   Max,
   MinLength,
   ValidateIf,
+  Matches,
 } from 'class-validator';
 import { TipoTarea, EstadoTarea, OrigenTarea } from '../entities/tarea.entity';
 import { Transform } from 'class-transformer';
@@ -29,7 +30,7 @@ export class CrearTareaDto {
 
   @IsOptional()
   @IsUUID()
-  materiaId?: string;
+  materiaId?: string | null;
 
   @ValidateIf((_object, value) => value !== undefined)
   @IsEnum(TipoTarea)
@@ -40,8 +41,15 @@ export class CrearTareaDto {
   estado?: EstadoTarea;
 
   @IsOptional()
-  @IsDateString()
-  fechaLimite?: string;
+  @IsDateString({ strict: true, strictSeparator: true })
+  @Matches(
+    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d{1,3})?)?(?:Z|[+-]\d{2}:\d{2})$/,
+    {
+      message:
+        'fechaLimite debe incluir fecha real, hora y zona (Z o un offset como -03:00)',
+    },
+  )
+  fechaLimite?: string | null;
 
   @IsOptional()
   @IsInt()

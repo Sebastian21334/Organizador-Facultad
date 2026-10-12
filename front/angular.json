@@ -39,14 +39,6 @@
       "sourceRoot": "src",
       "prefix": "app",
       "architect": {
-        "test": {
-          "builder": "@angular/build:unit-test",
-          "options": {
-            "tsConfig": "tsconfig.spec.json",
-            "buildTarget": "organizador-facultad:build:development",
-            "isolate": true
-          }
-        },
         "build": {
           "builder": "@angular/build:application",
           "options": {

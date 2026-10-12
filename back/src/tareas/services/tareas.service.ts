@@ -70,6 +70,7 @@ export class TareasService implements OnModuleInit, OnModuleDestroy {
           !(await this.tareasRepository.reclamarRecordatorio(
             tarea.id!,
             intentoId,
+            tarea,
           ))
         )
           continue;
@@ -81,13 +82,17 @@ export class TareasService implements OnModuleInit, OnModuleDestroy {
             20,
             86_400_000,
           );
-          await this.mailService.enviarRecordatorio(tarea.usuario.email, {
-            nombre: tarea.usuario.nombre || 'estudiante',
-            titulo: tarea.titulo || 'Actividad pendiente',
-            fechaLimite: tarea.fechaLimite,
-            materia: tarea.materia?.nombre,
-            tipo: tarea.tipo,
-          }, tarea.usuarioId);
+          await this.mailService.enviarRecordatorio(
+            tarea.usuario.email,
+            {
+              nombre: tarea.usuario.nombre || 'estudiante',
+              titulo: tarea.titulo || 'Actividad pendiente',
+              fechaLimite: tarea.fechaLimite,
+              materia: tarea.materia?.nombre,
+              tipo: tarea.tipo,
+            },
+            tarea.usuarioId,
+          );
           await this.tareasRepository.marcarRecordatorioEnviado(
             tarea.id!,
             intentoId,
@@ -165,8 +170,12 @@ export class TareasService implements OnModuleInit, OnModuleDestroy {
     if (
       datos.fechaLimite !== undefined ||
       datos.recordatorioMinutos !== undefined
-    )
+    ) {
       seguros.recordatorioEnviadoEn = null;
+      // Un envío iniciado antes de reprogramar no puede confirmar la nueva fecha.
+      seguros.recordatorioIntentoId = null;
+      seguros.recordatorioBloqueadoHasta = null;
+    }
     const actualizada = await this.tareasRepository.update(
       id,
       seguros,
@@ -198,7 +207,9 @@ export class TareasService implements OnModuleInit, OnModuleDestroy {
       if (datos[campo] !== undefined)
         (seguros as Record<string, unknown>)[campo] = datos[campo];
     }
-    if (datos.materia) {
+    if (datos.materia === null) {
+      seguros.materia = null;
+    } else if (datos.materia) {
       const materia = await this.materiasRepository.findById(
         datos.materia.id!,
         usuarioId,

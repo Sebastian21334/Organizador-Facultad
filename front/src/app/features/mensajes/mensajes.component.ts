@@ -1,4 +1,6 @@
-import { Component, OnInit, signal, inject, computed, effect, ElementRef, viewChild } from '@angular/core';
+import { Component, DestroyRef, OnInit, signal, inject, computed, effect, ElementRef, viewChild } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MensajesService } from './mensajes.service';
@@ -34,7 +36,7 @@ import { ToastService } from '../../core/services/toast.service';
               <div class="flex items-center gap-1.5 mt-0.5">
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse-dot"></span>
                 <p class="text-xs text-[#7A6F66]">
-                  En línea · Organizador de tareas
+                  Organizador de tareas
                 </p>
               </div>
             </div>
@@ -73,7 +75,7 @@ import { ToastService } from '../../core/services/toast.service';
                 ¿Qué tenés que preparar hoy?
               </h2>
               <p class="text-sm text-[#5E534B] max-w-md mt-1.5 leading-relaxed">
-                Escribile a Tempo cualquier compromiso o tarea de la facultad y la IA lo interpretará para agendarlo automáticamente.
+                Contale a Tempo una tarea y su fecha. La IA la agenda al final del día indicado; podés ajustar la hora exacta desde Tareas.
               </p>
 
               <!-- Sugerencias de ejemplo como Chips clickeables -->
@@ -138,9 +140,9 @@ import { ToastService } from '../../core/services/toast.service';
                       <span>Tarea agendada con éxito</span>
                     </div>
 
-                    <h3 class="font-display font-bold text-base text-[#1F2E23] mt-2 mb-2 leading-snug">
+                    <h2 class="font-display font-bold text-base text-[#1F2E23] mt-2 mb-2 leading-snug">
                       {{ m.tareaGenerada.titulo }}
-                    </h3>
+                    </h2>
 
                     @if (m.resultadoIA) {
                       <div class="flex flex-wrap items-center gap-1.5 mt-2">
@@ -273,13 +275,14 @@ import { ToastService } from '../../core/services/toast.service';
               class="flex-1 bg-transparent px-2 py-2 text-[16px] sm:text-sm text-[#2B231F] outline-none placeholder:text-[#968A7E]"
               placeholder="Escribí una tarea (ej: 'Parcial de Física el martes')..."
               aria-label="Tarea o compromiso para Tempo IA"
-              [disabled]="enviando()"
+              maxlength="4000"
+              [disabled]="enviando() || cargando()"
               autocomplete="off"
             />
 
             <button
               type="submit"
-              [disabled]="enviando() || !texto.trim()"
+              [disabled]="enviando() || cargando() || !texto.trim()"
               class="w-11 h-11 sm:w-10 sm:h-10 shrink-0 rounded-full bg-[#6E1F2B] text-white flex items-center justify-center hover:bg-[#541721] active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100 transition-all shadow-sm shadow-[#6E1F2B]/25"
               aria-label="Enviar mensaje a Tempo"
             >
@@ -313,6 +316,8 @@ import { ToastService } from '../../core/services/toast.service';
 export class MensajesComponent implements OnInit {
   private readonly mensajesService = inject(MensajesService);
   private readonly toast = inject(ToastService);
+  private readonly destroyRef = inject(DestroyRef);
+  private carga?: Subscription;
 
   protected readonly scrollContainer = viewChild<ElementRef<HTMLDivElement>>('scrollContainer');
 
@@ -325,7 +330,7 @@ export class MensajesComponent implements OnInit {
   protected readonly sugerencias = [
     'Parcial de Redes el 15 de octubre',
     'Entrega TP2 de Bases de Datos para el lunes',
-    'Final de Sistemas el jueves 14hs',
+    'Final de Sistemas el jueves',
     'Estudiar Álgebra para mañana',
   ];
 
@@ -353,9 +358,11 @@ export class MensajesComponent implements OnInit {
   }
 
   protected cargar(): void {
+    if (this.enviando()) return;
+    this.carga?.unsubscribe();
     this.cargando.set(true);
     this.error.set(null);
-    this.mensajesService.listar().subscribe({
+    this.carga = this.mensajesService.listar().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (mensajes) => {
         this.mensajes.set(mensajes);
         this.cargando.set(false);
@@ -369,7 +376,8 @@ export class MensajesComponent implements OnInit {
 
   protected enviar(): void {
     const texto = this.texto.trim();
-    if (!texto || this.enviando()) return;
+    if (!texto || this.enviando() || this.cargando()) return;
+    if (texto.length > 4000) { this.error.set('El mensaje admite hasta 4000 caracteres.'); return; }
 
     this.textoPendiente.set(texto);
     this.enviando.set(true);

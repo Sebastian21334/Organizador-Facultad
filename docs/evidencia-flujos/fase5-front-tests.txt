@@ -1,0 +1,17 @@
+
+> organizador-facultad@0.0.0 test
+> ng test --watch=false
+
+> Building...
+√ Building...
+Application bundle generation complete. [3.607 seconds] - 2026-10-10T01:38:40.591Z
+
+
+ RUN  v4.1.11 C:/Users/Sebastian Gonzalez/Desktop/proyectos/Proyecto organizador universidad/front
+
+
+ Test Files  17 passed (17)
+      Tests  136 passed (136)
+   Start at  22:38:44
+   Duration  25.50s (transform 4.82s, setup 11.04s, import 23.39s, tests 7.45s, environment 167.51s)
+

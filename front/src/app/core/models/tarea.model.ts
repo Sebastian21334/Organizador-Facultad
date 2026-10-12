@@ -24,3 +24,9 @@ export interface CrearTareaDto {
   recordatorioMinutos?: number | null;
   origen?: OrigenTarea;
 }
+
+/** Un campo omitido se conserva; null borra una asociación o fecha opcional. */
+export type ActualizarTareaDto = Partial<Omit<CrearTareaDto, 'materiaId' | 'fechaLimite'>> & {
+  materiaId?: string | null;
+  fechaLimite?: string | null;
+};

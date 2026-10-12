@@ -25,20 +25,14 @@ export function detectPwaPlatform(
 export class PwaPlatformService {
   private readonly window = inject(DOCUMENT).defaultView;
   private readonly destroyRef = inject(DestroyRef);
-  private readonly storageKey = 'tempo-pwa-install-dismissed-v1';
   private readonly deferredPrompt = signal<InstallPromptEvent | null>(null);
-  private readonly dismissed = signal(this.readDismissed());
   private readonly manuallyOpened = signal(false);
   readonly platform: PwaPlatform = this.window ? detectPwaPlatform(this.window.navigator) : 'other';
   readonly installed = signal(this.isStandalone());
   readonly canInstall = computed(() => !this.installed() && !!this.deferredPrompt());
   readonly error = signal('');
-  readonly showPopup = computed(
-    () =>
-      !this.installed() &&
-      (this.manuallyOpened() ||
-        (!this.dismissed() && ['android', 'ios-safari'].includes(this.platform))),
-  );
+  // Instalar es una acción opcional: la primera visita nunca interrumpe el flujo.
+  readonly showPopup = computed(() => !this.installed() && this.manuallyOpened());
 
   constructor() {
     const win = this.window;
@@ -70,13 +64,7 @@ export class PwaPlatformService {
     this.manuallyOpened.set(true);
   }
   dismiss(): void {
-    this.dismissed.set(true);
     this.manuallyOpened.set(false);
-    try {
-      this.window?.localStorage.setItem(this.storageKey, '1');
-    } catch {
-      /* Preferencia válida durante esta visita. */
-    }
   }
   async install(): Promise<void> {
     const event = this.deferredPrompt();
@@ -97,12 +85,5 @@ export class PwaPlatformService {
       this.window?.matchMedia?.('(display-mode: standalone)').matches ||
       (this.window?.navigator as PwaNavigator | undefined)?.standalone
     );
-  }
-  private readDismissed(): boolean {
-    try {
-      return this.window?.localStorage.getItem(this.storageKey) === '1';
-    } catch {
-      return false;
-    }
   }
 }

@@ -19,14 +19,16 @@ export class ThemeService {
   alternar(): void {
     const siguiente: Tema = this.esOscuro() ? 'claro' : 'oscuro';
     this.temaActual.set(siguiente);
-    localStorage.setItem(this.storageKey, siguiente);
     this.aplicar(siguiente);
+    try { localStorage.setItem(this.storageKey, siguiente); } catch { /* La preferencia sigue activa en memoria. */ }
   }
 
   private temaInicial(): Tema {
-    const guardado = localStorage.getItem(this.storageKey);
-    if (guardado === 'claro' || guardado === 'oscuro') return guardado;
-    return matchMedia('(prefers-color-scheme: dark)').matches ? 'oscuro' : 'claro';
+    try {
+      const guardado = localStorage.getItem(this.storageKey);
+      if (guardado === 'claro' || guardado === 'oscuro') return guardado;
+    } catch { /* El almacenamiento restringido no debe impedir abrir la app. */ }
+    return this.document.defaultView?.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'oscuro' : 'claro';
   }
 
   private aplicar(tema: Tema): void {

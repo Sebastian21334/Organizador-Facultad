@@ -6,7 +6,6 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test",
     "preview:pwa": "node scripts/serve-pwa.mjs"
   },
   "private": true,

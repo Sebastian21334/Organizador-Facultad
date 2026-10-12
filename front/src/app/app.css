@@ -28,6 +28,7 @@
    ========================================================= */
 
 .app-sidebar {
+  overflow-y: auto;
   position: fixed;
 
   top: 0;
@@ -141,9 +142,9 @@
 }
 
 .brand-slogan {
-  color: #a69577;
+  color: var(--muted);
 
-  font-size: 0.58rem;
+  font-size: 0.7rem;
   line-height: 1.25;
 
   text-align: center;
@@ -165,8 +166,10 @@
 }
 
 .nav-item {
-  width: 2.9rem;
-  height: 2.9rem;
+  width: 100%;
+  min-height: 2.75rem;
+  padding: .65rem .5rem;
+  gap: .5rem;
 
   display: inline-flex;
 
@@ -180,7 +183,7 @@
 
   border: 1px solid transparent;
 
-  transition: all 0.2s ease;
+  transition: background-color .18s ease, color .18s ease, transform .18s var(--ease-out);
 
   cursor: pointer;
 }
@@ -209,10 +212,17 @@
   border-color: rgba(216, 203, 174, 0.8);
 }
 
-/* Etiqueta de texto junto al ícono: solo se usa en el drawer mobile */
 .nav-item-label {
-  display: none;
+  display: inline;
+  font-size: .78rem;
+  line-height: 1.4;
+  text-align: left;
 }
+.nav-item { justify-content: flex-start; }
+.nav-item svg { flex-shrink: 0; }
+.drawer-close { display: none; }
+.skip-link { position: fixed; top: .5rem; left: .5rem; z-index: 110; padding: .8rem 1rem; border-radius: .6rem; background: var(--card); color: var(--ink); transform: translateY(-160%); }
+.skip-link:focus { transform: none; }
 
 
 /* =========================================================
@@ -243,7 +253,7 @@
   padding: 0;
 }
 
-.app-shell:not(:has(.app-sidebar)) .app-content {
+.app-shell:not(:has(.app-sidebar)):not(.app-shell--reserva-privada) .app-content {
   margin-left: 0;
 }
 
@@ -320,11 +330,6 @@
 
 @media (max-width: 768px) {
 
-  html, body {
-    height: 100%;
-    overflow: hidden; /* la página completa ya no scrollea */
-  }
-
   .app-shell {
     display: flex;
     flex-direction: column;
@@ -341,6 +346,7 @@
      ------------------------- */
 
   .mobile-topbar {
+    --topbar-control-size: 2.75rem;
     display: flex;
     align-items: center;
 
@@ -355,6 +361,12 @@
     border-bottom: 1px solid #d8cbae;
 
     box-sizing: border-box;
+  }
+
+  /* Misma altura que los controles reales, sin anticipar navegación privada. */
+  .mobile-topbar--placeholder::before {
+    content: '';
+    height: var(--topbar-control-size);
   }
 
   .menu-toggle {
@@ -434,7 +446,9 @@
     position: fixed;
 
     top: 0;
-    left: -100%;
+    left: 0;
+    transform: translateX(-100%);
+    visibility: hidden;
     bottom: 0;
 
     height: 100dvh;
@@ -448,7 +462,8 @@
 
     box-shadow: 12px 0 28px rgba(58, 42, 34, 0.18);
 
-    transition: left 0.28s ease;
+    /* La visibilidad debe ser inmediata para recibir el foco al abrir. */
+    transition: transform .22s var(--ease-out);
 
     z-index: 50;
 
@@ -458,8 +473,11 @@
   }
 
   .app-sidebar--open {
-    left: 0;
+    transform: none;
+    visibility: visible;
   }
+  .drawer-close { display: flex; align-items: center; justify-content: space-between; min-height: 44px; padding: .5rem .75rem; margin-bottom: .75rem; border: 1px solid var(--border-strong); border-radius: .65rem; background: var(--card); color: var(--ink); cursor: pointer; }
+  .menu-toggle, .mobile-theme-toggle { width: var(--topbar-control-size); height: var(--topbar-control-size); }
 
 
   /* -------------------------
@@ -592,7 +610,7 @@
   }
 
   .brand-slogan {
-    font-size: 0.55rem;
+    font-size: 0.7rem;
   }
 
   .app-content {
@@ -615,5 +633,5 @@
 :host-context(.dark) .brand-block { border-color: #293240; }
 :host-context(.dark) .nav-item { color: #8e98a8; }
 :host-context(.dark) .nav-item:hover { color: #dce1ff; background: rgba(116,132,244,.13); border-color: rgba(135,148,255,.24); }
-:host-context(.dark) .nav-item.active { color: #fff; background: linear-gradient(145deg, #8794ff, #5969df); box-shadow: 0 10px 24px rgba(68,82,190,.3); }
+:host-context(.dark) .nav-item.active { color: var(--on-accent); background: var(--action-bg); box-shadow: 0 10px 24px rgba(68,82,190,.3); }
 :host-context(.dark) .nav-item--logout { border-color: #293240; }

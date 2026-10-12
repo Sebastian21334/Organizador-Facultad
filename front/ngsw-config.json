@@ -7,7 +7,6 @@
       "installMode": "prefetch",
       "resources": {
         "files": [
-          "/favicon.ico",
           "/index.html",
           "/manifest.webmanifest",
           "/*.css",
@@ -21,7 +20,7 @@
       "installMode": "lazy",
       "updateMode": "lazy",
       "resources": {
-        "files": ["/media/**", "/pdfjs/**"]
+        "files": ["/media/**", "/pdfjs/**", "/fonts/**"]
       }
     }
   ],

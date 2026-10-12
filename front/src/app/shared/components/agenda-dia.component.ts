@@ -9,7 +9,11 @@ import { EstadoTarea, Tarea, TipoTarea } from '../../core/models';
   template: `
     <section class="day-agenda" aria-label="Tareas del día seleccionado">
       <header class="day-heading" aria-live="polite" aria-atomic="true">
-        <h3>{{ fecha() | date: "EEEE d 'de' MMMM" : undefined : 'es-AR' }}</h3>
+        @if (nivelTitulo() === 2) {
+          <h2>{{ fecha() | date: "EEEE d 'de' MMMM" : undefined : 'es-AR' }}</h2>
+        } @else {
+          <h3>{{ fecha() | date: "EEEE d 'de' MMMM" : undefined : 'es-AR' }}</h3>
+        }
         <span>{{ tareas().length }} {{ tareas().length === 1 ? 'tarea' : 'tareas' }}</span>
       </header>
       <div class="day-tasks">
@@ -42,8 +46,8 @@ import { EstadoTarea, Tarea, TipoTarea } from '../../core/models';
   styles: `
     :host { display: block; min-width: 0; }
     .day-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; }
-    h3 { margin: 0; font: 600 .95rem var(--font-body); color: var(--ink); }
-    h3::first-letter { text-transform: uppercase; }
+    h2, h3 { margin: 0; font: 600 .95rem var(--font-body); color: var(--ink); }
+    h2::first-letter, h3::first-letter { text-transform: uppercase; }
     .day-heading > span { flex-shrink: 0; color: var(--muted); font-size: .7rem; }
     .day-tasks { padding: 0 1rem; border: 1px solid var(--border); border-radius: .85rem; background: var(--card); }
     .day-task { display: flex; align-items: center; gap: .75rem; width: 100%; padding: 1rem 0; border: 0; background: transparent; color: var(--ink); text-align: left; cursor: pointer; }
@@ -68,6 +72,7 @@ export class AgendaDiaComponent {
   readonly fecha = input.required<Date>();
   readonly tareas = input.required<Tarea[]>();
   readonly esHoy = input(false);
+  readonly nivelTitulo = input<2 | 3>(2);
   readonly seleccionar = output<Tarea>();
   protected readonly estadoHecha = EstadoTarea.HECHA;
   protected readonly tipoExamen = TipoTarea.EXAMEN;

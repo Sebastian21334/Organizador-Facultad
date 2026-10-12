@@ -7,9 +7,12 @@ import { Tarea, Materia, EstadoTarea, EstadoMateria, Cuatrimestre, OrigenTarea, 
 import { AuthService } from '../../core/services/auth.service';
 import { LoaderComponent } from '../../shared/components/loader.component';
 import { ErrorComponent } from '../../shared/components/error.component';
-import { TareaBadgeComponent } from '../../shared/components/tarea-badge.component';
 import { AgendaDiaComponent } from '../../shared/components/agenda-dia.component';
 import { LucideDynamicIcon, LucideCalendarDays } from '@lucide/angular';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { interval } from 'rxjs';
+import { mismoDiaLocal } from '../../core/services/fechas';
+import { TareaCalendarioDialogComponent } from '../calendario/tarea-calendario-dialog.component';
 
 interface DiaSemana {
   fecha: Date;
@@ -21,9 +24,12 @@ interface DiaSemana {
 @Component({
   selector: 'app-inicio',
   host: { '[class.inicio-preview]': 'vistaPrevia()' },
-  imports: [CommonModule, RouterLink, LoaderComponent, ErrorComponent, TareaBadgeComponent, AgendaDiaComponent, LucideDynamicIcon],
+  imports: [CommonModule, RouterLink, LoaderComponent, ErrorComponent, AgendaDiaComponent, LucideDynamicIcon, TareaCalendarioDialogComponent],
   template: `
     <div class="inicio-page">
+      @if (errorMaterias()) {
+        <app-error [mensaje]="errorMaterias()" [permitirReintento]="true" (reintentar)="cargarMaterias()" />
+      }
       @if (cargando()) {
         <div class="inicio-loading">
           <app-loader mensaje="Preparando tu semana..." />
@@ -37,7 +43,7 @@ interface DiaSemana {
           <aside class="inicio-welcome">
             <div>
               <p class="text-xs font-mono uppercase tracking-[0.15em] text-[#F1DEE1]/70">
-                {{ hoy | date: "EEEE d 'de' MMMM" : undefined : 'es-AR' }}
+                {{ hoy() | date: "EEEE d 'de' MMMM" : undefined : 'es-AR' }}
               </p>
               <div class="inicio-welcome-divider"></div>
               <h1 class="text-5xl md:text-6xl font-display font-bold text-[#FAF6EE] mt-4 leading-[1.05]">
@@ -47,7 +53,7 @@ interface DiaSemana {
                  {{ resumen() }}
                </p>
                <div class="inicio-quick-actions">
-                 <a routerLink="/tareas">+ Nueva tarea</a>
+                 <a routerLink="/tareas" class="button-primary">+ Nueva tarea</a>
                  <a routerLink="/mensajes">✦ Hablar con IA</a>
                </div>
             </div>
@@ -72,15 +78,15 @@ interface DiaSemana {
                     <button type="button" class="weekly-day" [class.is-selected]="dia.fecha.getTime() === diaSemanaSeleccionado().fecha.getTime()"
                       [attr.aria-pressed]="dia.fecha.getTime() === diaSemanaSeleccionado().fecha.getTime()"
                       [attr.aria-current]="dia.esHoy ? 'date' : null"
-                      [attr.aria-label]="(dia.fecha | date: 'fullDate' : undefined : 'es-AR') + ': ' + dia.tareas.length + ' tareas'"
+                      [attr.aria-label]="diasSemanaIniciales[i] + ' ' + (dia.fecha | date: 'd') + '. ' + (dia.fecha | date: 'fullDate' : undefined : 'es-AR') + ': ' + dia.tareas.length + ' tareas'"
                       aria-controls="weekly-day-agenda" (click)="fechaSemanaSeleccionada.set(dia.fecha)">
-                      <span class="weekly-day-label">{{ diasSemanaIniciales[i] }}</span>
+                      <span class="weekly-day-label" aria-hidden="true">{{ diasSemanaIniciales[i] + ' ' }}</span>
                       <strong>{{ dia.fecha | date: 'd' }}</strong>
                       <span class="weekly-day-dot" [class.has-tasks]="dia.tareas.length > 0" aria-hidden="true"></span>
                     </button>
                   }
                 </div>
-                <app-agenda-dia id="weekly-day-agenda" [fecha]="diaSemanaSeleccionado().fecha" [tareas]="diaSemanaSeleccionado().tareas" [esHoy]="diaSemanaSeleccionado().esHoy" (seleccionar)="seleccionarTarea($event)" />
+                <app-agenda-dia id="weekly-day-agenda" [nivelTitulo]="3" [fecha]="diaSemanaSeleccionado().fecha" [tareas]="diaSemanaSeleccionado().tareas" [esHoy]="diaSemanaSeleccionado().esHoy" (seleccionar)="seleccionarTarea($event)" />
                 <a routerLink="/calendario" class="weekly-footer-link">Ver calendario completo <span aria-hidden="true">→</span></a>
               </section>
 
@@ -125,7 +131,7 @@ interface DiaSemana {
                         <span class="tarea-row-nombre">{{ t.titulo }}</span>
                         <span class="tarea-row-fecha">
                           @if (t.fechaLimite) {
-                            {{ t.fechaLimite | date: "EEE d 'de' MMM, HH:mm'hs'" : 'UTC' : 'es-AR' }}
+                            {{ t.fechaLimite | date: "EEE d 'de' MMM, HH:mm'hs'" : undefined : 'es-AR' }}
                           } @else {
                             Sin fecha
                           }
@@ -141,33 +147,8 @@ interface DiaSemana {
         </div>
       }
 
-      @if (tareaSeleccionada()) {
-        <div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4" (click)="cerrarDetalle()">
-          <div class="bg-[#FFFEFA] rounded-lg shadow-xl max-w-md w-full p-5 space-y-3" (click)="$event.stopPropagation()">
-            <div class="flex items-start justify-between">
-              <h2 class="text-lg font-display font-bold text-[#3A2A22]">{{ tareaSeleccionada()!.titulo }}</h2>
-              <button (click)="cerrarDetalle()" class="text-[#A39C87] hover:text-[#5B5748]">✕</button>
-            </div>
-            <div class="flex flex-wrap gap-2">
-              <app-tarea-badge [tipo]="tareaSeleccionada()!.tipo" [estado]="tareaSeleccionada()!.estado" />
-            </div>
-            <dl class="text-sm space-y-1.5">
-              <div>
-                <dt class="text-[#8C8570] inline">Materia: </dt>
-                <dd class="inline text-[#3A2A22]">{{ tareaSeleccionada()!.materia?.nombre ?? '—' }}</dd>
-              </div>
-              <div>
-                <dt class="text-[#8C8570] inline">Fecha límite: </dt>
-                <dd class="inline text-[#3A2A22]">{{ tareaSeleccionada()!.fechaLimite ? (tareaSeleccionada()!.fechaLimite | date: 'medium' : 'UTC' : 'es-AR') : '—' }}</dd>
-              </div>
-              <div>
-                <dt class="text-[#8C8570] inline">Descripción: </dt>
-                <dd class="inline text-[#3A2A22]">{{ tareaSeleccionada()!.descripcion ?? '—' }}</dd>
-              </div>
-            </dl>
-            <a routerLink="/tareas" class="block text-xs text-[#5B5748] hover:underline pt-1">Ver todas las tareas →</a>
-          </div>
-        </div>
+      @if (tareaSeleccionada(); as tarea) {
+        <app-tarea-calendario-dialog [tarea]="tarea" (cancelada)="cerrarDetalle()" (actualizada)="tareaActualizada($event)" />
       }
     </div>
   `,
@@ -176,10 +157,10 @@ interface DiaSemana {
        Si el shell de la app (el <router-outlet> o su contenedor padre) tiene
        padding propio, hay que sacarlo ahí también para que el bordó llegue
        realmente hasta el borde de la ventana, como en la referencia. */
-    .inicio-page { min-height: 100%; }
+    .inicio-page { min-height: 100%; overflow-wrap: anywhere; }
     :host { display: block; }
     :host.inicio-preview .inicio-layout { grid-template-columns: minmax(280px, 30%) 1fr; min-height: 730px; }
-    :host.inicio-preview .inicio-welcome { padding: 3rem 2.5rem; }
+    :host.inicio-preview .inicio-welcome { min-width: 0; padding: 3rem 2.5rem; }
     :host.inicio-preview .inicio-dashboard-inner { padding: 2.5rem; }
     :host.inicio-preview .academic-progress-card { grid-template-columns: 1fr auto auto; }
     :host.inicio-preview .academic-progress-link { grid-column: auto; border-top: 0; padding-top: 0; }
@@ -195,12 +176,13 @@ interface DiaSemana {
       min-height: 100vh;
     }
 
-    .inicio-welcome {
+    .inicio-welcome { min-width: 0;
       background: linear-gradient(160deg, #6E1F2B 0%, #5A1621 100%);
       padding: 3rem 2.5rem;
       display: flex;
       align-items: flex-start;
     }
+    .inicio-welcome > div { min-width: 0; }
     .inicio-welcome-divider { width: 2.5rem; height: 2px; background: #F0C9BC; margin-top: 0.85rem; opacity: 0.7; }
     .inicio-quick-actions { display: flex; flex-direction: column; gap: .55rem; margin-top: 2.5rem; }
     .inicio-quick-actions a { width: fit-content; padding: .6rem .8rem; border: 1px solid rgba(241,222,225,.3); border-radius: .65rem; color: #fffefa; font-size: .72rem; text-decoration: none; background: rgba(255,255,255,.08); }
@@ -247,6 +229,8 @@ interface DiaSemana {
 
     .tarea-row {
       display: flex;
+      flex-wrap: wrap;
+      gap: .5rem 1rem;
       align-items: center;
       justify-content: space-between;
       width: 100%;
@@ -259,24 +243,31 @@ interface DiaSemana {
     }
     .tarea-row:hover { background-color: #E3DCC8; }
     .tarea-row-nombre {
+      flex: 1 1 16rem;
+      min-width: 0;
+      overflow-wrap: anywhere;
       font-weight: 700;
       color: #3A2A22;
       font-size: 0.95rem;
     }
     .tarea-row-fecha {
+      flex: 0 1 18rem;
+      min-width: 0;
+      max-width: 100%;
+      overflow-wrap: anywhere;
       font-size: 0.75rem;
       color: #B3401A;
-      white-space: nowrap;
-      margin-left: 1rem;
+      white-space: normal;
     }
 
     @media (max-width: 767px) {
-      .inicio-layout { grid-template-columns: 1fr; min-height: auto; }
-      .inicio-welcome { padding: 2rem 1.5rem; }
+      .inicio-layout { grid-template-columns: minmax(0, 1fr); min-height: auto; }
+      .inicio-welcome { min-width: 0; padding: 2rem 1.5rem; }
       .inicio-dashboard-inner { padding: 1.5rem 1.25rem; }
       .academic-progress-card { grid-template-columns: 1fr auto; }
       .academic-progress-link { grid-column: 1 / -1; border-top: 1px solid #e5dfd3; padding-top: .75rem; }
       .tarea-row { flex-direction: column; align-items: flex-start; gap: 0.25rem; }
+      .tarea-row-nombre, .tarea-row-fecha { flex-basis: auto; }
       .tarea-row-fecha { margin-left: 0; }
     }
   `,
@@ -287,9 +278,11 @@ export class InicioComponent implements OnInit {
   private readonly tareasService = inject(TareasService);
   private readonly materiasService = inject(MateriasService);
   private readonly authService = inject(AuthService);
+  private readonly ahora = signal(new Date());
 
   protected readonly cargando = signal(true);
   protected readonly error = signal<string | null>(null);
+  protected readonly errorMaterias = signal<string | null>(null);
   protected readonly tareas = signal<Tarea[]>([]);
   protected readonly materias = signal<Materia[]>([]);
   protected readonly tareaSeleccionada = signal<Tarea | null>(null);
@@ -297,7 +290,7 @@ export class InicioComponent implements OnInit {
   protected readonly fechaSemanaSeleccionada = signal(new Date(new Date().setHours(0, 0, 0, 0)));
   protected readonly diasSemanaIniciales = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
 
-  protected readonly hoy = new Date();
+  protected readonly hoy = computed(() => this.ahora());
   protected readonly materiasAprobadas = computed(() => this.materias().filter((m) => m.estado === EstadoMateria.APROBADO).length);
   protected readonly porcentajeAprobadas = computed(() => {
     const total = this.materias().length;
@@ -311,6 +304,7 @@ export class InicioComponent implements OnInit {
 
   protected readonly tareasPendientesOrdenadas = computed(() =>
     [...this.tareasPendientes()].sort((a, b) => {
+      if (!a.fechaLimite && !b.fechaLimite) return 0;
       if (!a.fechaLimite) return 1;
       if (!b.fechaLimite) return -1;
       return new Date(a.fechaLimite).getTime() - new Date(b.fechaLimite).getTime();
@@ -318,12 +312,12 @@ export class InicioComponent implements OnInit {
   );
 
   protected readonly tareasVencidas = computed(() => {
-    const ahora = new Date();
+    const ahora = this.ahora();
     return this.tareasPendientes().filter((t) => t.fechaLimite && new Date(t.fechaLimite) < ahora);
   });
 
   protected readonly proximaTarea = computed(() => {
-    const ahora = new Date();
+    const ahora = this.ahora();
     const conFecha = this.tareasPendientes()
       .filter((t) => t.fechaLimite && new Date(t.fechaLimite) >= ahora)
       .sort((a, b) => new Date(a.fechaLimite!).getTime() - new Date(b.fechaLimite!).getTime());
@@ -331,7 +325,7 @@ export class InicioComponent implements OnInit {
   });
 
   protected readonly semana = computed<DiaSemana[]>(() => {
-    const base = new Date();
+    const base = new Date(this.ahora());
     base.setHours(0, 0, 0, 0);
     const offset = (base.getDay() + 6) % 7; // lunes = 0
     const lunes = new Date(base);
@@ -344,13 +338,7 @@ export class InicioComponent implements OnInit {
       const tareasDelDia = tareas.filter((t) => {
         if (!t.fechaLimite) return false;
         const f = new Date(t.fechaLimite);
-        // Mismo criterio que el calendario: fechaLimite viaja en UTC medianoche,
-        // por eso comparamos con los getters UTC contra la fecha local del día.
-        return (
-          f.getUTCFullYear() === fecha.getFullYear() &&
-          f.getUTCMonth() === fecha.getMonth() &&
-          f.getUTCDate() === fecha.getDate()
-        );
+        return mismoDiaLocal(f, fecha);
       });
       return {
         fecha,
@@ -377,13 +365,17 @@ export class InicioComponent implements OnInit {
     const proxima = this.proximaTarea();
     if (pendientes === 0) return 'No tenés tareas pendientes por ahora.';
     if (!proxima) return `Tenés ${pendientes} ${pendientes === 1 ? 'tarea pendiente' : 'tareas pendientes'}.`;
-    const esHoy = this.esMismoDia(new Date(proxima.fechaLimite!), new Date());
-    const manana = new Date();
+    const esHoy = mismoDiaLocal(new Date(proxima.fechaLimite!), this.ahora());
+    const manana = new Date(this.ahora());
     manana.setDate(manana.getDate() + 1);
-    const esManiana = this.esMismoDia(new Date(proxima.fechaLimite!), manana);
+    const esManiana = mismoDiaLocal(new Date(proxima.fechaLimite!), manana);
     const cuando = esHoy ? 'vence hoy' : esManiana ? 'vence mañana' : 'vence pronto';
     return `Tenés ${pendientes} ${pendientes === 1 ? 'tarea pendiente' : 'tareas pendientes'} y "${proxima.titulo}" ${cuando}.`;
   });
+
+  constructor() {
+    interval(60_000).pipe(takeUntilDestroyed()).subscribe(() => this.ahora.set(new Date()));
+  }
 
   ngOnInit(): void {
     if (this.vistaPrevia()) {
@@ -408,7 +400,7 @@ export class InicioComponent implements OnInit {
     this.tareas.set(ejemplos.map((ejemplo, index) => {
       const fecha = new Date();
       fecha.setDate(fecha.getDate() + ejemplo.dias);
-      const limite = new Date(Date.UTC(fecha.getFullYear(), fecha.getMonth(), fecha.getDate(), 23, 59));
+      const limite = new Date(fecha.getFullYear(), fecha.getMonth(), fecha.getDate(), 23, 59);
       return {
         id: `demo-tarea-${index}`, titulo: ejemplo.titulo, descripcion: null,
         materia: materias[ejemplo.materia], tipo: ejemplo.tipo,
@@ -422,10 +414,7 @@ export class InicioComponent implements OnInit {
   protected cargar(): void {
     this.cargando.set(true);
     this.error.set(null);
-    this.materiasService.listar().subscribe({
-      next: (materias) => this.materias.set(materias),
-      error: () => this.materias.set([]),
-    });
+    this.cargarMaterias();
     this.tareasService.listar().subscribe({
       next: (tareas) => {
         this.tareas.set(tareas);
@@ -439,6 +428,7 @@ export class InicioComponent implements OnInit {
   }
 
   protected seleccionarTarea(t: Tarea): void {
+    if (this.vistaPrevia()) return;
     this.tareaSeleccionada.set(t);
   }
 
@@ -446,7 +436,16 @@ export class InicioComponent implements OnInit {
     this.tareaSeleccionada.set(null);
   }
 
-  private esMismoDia(a: Date, b: Date): boolean {
-    return a.getUTCFullYear() === b.getFullYear() && a.getUTCMonth() === b.getMonth() && a.getUTCDate() === b.getDate();
+  protected tareaActualizada(tarea: Tarea): void {
+    this.tareas.update(tareas => tareas.map(actual => actual.id === tarea.id ? tarea : actual));
+    this.cerrarDetalle();
+  }
+
+  protected cargarMaterias(): void {
+    this.errorMaterias.set(null);
+    this.materiasService.listar().subscribe({
+      next: materias => this.materias.set(materias),
+      error: () => this.errorMaterias.set('No se pudo cargar el progreso de tus materias. Reintentá para ver el resumen completo.'),
+    });
   }
 }

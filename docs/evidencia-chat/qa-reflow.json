@@ -1,0 +1,130 @@
+[
+  {
+    "route": "login",
+    "textScale": 1,
+    "geometry": {
+      "width": 320,
+      "document": 320,
+      "controls": [
+        {
+          "name": "email",
+          "left": 64.890625,
+          "right": 280.609375,
+          "width": 215.71875
+        },
+        {
+          "name": "password",
+          "left": 64.890625,
+          "right": 280.609375,
+          "width": 215.71875
+        },
+        {
+          "name": "Iniciar sesión ",
+          "left": 24,
+          "right": 296,
+          "width": 272
+        }
+      ]
+    },
+    "violations": []
+  },
+  {
+    "route": "login",
+    "textScale": 2,
+    "geometry": {
+      "width": 320,
+      "document": 320,
+      "controls": [
+        {
+          "name": "email",
+          "left": 123.328125,
+          "right": 242.203125,
+          "width": 118.875
+        },
+        {
+          "name": "password",
+          "left": 123.328125,
+          "right": 242.203125,
+          "width": 118.875
+        },
+        {
+          "name": "Iniciar sesión ",
+          "left": 48,
+          "right": 272,
+          "width": 224
+        }
+      ]
+    },
+    "violations": []
+  },
+  {
+    "route": "chat",
+    "textScale": 1,
+    "geometry": {
+      "width": 320,
+      "document": 320,
+      "controls": [
+        {
+          "name": "Cerrar sesión",
+          "left": 260,
+          "right": 304,
+          "width": 44
+        },
+        {
+          "name": "Cargar mensajes anteriores",
+          "left": 50.828125,
+          "right": 269.171875,
+          "width": 218.34375
+        },
+        {
+          "name": "chat-message",
+          "left": 33,
+          "right": 244.609375,
+          "width": 211.609375
+        },
+        {
+          "name": "Enviar mensaje",
+          "left": 252.609375,
+          "right": 296.609375,
+          "width": 44
+        }
+      ]
+    },
+    "violations": []
+  },
+  {
+    "route": "chat",
+    "textScale": 2,
+    "geometry": {
+      "width": 320,
+      "document": 320,
+      "controls": [
+        {
+          "name": "Cerrar sesión",
+          "left": 231.578125,
+          "right": 288,
+          "width": 56.421875
+        },
+        {
+          "name": "Cargar mensajes anteriores",
+          "left": 32,
+          "right": 288,
+          "width": 256
+        },
+        {
+          "name": "chat-message",
+          "left": 65,
+          "right": 214.203125,
+          "width": 149.203125
+        },
+        {
+          "name": "Enviar mensaje",
+          "left": 230.203125,
+          "right": 274.203125,
+          "width": 44
+        }
+      ]
+    },
+    "violations": []
+  }
+]

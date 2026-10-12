@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-10T00:44:39.579Z",
+  "environment": "Next producción con API ficticia local; Origin de POST sustituido por Playwright para probar la política HTTPS sin debilitarla.",
+  "screens": [
+    "movil-login.png",
+    "movil-login-error.png"
+  ],
+  "checks": [
+    {
+      "size": "movil",
+      "screen": "login",
+      "overflow": {
+        "width": 390,
+        "document": 390
+      },
+      "violations": []
+    }
+  ],
+  "errors": [],
+  "failure": "page.waitForURL: Timeout 30000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation to \"**/chat\" until \"load\"\n============================================================\n    at C:\\Users\\Sebastian Gonzalez\\Desktop\\proyectos\\Proyecto organizador universidad\\.tmp\\qa\\chat-visual.cjs:28:14"
+}

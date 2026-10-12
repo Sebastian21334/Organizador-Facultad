@@ -1,0 +1,33 @@
+{
+  "policy": "Se informa la corrida mediana por score de tres corridas, no la mejor. Todas las corridas se conservan.",
+  "rows": [
+    {
+      "run": 1,
+      "performance": 0.59,
+      "LCP": 2170.3153,
+      "CLS": 0.309287,
+      "TBT": 1303.0000000000005
+    },
+    {
+      "run": 2,
+      "performance": 0.88,
+      "LCP": 1975.2372999999998,
+      "CLS": 0,
+      "TBT": 455.7627
+    },
+    {
+      "run": 3,
+      "performance": 0.9,
+      "LCP": 2681.383,
+      "CLS": 0.105878,
+      "TBT": 206.99999999999977
+    }
+  ],
+  "median": {
+    "run": 2,
+    "performance": 0.88,
+    "LCP": 1975.2372999999998,
+    "CLS": 0,
+    "TBT": 455.7627
+  }
+}

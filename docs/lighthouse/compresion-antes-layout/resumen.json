@@ -1,0 +1,260 @@
+[
+  {
+    "name": "portada-mobile",
+    "requestedUrl": "http://127.0.0.1:8080/",
+    "finalUrl": "http://127.0.0.1:8080/",
+    "lighthouseVersion": "13.5.0",
+    "fetchTime": "2026-10-10T01:13:12.657Z",
+    "environment": {
+      "networkUserAgent": "Mozilla/5.0 (Linux; Android 11; moto g power (2022)) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Mobile Safari/537.36",
+      "hostUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.0.0 Safari/537.36",
+      "benchmarkIndex": 3911,
+      "credits": {
+        "axe-core": "4.14.0"
+      }
+    },
+    "scores": {
+      "performance": 67,
+      "accessibility": 100,
+      "best-practices": 96,
+      "seo": 100
+    },
+    "metrics": {
+      "first-contentful-paint": {
+        "value": 1809.9881999999998,
+        "display": "1.8 s"
+      },
+      "largest-contentful-paint": {
+        "value": 7203.7441,
+        "display": "7.2 s"
+      },
+      "total-blocking-time": {
+        "value": 345,
+        "display": "350 ms"
+      },
+      "cumulative-layout-shift": {
+        "value": 0,
+        "display": "0"
+      },
+      "speed-index": {
+        "value": 1912.8273665619563,
+        "display": "1.9 s"
+      }
+    }
+  },
+  {
+    "name": "portada-desktop",
+    "requestedUrl": "http://127.0.0.1:8080/",
+    "finalUrl": "http://127.0.0.1:8080/",
+    "lighthouseVersion": "13.5.0",
+    "fetchTime": "2026-10-10T01:13:20.934Z",
+    "environment": {
+      "networkUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36",
+      "hostUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.0.0 Safari/537.36",
+      "benchmarkIndex": 3828,
+      "credits": {
+        "axe-core": "4.14.0"
+      }
+    },
+    "scores": {
+      "performance": 97,
+      "accessibility": 100,
+      "best-practices": 96,
+      "seo": 100
+    },
+    "metrics": {
+      "first-contentful-paint": {
+        "value": 441.041025,
+        "display": "0.4 s"
+      },
+      "largest-contentful-paint": {
+        "value": 1322.6848999999997,
+        "display": "1.3 s"
+      },
+      "total-blocking-time": {
+        "value": 9,
+        "display": "10 ms"
+      },
+      "cumulative-layout-shift": {
+        "value": 0,
+        "display": "0"
+      },
+      "speed-index": {
+        "value": 668.1125585824996,
+        "display": "0.7 s"
+      }
+    }
+  },
+  {
+    "name": "inicio-mobile",
+    "requestedUrl": "http://127.0.0.1:8080/inicio",
+    "finalUrl": "http://127.0.0.1:8080/inicio",
+    "lighthouseVersion": "13.5.0",
+    "fetchTime": "2026-10-10T01:13:30.109Z",
+    "environment": {
+      "networkUserAgent": "Mozilla/5.0 (Linux; Android 11; moto g power (2022)) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Mobile Safari/537.36",
+      "hostUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.0.0 Safari/537.36",
+      "benchmarkIndex": 3867.5,
+      "credits": {
+        "axe-core": "4.14.0"
+      }
+    },
+    "scores": {
+      "performance": 72,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100
+    },
+    "metrics": {
+      "first-contentful-paint": {
+        "value": 1477.0579500000003,
+        "display": "1.5 s"
+      },
+      "largest-contentful-paint": {
+        "value": 7369.7053000000005,
+        "display": "7.4 s"
+      },
+      "total-blocking-time": {
+        "value": 172,
+        "display": "170 ms"
+      },
+      "cumulative-layout-shift": {
+        "value": 0.077992,
+        "display": "0.078"
+      },
+      "speed-index": {
+        "value": 1745.920736608236,
+        "display": "1.7 s"
+      }
+    }
+  },
+  {
+    "name": "inicio-desktop",
+    "requestedUrl": "http://127.0.0.1:8080/inicio",
+    "finalUrl": "http://127.0.0.1:8080/inicio",
+    "lighthouseVersion": "13.5.0",
+    "fetchTime": "2026-10-10T01:13:39.079Z",
+    "environment": {
+      "networkUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36",
+      "hostUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.0.0 Safari/537.36",
+      "benchmarkIndex": 3619.5,
+      "credits": {
+        "axe-core": "4.14.0"
+      }
+    },
+    "scores": {
+      "performance": 55,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100
+    },
+    "metrics": {
+      "first-contentful-paint": {
+        "value": 518.6899500000001,
+        "display": "0.5 s"
+      },
+      "largest-contentful-paint": {
+        "value": 1712.784925,
+        "display": "1.7 s"
+      },
+      "total-blocking-time": {
+        "value": 1051.7066999999995,
+        "display": "1,050 ms"
+      },
+      "cumulative-layout-shift": {
+        "value": 0.114074,
+        "display": "0.114"
+      },
+      "speed-index": {
+        "value": 2444.525660503561,
+        "display": "2.4 s"
+      }
+    }
+  },
+  {
+    "name": "tareas-mobile",
+    "requestedUrl": "http://127.0.0.1:8080/tareas",
+    "finalUrl": "http://127.0.0.1:8080/tareas",
+    "lighthouseVersion": "13.5.0",
+    "fetchTime": "2026-10-10T01:13:52.003Z",
+    "environment": {
+      "networkUserAgent": "Mozilla/5.0 (Linux; Android 11; moto g power (2022)) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Mobile Safari/537.36",
+      "hostUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.0.0 Safari/537.36",
+      "benchmarkIndex": 3620,
+      "credits": {
+        "axe-core": "4.14.0"
+      }
+    },
+    "scores": {
+      "performance": 63,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100
+    },
+    "metrics": {
+      "first-contentful-paint": {
+        "value": 1691.72645,
+        "display": "1.7 s"
+      },
+      "largest-contentful-paint": {
+        "value": 7512.1294,
+        "display": "7.5 s"
+      },
+      "total-blocking-time": {
+        "value": 423,
+        "display": "420 ms"
+      },
+      "cumulative-layout-shift": {
+        "value": 0.077992,
+        "display": "0.078"
+      },
+      "speed-index": {
+        "value": 1803.25361252219,
+        "display": "1.8 s"
+      }
+    }
+  },
+  {
+    "name": "tareas-desktop",
+    "requestedUrl": "http://127.0.0.1:8080/tareas",
+    "finalUrl": "http://127.0.0.1:8080/tareas",
+    "lighthouseVersion": "13.5.0",
+    "fetchTime": "2026-10-10T01:14:02.998Z",
+    "environment": {
+      "networkUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36",
+      "hostUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.0.0 Safari/537.36",
+      "benchmarkIndex": 3393.5,
+      "credits": {
+        "axe-core": "4.14.0"
+      }
+    },
+    "scores": {
+      "performance": 90,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100
+    },
+    "metrics": {
+      "first-contentful-paint": {
+        "value": 472.51700000000005,
+        "display": "0.5 s"
+      },
+      "largest-contentful-paint": {
+        "value": 1414.7585,
+        "display": "1.4 s"
+      },
+      "total-blocking-time": {
+        "value": 125,
+        "display": "130 ms"
+      },
+      "cumulative-layout-shift": {
+        "value": 0.114074,
+        "display": "0.114"
+      },
+      "speed-index": {
+        "value": 794.3383038267662,
+        "display": "0.8 s"
+      }
+    }
+  }
+]

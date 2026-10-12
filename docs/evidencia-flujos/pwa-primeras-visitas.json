@@ -1,0 +1,234 @@
+[
+  {
+    "name": "android-portada-primera-visita",
+    "platform": "android",
+    "device": "Pixel 7",
+    "userAgent": "Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Mobile Safari/537.36",
+    "engine": "Chromium",
+    "requestedUrl": "http://127.0.0.1:8080/",
+    "passed": true,
+    "assertions": [
+      {
+        "description": "Contexto nuevo sin preferencias guardadas",
+        "passed": true
+      },
+      {
+        "description": "El navegador aplica el agente móvil solicitado",
+        "passed": true
+      },
+      {
+        "description": "Primera visita conserva la ruta solicitada",
+        "passed": true
+      },
+      {
+        "description": "No aparece invitación modal al cargar",
+        "passed": true
+      },
+      {
+        "description": "No depende de una preferencia de cierre guardada",
+        "passed": true
+      },
+      {
+        "description": "Instalar app permanece accesible por decisión del usuario",
+        "passed": true
+      },
+      {
+        "description": "La pantalla muestra las instrucciones apropiadas",
+        "passed": true
+      },
+      {
+        "description": "Abrir instrucciones no crea otro modal",
+        "passed": true
+      },
+      {
+        "description": "Instrucciones sin infracciones automáticas de accesibilidad",
+        "passed": true
+      },
+      {
+        "description": "Sin excepciones JavaScript",
+        "passed": true
+      }
+    ],
+    "screenshots": [
+      "docs/evidencia-flujos/android-portada-primera-visita-sin-modal.png",
+      "docs/evidencia-flujos/android-portada-primera-visita-instrucciones.png"
+    ],
+    "violations": [],
+    "pageErrors": [],
+    "finalUrl": "http://127.0.0.1:8080/"
+  },
+  {
+    "name": "android-inicio-primera-visita",
+    "platform": "android",
+    "device": "Pixel 7",
+    "userAgent": "Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Mobile Safari/537.36",
+    "engine": "Chromium",
+    "requestedUrl": "http://127.0.0.1:8080/inicio",
+    "passed": true,
+    "assertions": [
+      {
+        "description": "Contexto nuevo sin preferencias guardadas",
+        "passed": true
+      },
+      {
+        "description": "El navegador aplica el agente móvil solicitado",
+        "passed": true
+      },
+      {
+        "description": "Primera visita conserva la ruta solicitada",
+        "passed": true
+      },
+      {
+        "description": "No aparece invitación modal al cargar",
+        "passed": true
+      },
+      {
+        "description": "No depende de una preferencia de cierre guardada",
+        "passed": true
+      },
+      {
+        "description": "Instalar app permanece accesible por decisión del usuario",
+        "passed": true
+      },
+      {
+        "description": "La pantalla muestra las instrucciones apropiadas",
+        "passed": true
+      },
+      {
+        "description": "Abrir instrucciones no crea otro modal",
+        "passed": true
+      },
+      {
+        "description": "Instrucciones sin infracciones automáticas de accesibilidad",
+        "passed": true
+      },
+      {
+        "description": "Sin excepciones JavaScript",
+        "passed": true
+      }
+    ],
+    "screenshots": [
+      "docs/evidencia-flujos/android-inicio-primera-visita-sin-modal.png",
+      "docs/evidencia-flujos/android-inicio-primera-visita-instrucciones.png"
+    ],
+    "violations": [],
+    "pageErrors": [],
+    "finalUrl": "http://127.0.0.1:8080/inicio"
+  },
+  {
+    "name": "ios-portada-primera-visita",
+    "platform": "ios",
+    "device": "iPhone 13",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Mobile/15E148 Safari/604.1",
+    "engine": "Chromium",
+    "requestedUrl": "http://127.0.0.1:8080/",
+    "passed": true,
+    "assertions": [
+      {
+        "description": "Contexto nuevo sin preferencias guardadas",
+        "passed": true
+      },
+      {
+        "description": "El navegador aplica el agente móvil solicitado",
+        "passed": true
+      },
+      {
+        "description": "Primera visita conserva la ruta solicitada",
+        "passed": true
+      },
+      {
+        "description": "No aparece invitación modal al cargar",
+        "passed": true
+      },
+      {
+        "description": "No depende de una preferencia de cierre guardada",
+        "passed": true
+      },
+      {
+        "description": "Instalar app permanece accesible por decisión del usuario",
+        "passed": true
+      },
+      {
+        "description": "La pantalla muestra las instrucciones apropiadas",
+        "passed": true
+      },
+      {
+        "description": "Abrir instrucciones no crea otro modal",
+        "passed": true
+      },
+      {
+        "description": "Instrucciones sin infracciones automáticas de accesibilidad",
+        "passed": true
+      },
+      {
+        "description": "Sin excepciones JavaScript",
+        "passed": true
+      }
+    ],
+    "screenshots": [
+      "docs/evidencia-flujos/ios-portada-primera-visita-sin-modal.png",
+      "docs/evidencia-flujos/ios-portada-primera-visita-instrucciones.png"
+    ],
+    "violations": [],
+    "pageErrors": [],
+    "finalUrl": "http://127.0.0.1:8080/"
+  },
+  {
+    "name": "ios-inicio-primera-visita",
+    "platform": "ios",
+    "device": "iPhone 13",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Mobile/15E148 Safari/604.1",
+    "engine": "Chromium",
+    "requestedUrl": "http://127.0.0.1:8080/inicio",
+    "passed": true,
+    "assertions": [
+      {
+        "description": "Contexto nuevo sin preferencias guardadas",
+        "passed": true
+      },
+      {
+        "description": "El navegador aplica el agente móvil solicitado",
+        "passed": true
+      },
+      {
+        "description": "Primera visita conserva la ruta solicitada",
+        "passed": true
+      },
+      {
+        "description": "No aparece invitación modal al cargar",
+        "passed": true
+      },
+      {
+        "description": "No depende de una preferencia de cierre guardada",
+        "passed": true
+      },
+      {
+        "description": "Instalar app permanece accesible por decisión del usuario",
+        "passed": true
+      },
+      {
+        "description": "La pantalla muestra las instrucciones apropiadas",
+        "passed": true
+      },
+      {
+        "description": "Abrir instrucciones no crea otro modal",
+        "passed": true
+      },
+      {
+        "description": "Instrucciones sin infracciones automáticas de accesibilidad",
+        "passed": true
+      },
+      {
+        "description": "Sin excepciones JavaScript",
+        "passed": true
+      }
+    ],
+    "screenshots": [
+      "docs/evidencia-flujos/ios-inicio-primera-visita-sin-modal.png",
+      "docs/evidencia-flujos/ios-inicio-primera-visita-instrucciones.png"
+    ],
+    "violations": [],
+    "pageErrors": [],
+    "finalUrl": "http://127.0.0.1:8080/inicio"
+  }
+]

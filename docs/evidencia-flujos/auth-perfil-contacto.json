@@ -1,0 +1,607 @@
+{
+  "startedAt": "2026-10-10T01:30:05.387Z",
+  "environment": {
+    "baseURL": "http://127.0.0.1:8080",
+    "apiURL": "http://127.0.0.1:4300",
+    "browser": "chrome",
+    "timezone": "America/Argentina/Buenos_Aires"
+  },
+  "scope": "UI real sobre build de producción; auth, correo y persistencia del servidor simulados. No demuestra entrega de email ni seguridad del backend.",
+  "cases": [
+    {
+      "name": "registro",
+      "size": {
+        "name": "movil",
+        "width": 390,
+        "height": 844
+      },
+      "theme": "claro",
+      "passed": true,
+      "assertions": [
+        {
+          "description": "Validar sin enviar enfoca el primer campo inválido",
+          "passed": true
+        },
+        {
+          "description": "El formulario vacío no llega a la API",
+          "passed": true
+        },
+        {
+          "description": "Tab avanza del nombre al correo",
+          "passed": true
+        },
+        {
+          "description": "Confirmación distinta no envía el registro",
+          "passed": true
+        },
+        {
+          "description": "Confirmación distinta conserva el foco en el campo a corregir",
+          "passed": true
+        },
+        {
+          "description": "Registro aceptado por fixture",
+          "passed": true
+        },
+        {
+          "description": "Éxito retira el formulario y ofrece acceso manual",
+          "passed": true
+        },
+        {
+          "description": "Un solo registro válido",
+          "passed": true
+        },
+        {
+          "description": "Sin excepciones JavaScript durante el flujo",
+          "passed": true,
+          "details": []
+        },
+        {
+          "description": "No se intentó conectar un servicio externo",
+          "passed": true,
+          "details": []
+        }
+      ],
+      "screenshots": [
+        "docs/evidencia-flujos/registro-movil-validacion.png",
+        "docs/evidencia-flujos/registro-movil-exito.png"
+      ],
+      "pageErrors": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/auth/session",
+          "status": 401
+        },
+        {
+          "method": "POST",
+          "path": "/auth/register",
+          "status": 200
+        }
+      ],
+      "blockedExternal": [],
+      "finalPath": "/register"
+    },
+    {
+      "name": "login-error-reintento",
+      "size": {
+        "name": "tablet",
+        "width": 768,
+        "height": 1024
+      },
+      "theme": "claro",
+      "passed": true,
+      "assertions": [
+        {
+          "description": "Se ejercita error HTTP simulado",
+          "passed": true
+        },
+        {
+          "description": "Login fallido conserva email y contraseña",
+          "passed": true
+        },
+        {
+          "description": "Login fallido vuelve a habilitar reintento",
+          "passed": true
+        },
+        {
+          "description": "Reintento obtiene sesión de fixture",
+          "passed": true
+        },
+        {
+          "description": "Login exitoso navega al inicio y hubo dos intentos",
+          "passed": true
+        },
+        {
+          "description": "Sin excepciones JavaScript durante el flujo",
+          "passed": true,
+          "details": []
+        },
+        {
+          "description": "No se intentó conectar un servicio externo",
+          "passed": true,
+          "details": []
+        }
+      ],
+      "screenshots": [
+        "docs/evidencia-flujos/login-error-reintento-tablet-error.png",
+        "docs/evidencia-flujos/login-error-reintento-tablet-exito.png"
+      ],
+      "pageErrors": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/auth/session",
+          "status": 401
+        },
+        {
+          "method": "POST",
+          "path": "/auth/login",
+          "status": 503
+        },
+        {
+          "method": "POST",
+          "path": "/auth/login",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/auth/session",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/push/public-key",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/push/subscriptions",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/materias",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/tareas",
+          "status": 200
+        }
+      ],
+      "blockedExternal": [],
+      "finalPath": "/inicio"
+    },
+    {
+      "name": "recuperacion",
+      "size": {
+        "name": "escritorio",
+        "width": 1440,
+        "height": 1000
+      },
+      "theme": "claro",
+      "passed": true,
+      "assertions": [
+        {
+          "description": "Correo inválido no genera recuperación",
+          "passed": true
+        },
+        {
+          "description": "Error de correo enfoca el campo",
+          "passed": true
+        },
+        {
+          "description": "Se ejercita fallo de recuperación",
+          "passed": true
+        },
+        {
+          "description": "Se conserva el correo al fallar",
+          "passed": true
+        },
+        {
+          "description": "Reintento de recuperación aceptado",
+          "passed": true
+        },
+        {
+          "description": "Mensaje de éxito se mantiene en recuperación",
+          "passed": true
+        },
+        {
+          "description": "Sin excepciones JavaScript durante el flujo",
+          "passed": true,
+          "details": []
+        },
+        {
+          "description": "No se intentó conectar un servicio externo",
+          "passed": true,
+          "details": []
+        }
+      ],
+      "screenshots": [
+        "docs/evidencia-flujos/recuperacion-escritorio-error.png",
+        "docs/evidencia-flujos/recuperacion-escritorio-exito.png"
+      ],
+      "pageErrors": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/auth/session",
+          "status": 401
+        },
+        {
+          "method": "POST",
+          "path": "/auth/forgot-password",
+          "status": 503
+        },
+        {
+          "method": "POST",
+          "path": "/auth/forgot-password",
+          "status": 200
+        }
+      ],
+      "blockedExternal": [],
+      "finalPath": "/olvide-password"
+    },
+    {
+      "name": "restablecer-password",
+      "size": {
+        "name": "escritorio",
+        "width": 1440,
+        "height": 1000
+      },
+      "theme": "claro",
+      "passed": true,
+      "assertions": [
+        {
+          "description": "Token eliminado de la barra de dirección",
+          "passed": true
+        },
+        {
+          "description": "Restablecimiento aceptado en fixture",
+          "passed": true
+        },
+        {
+          "description": "Éxito retira campos sensibles",
+          "passed": true
+        },
+        {
+          "description": "El éxito sigue visible sin redirección automática",
+          "passed": true
+        },
+        {
+          "description": "Sólo un restablecimiento enviado",
+          "passed": true
+        },
+        {
+          "description": "Sin excepciones JavaScript durante el flujo",
+          "passed": true,
+          "details": []
+        },
+        {
+          "description": "No se intentó conectar un servicio externo",
+          "passed": true,
+          "details": []
+        }
+      ],
+      "screenshots": [
+        "docs/evidencia-flujos/restablecer-password-escritorio-exito-persistente.png"
+      ],
+      "pageErrors": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/auth/session",
+          "status": 401
+        },
+        {
+          "method": "POST",
+          "path": "/auth/reset-password",
+          "status": 200
+        }
+      ],
+      "blockedExternal": [],
+      "finalPath": "/resetear-password"
+    },
+    {
+      "name": "verificacion-email",
+      "size": {
+        "name": "movil",
+        "width": 390,
+        "height": 844
+      },
+      "theme": "oscuro",
+      "passed": true,
+      "assertions": [
+        {
+          "description": "Token inválido bloquea confirmar y no envía",
+          "passed": true
+        },
+        {
+          "description": "Token inválido tampoco permanece en URL",
+          "passed": true
+        },
+        {
+          "description": "Contraseña vacía se anuncia y enfoca",
+          "passed": true
+        },
+        {
+          "description": "Se ejercita error de confirmación",
+          "passed": true
+        },
+        {
+          "description": "Error conserva contraseña para reintento",
+          "passed": true
+        },
+        {
+          "description": "Confirmación aceptada por fixture",
+          "passed": true
+        },
+        {
+          "description": "Éxito ofrece iniciar sesión y elimina contraseña",
+          "passed": true
+        },
+        {
+          "description": "Sin excepciones JavaScript durante el flujo",
+          "passed": true,
+          "details": []
+        },
+        {
+          "description": "No se intentó conectar un servicio externo",
+          "passed": true,
+          "details": []
+        }
+      ],
+      "screenshots": [
+        "docs/evidencia-flujos/verificacion-email-movil-token-invalido.png",
+        "docs/evidencia-flujos/verificacion-email-movil-error.png",
+        "docs/evidencia-flujos/verificacion-email-movil-exito.png"
+      ],
+      "pageErrors": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/auth/session",
+          "status": 401
+        },
+        {
+          "method": "GET",
+          "path": "/auth/session",
+          "status": 401
+        },
+        {
+          "method": "POST",
+          "path": "/auth/verify-email",
+          "status": 503
+        },
+        {
+          "method": "POST",
+          "path": "/auth/verify-email",
+          "status": 200
+        }
+      ],
+      "blockedExternal": [],
+      "finalPath": "/verificar-email"
+    },
+    {
+      "name": "perfil-cambios-independientes",
+      "size": {
+        "name": "escritorio",
+        "width": 1440,
+        "height": 1000
+      },
+      "theme": "oscuro",
+      "passed": true,
+      "assertions": [
+        {
+          "description": "Perfil sin cargar impide guardar valores vacíos",
+          "passed": true
+        },
+        {
+          "description": "Nombre guardado por fixture",
+          "passed": true
+        },
+        {
+          "description": "Guardar nombre envía exclusivamente nombre",
+          "passed": true
+        },
+        {
+          "description": "Nombre no guarda un recordatorio editado pero no confirmado",
+          "passed": true
+        },
+        {
+          "description": "Anticipación fraccionaria no se envía y recibe foco",
+          "passed": true
+        },
+        {
+          "description": "Recordatorio guardado por fixture",
+          "passed": true
+        },
+        {
+          "description": "Guardar recordatorio conserva el nombre confirmado",
+          "passed": true
+        },
+        {
+          "description": "Servidor de prueba conserva ambas preferencias confirmadas",
+          "passed": true
+        },
+        {
+          "description": "El borrador de nombre permanece visible sin guardarse",
+          "passed": true
+        },
+        {
+          "description": "La prueba no modificó contraseña",
+          "passed": true
+        },
+        {
+          "description": "Recargar recupera nombre confirmado, no borrador",
+          "passed": true
+        },
+        {
+          "description": "Recargar recupera 2 horas de recordatorio",
+          "passed": true
+        },
+        {
+          "description": "Sin excepciones JavaScript durante el flujo",
+          "passed": true,
+          "details": []
+        },
+        {
+          "description": "No se intentó conectar un servicio externo",
+          "passed": true,
+          "details": []
+        }
+      ],
+      "screenshots": [
+        "docs/evidencia-flujos/perfil-cambios-independientes-escritorio-error-carga.png",
+        "docs/evidencia-flujos/perfil-cambios-independientes-escritorio-guardado-independiente.png",
+        "docs/evidencia-flujos/perfil-cambios-independientes-escritorio-persistencia-fixture.png"
+      ],
+      "pageErrors": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/auth/session",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/push/public-key",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/push/subscriptions",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/auth/perfil",
+          "status": 503
+        },
+        {
+          "method": "GET",
+          "path": "/auth/perfil",
+          "status": 200
+        },
+        {
+          "method": "PATCH",
+          "path": "/auth/perfil",
+          "status": 200
+        },
+        {
+          "method": "PATCH",
+          "path": "/auth/perfil",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/auth/session",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/push/public-key",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/push/subscriptions",
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/auth/perfil",
+          "status": 200
+        }
+      ],
+      "blockedExternal": [],
+      "finalPath": "/perfil"
+    },
+    {
+      "name": "contacto",
+      "size": {
+        "name": "tablet",
+        "width": 768,
+        "height": 1024
+      },
+      "theme": "claro",
+      "passed": true,
+      "assertions": [
+        {
+          "description": "Contacto vacío identifica sus tres campos y no envía",
+          "passed": true
+        },
+        {
+          "description": "Se ejercita un fallo de contacto",
+          "passed": true
+        },
+        {
+          "description": "Error conserva mensaje y datos del remitente",
+          "passed": true
+        },
+        {
+          "description": "Error comunica que el mensaje se conserva",
+          "passed": true
+        },
+        {
+          "description": "Envío pendiente bloquea repetición",
+          "passed": true
+        },
+        {
+          "description": "Reintento de contacto aceptado",
+          "passed": true
+        },
+        {
+          "description": "Éxito limpia sólo el mensaje y conserva contacto",
+          "passed": true
+        },
+        {
+          "description": "Sólo se enviaron fallo y reintento autorizados",
+          "passed": true
+        },
+        {
+          "description": "Sin excepciones JavaScript durante el flujo",
+          "passed": true,
+          "details": []
+        },
+        {
+          "description": "No se intentó conectar un servicio externo",
+          "passed": true,
+          "details": []
+        }
+      ],
+      "screenshots": [
+        "docs/evidencia-flujos/contacto-tablet-error-conservado.png",
+        "docs/evidencia-flujos/contacto-tablet-enviando.png",
+        "docs/evidencia-flujos/contacto-tablet-exito.png"
+      ],
+      "pageErrors": [],
+      "requests": [
+        {
+          "method": "GET",
+          "path": "/auth/session",
+          "status": 401
+        },
+        {
+          "method": "POST",
+          "path": "/contacto",
+          "status": 503
+        },
+        {
+          "method": "POST",
+          "path": "/contacto",
+          "status": 200
+        }
+      ],
+      "blockedExternal": [],
+      "finalPath": "/contacto"
+    }
+  ],
+  "completedAt": "2026-10-10T01:30:17.471Z",
+  "summary": {
+    "cases": 7,
+    "passed": 7,
+    "failed": 0,
+    "assertions": 65
+  }
+}

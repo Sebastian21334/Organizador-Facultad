@@ -1,0 +1,51 @@
+
+> organizador-facultad@0.0.0 build
+> ng build
+
+> Building...
+√ Building...
+Initial chunk files | Names                     |  Raw size | Estimated transfer size
+main-CTVWVXTX.js    | main                      | 245.80 kB |                46.58 kB
+chunk-DctJoFaf.js   | -                         | 185.50 kB |                54.34 kB
+styles-DUFA7II6.css | styles                    |  48.18 kB |                 8.94 kB
+chunk-DJVAsKa_.js   | -                         | 464 bytes |               464 bytes
+
+                    | Initial total             | 479.95 kB |               110.32 kB
+
+Lazy chunk files    | Names                     |  Raw size | Estimated transfer size
+chunk-BrlezYNY.js   | pdf                       | 431.82 kB |               107.89 kB
+chunk-BkiPkGZO.js   | -                         |  52.85 kB |                10.75 kB
+chunk-BqmMR6tf.js   | materias-component        |  39.50 kB |                10.21 kB
+chunk-CDhciQHm.js   | tareas-component          |  32.94 kB |                 8.01 kB
+chunk-Ca0Tp8VT.js   | calendario-component      |  26.92 kB |                 6.42 kB
+chunk-xgeTqoot.js   | landing-component         |  21.54 kB |                 5.20 kB
+chunk-44QAEUVu.js   | -                         |  20.07 kB |                 5.73 kB
+chunk-Cr8iisjv.js   | perfil-component          |  20.06 kB |                 5.21 kB
+chunk-Cb_EAwKl.js   | -                         |  19.57 kB |                 5.38 kB
+chunk-pVERcSGD.js   | mensajes-component        |  18.20 kB |                 5.32 kB
+chunk-Cp0PTJcj.js   | register-component        |  16.09 kB |                 4.26 kB
+chunk-Dq7l7jjk.js   | reset-password-component  |  14.67 kB |                 4.19 kB
+chunk-8YagvrRJ.js   | login-component           |  12.23 kB |                 3.57 kB
+chunk-DfC_AKNb.js   | forgot-password-component |   9.70 kB |                 3.03 kB
+chunk-Cb-41KQH.js   | -                         |   8.46 kB |                 2.90 kB
+...and 9 more lazy chunks files. Use "--verbose" to show all the files.
+
+Application bundle generation complete. [12.646 seconds] - 2026-10-10T21:09:07.519Z
+
+▲ [WARNING] angular:styles/component:css;0dd9c7f8c1ea7d7f;C:\Users\Sebastian Gonzalez\Desktop\proyectos\Proyecto organizador universidad\front\src\app\features\inicio\inicio.component.ts exceeded maximum budget. Budget 4.00 kB was not met by 2.03 kB with a total of 6.03 kB.
+
+
+▲ [WARNING] angular:styles/component:css;cb7093bf8cc55548;C:\Users\Sebastian Gonzalez\Desktop\proyectos\Proyecto organizador universidad\front\src\app\features\calendario\calendario.component.ts exceeded maximum budget. Budget 4.00 kB was not met by 3.88 kB with a total of 7.88 kB.
+
+
+▲ [WARNING] angular:styles/component:css;44da66568b49d8cb;C:\Users\Sebastian Gonzalez\Desktop\proyectos\Proyecto organizador universidad\front\src\app\features\tareas\tareas.component.ts exceeded maximum budget. Budget 4.00 kB was not met by 2.13 kB with a total of 6.13 kB.
+
+
+▲ [WARNING] src/app/features/landing/landing.component.css exceeded maximum budget. Budget 4.00 kB was not met by 3.33 kB with a total of 7.33 kB.
+
+
+▲ [WARNING] src/app/app.css exceeded maximum budget. Budget 4.00 kB was not met by 3.64 kB with a total of 7.64 kB.
+
+
+Output location: C:\Users\Sebastian Gonzalez\Desktop\proyectos\Proyecto organizador universidad\front\dist\organizador-facultad
+

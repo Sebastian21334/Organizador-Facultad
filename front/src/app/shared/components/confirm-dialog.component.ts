@@ -24,7 +24,7 @@ import { ConfirmDialogService } from './confirm-dialog.service';
     .actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px; }
     button { min-height: 42px; padding: 10px 16px; border: 1px solid var(--border); border-radius: 10px; font-size: .8rem; font-weight: 600; cursor: pointer; }
     .cancel { background: var(--bg); color: var(--ink-secondary); }
-    .confirm { background: var(--accent); color: white; border-color: var(--accent); }
+    .confirm { background: var(--action-bg); color: var(--on-accent); border-color: var(--action-bg); }
     .danger { background: var(--error-bg); color: var(--error-text); border-color: var(--error-border); }
   `,
 })

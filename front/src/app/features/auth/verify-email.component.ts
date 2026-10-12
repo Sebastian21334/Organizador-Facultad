@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Location } from '@angular/common';
@@ -23,8 +23,14 @@ import { AuthService } from '../../core/services/auth.service';
           <h2 class="font-display text-xl text-[#2B231F]">Confirmá tu cuenta</h2>
           <p class="text-sm text-[#7A6F66] mt-3">Ingresá la contraseña que elegiste al registrarte. Esto evita confirmar por accidente una cuenta creada por otra persona.</p>
           <form [formGroup]="form" (ngSubmit)="verify()" class="mt-5">
-            <label for="password" class="block text-sm text-[#5E534B] mb-2">Tu contraseña</label>
-            <input id="password" type="password" formControlName="password" autocomplete="current-password" class="w-full rounded-xl border border-[#D8CBAE] px-4 py-3 bg-[#FAF8F5]" />
+            <label for="password" class="block text-sm text-[#5E534B] mb-2">Tu contraseña (obligatoria)</label>
+            <input id="password" type="password" formControlName="password" autocomplete="current-password" required
+              [attr.aria-invalid]="form.controls.password.invalid && form.controls.password.touched"
+              [attr.aria-describedby]="form.controls.password.invalid && form.controls.password.touched ? 'password-error' : null"
+              class="w-full rounded-xl border border-[#D8CBAE] px-4 py-3 bg-[#FAF8F5]" />
+            @if (form.controls.password.invalid && form.controls.password.touched) {
+              <p id="password-error" class="text-sm text-[#A62828] mt-2">Ingresá tu contraseña para confirmar la cuenta.</p>
+            }
             @if (error()) { <p class="text-sm text-[#A62828] mt-3" role="alert">{{ error() }}</p> }
             <button type="submit" class="button-primary mt-5 w-full" [disabled]="loading() || !token">{{ loading() ? 'Confirmando…' : 'Confirmar mi cuenta' }}</button>
           </form>
@@ -39,6 +45,8 @@ import { AuthService } from '../../core/services/auth.service';
   `,
 })
 export class VerifyEmailComponent implements OnInit {
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+  private readonly changeDetector = inject(ChangeDetectorRef);
   private readonly route = inject(ActivatedRoute);
   private readonly location = inject(Location);
   private readonly auth = inject(AuthService);
@@ -56,7 +64,13 @@ export class VerifyEmailComponent implements OnInit {
     if (!/^[a-f0-9]{64}$/.test(this.token)) { this.token = ''; this.error.set('El enlace no es válido. Solicitá uno nuevo desde el inicio de sesión.'); }
   }
   protected verify(): void {
-    if (this.loading() || !this.token || this.form.invalid) { this.form.markAllAsTouched(); return; }
+    if (this.loading() || !this.token || this.verified()) return;
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      this.changeDetector.detectChanges();
+      this.host.nativeElement.querySelector<HTMLElement>('input[aria-invalid="true"]')?.focus();
+      return;
+    }
     this.loading.set(true); this.error.set(null);
     this.auth.verifyEmail({ token: this.token, password: this.form.getRawValue().password }).subscribe({
       next: () => { this.loading.set(false); this.verified.set(true); this.form.reset(); this.token = ''; },

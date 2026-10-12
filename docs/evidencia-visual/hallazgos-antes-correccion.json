@@ -1,0 +1,690 @@
+[
+  {
+    "name": "claro-movil-inicio",
+    "route": "inicio",
+    "theme": "claro",
+    "size": {
+      "name": "movil",
+      "width": 390,
+      "height": 844
+    },
+    "violations": [
+      {
+        "id": "label-content-name-mismatch",
+        "impact": "serious",
+        "help": "Elements must have their visible text as part of their accessible name",
+        "nodes": [
+          {
+            "target": [
+              ".weekly-day[aria-controls=\"weekly-day-agenda\"][type=\"button\"]:nth-child(1)"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c363609396=\"\" type=\"button\" aria-controls=\"weekly-day-agenda\" class=\"weekly-day\" aria-pressed=\"false\" aria-label=\"L 5. lunes, 5 de octubre de 2026: 0 tareas\">"
+          },
+          {
+            "target": [
+              ".weekly-day[aria-controls=\"weekly-day-agenda\"][type=\"button\"]:nth-child(2)"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c363609396=\"\" type=\"button\" aria-controls=\"weekly-day-agenda\" class=\"weekly-day\" aria-pressed=\"false\" aria-label=\"M 6. martes, 6 de octubre de 2026: 0 tareas\">"
+          },
+          {
+            "target": [
+              ".weekly-day[aria-controls=\"weekly-day-agenda\"][type=\"button\"]:nth-child(3)"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c363609396=\"\" type=\"button\" aria-controls=\"weekly-day-agenda\" class=\"weekly-day\" aria-pressed=\"false\" aria-label=\"M 7. miércoles, 7 de octubre de 2026: 1 tareas\">"
+          },
+          {
+            "target": [
+              ".weekly-day[aria-controls=\"weekly-day-agenda\"][type=\"button\"]:nth-child(4)"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c363609396=\"\" type=\"button\" aria-controls=\"weekly-day-agenda\" class=\"weekly-day\" aria-pressed=\"false\" aria-label=\"J 8. jueves, 8 de octubre de 2026: 1 tareas\">"
+          },
+          {
+            "target": [
+              ".is-selected"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c363609396=\"\" type=\"button\" aria-controls=\"weekly-day-agenda\" class=\"weekly-day is-selected\" aria-pressed=\"true\" aria-current=\"date\" aria-label=\"V 9. viernes, 9 de octubre de 2026: 0 tareas\">"
+          },
+          {
+            "target": [
+              ".weekly-day[aria-controls=\"weekly-day-agenda\"][type=\"button\"]:nth-child(6)"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c363609396=\"\" type=\"button\" aria-controls=\"weekly-day-agenda\" class=\"weekly-day\" aria-pressed=\"false\" aria-label=\"S 10. sábado, 10 de octubre de 2026: 1 tareas\">"
+          },
+          {
+            "target": [
+              ".weekly-day[aria-controls=\"weekly-day-agenda\"][type=\"button\"]:nth-child(7)"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c363609396=\"\" type=\"button\" aria-controls=\"weekly-day-agenda\" class=\"weekly-day\" aria-pressed=\"false\" aria-label=\"D 11. domingo, 11 de octubre de 2026: 0 tareas\">"
+          }
+        ]
+      }
+    ],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 390,
+      "documentWidth": 390,
+      "mainWidth": 390,
+      "mainScrollWidth": 390,
+      "headings": [
+        "Hola, Estudiante"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "claro-movil-calendario",
+    "route": "calendario",
+    "theme": "claro",
+    "size": {
+      "name": "movil",
+      "width": 390,
+      "height": 844
+    },
+    "violations": [
+      {
+        "id": "label-content-name-mismatch",
+        "impact": "serious",
+        "help": "Elements must have their visible text as part of their accessible name",
+        "nodes": [
+          {
+            "target": [
+              ".bg-\\[\\#FFFEFA\\].border-\\[\\#D9D3C2\\].calendar-cell:nth-child(10) > .calendar-day-select[aria-controls=\"calendar-day-agenda\"][type=\"button\"]"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c3923189511=\"\" type=\"button\" aria-controls=\"calendar-day-agenda\" class=\"calendar-day-select\" aria-label=\"7, 1 tareas. miércoles, 7 de octubre de 2026\" aria-pressed=\"false\">"
+          },
+          {
+            "target": [
+              ".bg-\\[\\#FFFEFA\\].border-\\[\\#D9D3C2\\].calendar-cell:nth-child(11) > .calendar-day-select[aria-controls=\"calendar-day-agenda\"][type=\"button\"]"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c3923189511=\"\" type=\"button\" aria-controls=\"calendar-day-agenda\" class=\"calendar-day-select\" aria-label=\"8, 1 tareas. jueves, 8 de octubre de 2026\" aria-pressed=\"false\">"
+          },
+          {
+            "target": [
+              ".bg-\\[\\#FFFEFA\\].border-\\[\\#D9D3C2\\].calendar-cell:nth-child(13) > .calendar-day-select[aria-controls=\"calendar-day-agenda\"][type=\"button\"]"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c3923189511=\"\" type=\"button\" aria-controls=\"calendar-day-agenda\" class=\"calendar-day-select\" aria-label=\"10, 1 tareas. sábado, 10 de octubre de 2026\" aria-pressed=\"false\">"
+          },
+          {
+            "target": [
+              ".bg-\\[\\#FFFEFA\\].border-\\[\\#D9D3C2\\].calendar-cell:nth-child(15) > .calendar-day-select[aria-controls=\"calendar-day-agenda\"][type=\"button\"]"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c3923189511=\"\" type=\"button\" aria-controls=\"calendar-day-agenda\" class=\"calendar-day-select\" aria-label=\"12, 1 tareas. lunes, 12 de octubre de 2026\" aria-pressed=\"false\">"
+          }
+        ]
+      }
+    ],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 390,
+      "documentWidth": 390,
+      "mainWidth": 390,
+      "mainScrollWidth": 390,
+      "headings": [
+        "Calendario"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "claro-tablet-inicio",
+    "route": "inicio",
+    "theme": "claro",
+    "size": {
+      "name": "tablet",
+      "width": 768,
+      "height": 1024
+    },
+    "violations": [
+      {
+        "id": "label-content-name-mismatch",
+        "impact": "serious",
+        "help": "Elements must have their visible text as part of their accessible name",
+        "nodes": [
+          {
+            "target": [
+              ".weekly-day[aria-controls=\"weekly-day-agenda\"][type=\"button\"]:nth-child(1)"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c363609396=\"\" type=\"button\" aria-controls=\"weekly-day-agenda\" class=\"weekly-day\" aria-pressed=\"false\" aria-label=\"L 5. lunes, 5 de octubre de 2026: 0 tareas\">"
+          },
+          {
+            "target": [
+              ".weekly-day[aria-controls=\"weekly-day-agenda\"][type=\"button\"]:nth-child(2)"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c363609396=\"\" type=\"button\" aria-controls=\"weekly-day-agenda\" class=\"weekly-day\" aria-pressed=\"false\" aria-label=\"M 6. martes, 6 de octubre de 2026: 0 tareas\">"
+          },
+          {
+            "target": [
+              ".weekly-day[aria-controls=\"weekly-day-agenda\"][type=\"button\"]:nth-child(3)"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c363609396=\"\" type=\"button\" aria-controls=\"weekly-day-agenda\" class=\"weekly-day\" aria-pressed=\"false\" aria-label=\"M 7. miércoles, 7 de octubre de 2026: 1 tareas\">"
+          },
+          {
+            "target": [
+              ".weekly-day[aria-controls=\"weekly-day-agenda\"][type=\"button\"]:nth-child(4)"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c363609396=\"\" type=\"button\" aria-controls=\"weekly-day-agenda\" class=\"weekly-day\" aria-pressed=\"false\" aria-label=\"J 8. jueves, 8 de octubre de 2026: 1 tareas\">"
+          },
+          {
+            "target": [
+              ".is-selected"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c363609396=\"\" type=\"button\" aria-controls=\"weekly-day-agenda\" class=\"weekly-day is-selected\" aria-pressed=\"true\" aria-current=\"date\" aria-label=\"V 9. viernes, 9 de octubre de 2026: 0 tareas\">"
+          },
+          {
+            "target": [
+              ".weekly-day[aria-controls=\"weekly-day-agenda\"][type=\"button\"]:nth-child(6)"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c363609396=\"\" type=\"button\" aria-controls=\"weekly-day-agenda\" class=\"weekly-day\" aria-pressed=\"false\" aria-label=\"S 10. sábado, 10 de octubre de 2026: 1 tareas\">"
+          },
+          {
+            "target": [
+              ".weekly-day[aria-controls=\"weekly-day-agenda\"][type=\"button\"]:nth-child(7)"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c363609396=\"\" type=\"button\" aria-controls=\"weekly-day-agenda\" class=\"weekly-day\" aria-pressed=\"false\" aria-label=\"D 11. domingo, 11 de octubre de 2026: 0 tareas\">"
+          }
+        ]
+      }
+    ],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 768,
+      "documentWidth": 768,
+      "mainWidth": 768,
+      "mainScrollWidth": 768,
+      "headings": [
+        "Hola, Estudiante"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "claro-escritorio-inicio",
+    "route": "inicio",
+    "theme": "claro",
+    "size": {
+      "name": "escritorio",
+      "width": 1440,
+      "height": 1000
+    },
+    "violations": [
+      {
+        "id": "label-content-name-mismatch",
+        "impact": "serious",
+        "help": "Elements must have their visible text as part of their accessible name",
+        "nodes": [
+          {
+            "target": [
+              ".weekly-day[aria-controls=\"weekly-day-agenda\"][type=\"button\"]:nth-child(1)"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c363609396=\"\" type=\"button\" aria-controls=\"weekly-day-agenda\" class=\"weekly-day\" aria-pressed=\"false\" aria-label=\"L 5. lunes, 5 de octubre de 2026: 0 tareas\">"
+          },
+          {
+            "target": [
+              ".weekly-day[aria-controls=\"weekly-day-agenda\"][type=\"button\"]:nth-child(2)"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c363609396=\"\" type=\"button\" aria-controls=\"weekly-day-agenda\" class=\"weekly-day\" aria-pressed=\"false\" aria-label=\"M 6. martes, 6 de octubre de 2026: 0 tareas\">"
+          },
+          {
+            "target": [
+              ".weekly-day[aria-controls=\"weekly-day-agenda\"][type=\"button\"]:nth-child(3)"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c363609396=\"\" type=\"button\" aria-controls=\"weekly-day-agenda\" class=\"weekly-day\" aria-pressed=\"false\" aria-label=\"M 7. miércoles, 7 de octubre de 2026: 1 tareas\">"
+          },
+          {
+            "target": [
+              ".weekly-day[aria-controls=\"weekly-day-agenda\"][type=\"button\"]:nth-child(4)"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c363609396=\"\" type=\"button\" aria-controls=\"weekly-day-agenda\" class=\"weekly-day\" aria-pressed=\"false\" aria-label=\"J 8. jueves, 8 de octubre de 2026: 1 tareas\">"
+          },
+          {
+            "target": [
+              ".is-selected"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c363609396=\"\" type=\"button\" aria-controls=\"weekly-day-agenda\" class=\"weekly-day is-selected\" aria-pressed=\"true\" aria-current=\"date\" aria-label=\"V 9. viernes, 9 de octubre de 2026: 0 tareas\">"
+          },
+          {
+            "target": [
+              ".weekly-day[aria-controls=\"weekly-day-agenda\"][type=\"button\"]:nth-child(6)"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c363609396=\"\" type=\"button\" aria-controls=\"weekly-day-agenda\" class=\"weekly-day\" aria-pressed=\"false\" aria-label=\"S 10. sábado, 10 de octubre de 2026: 1 tareas\">"
+          },
+          {
+            "target": [
+              ".weekly-day[aria-controls=\"weekly-day-agenda\"][type=\"button\"]:nth-child(7)"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c363609396=\"\" type=\"button\" aria-controls=\"weekly-day-agenda\" class=\"weekly-day\" aria-pressed=\"false\" aria-label=\"D 11. domingo, 11 de octubre de 2026: 0 tareas\">"
+          }
+        ]
+      }
+    ],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 1440,
+      "documentWidth": 1440,
+      "mainWidth": 1286,
+      "mainScrollWidth": 1286,
+      "headings": [
+        "Hola, Estudiante"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-movil-inicio",
+    "route": "inicio",
+    "theme": "oscuro",
+    "size": {
+      "name": "movil",
+      "width": 390,
+      "height": 844
+    },
+    "violations": [
+      {
+        "id": "label-content-name-mismatch",
+        "impact": "serious",
+        "help": "Elements must have their visible text as part of their accessible name",
+        "nodes": [
+          {
+            "target": [
+              ".weekly-day[aria-controls=\"weekly-day-agenda\"][type=\"button\"]:nth-child(1)"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c363609396=\"\" type=\"button\" aria-controls=\"weekly-day-agenda\" class=\"weekly-day\" aria-pressed=\"false\" aria-label=\"L 5. lunes, 5 de octubre de 2026: 0 tareas\">"
+          },
+          {
+            "target": [
+              ".weekly-day[aria-controls=\"weekly-day-agenda\"][type=\"button\"]:nth-child(2)"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c363609396=\"\" type=\"button\" aria-controls=\"weekly-day-agenda\" class=\"weekly-day\" aria-pressed=\"false\" aria-label=\"M 6. martes, 6 de octubre de 2026: 0 tareas\">"
+          },
+          {
+            "target": [
+              ".weekly-day[aria-controls=\"weekly-day-agenda\"][type=\"button\"]:nth-child(3)"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c363609396=\"\" type=\"button\" aria-controls=\"weekly-day-agenda\" class=\"weekly-day\" aria-pressed=\"false\" aria-label=\"M 7. miércoles, 7 de octubre de 2026: 1 tareas\">"
+          },
+          {
+            "target": [
+              ".weekly-day[aria-controls=\"weekly-day-agenda\"][type=\"button\"]:nth-child(4)"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c363609396=\"\" type=\"button\" aria-controls=\"weekly-day-agenda\" class=\"weekly-day\" aria-pressed=\"false\" aria-label=\"J 8. jueves, 8 de octubre de 2026: 1 tareas\">"
+          },
+          {
+            "target": [
+              ".is-selected"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c363609396=\"\" type=\"button\" aria-controls=\"weekly-day-agenda\" class=\"weekly-day is-selected\" aria-pressed=\"true\" aria-current=\"date\" aria-label=\"V 9. viernes, 9 de octubre de 2026: 0 tareas\">"
+          },
+          {
+            "target": [
+              ".weekly-day[aria-controls=\"weekly-day-agenda\"][type=\"button\"]:nth-child(6)"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c363609396=\"\" type=\"button\" aria-controls=\"weekly-day-agenda\" class=\"weekly-day\" aria-pressed=\"false\" aria-label=\"S 10. sábado, 10 de octubre de 2026: 1 tareas\">"
+          },
+          {
+            "target": [
+              ".weekly-day[aria-controls=\"weekly-day-agenda\"][type=\"button\"]:nth-child(7)"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c363609396=\"\" type=\"button\" aria-controls=\"weekly-day-agenda\" class=\"weekly-day\" aria-pressed=\"false\" aria-label=\"D 11. domingo, 11 de octubre de 2026: 0 tareas\">"
+          }
+        ]
+      }
+    ],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 390,
+      "documentWidth": 390,
+      "mainWidth": 390,
+      "mainScrollWidth": 390,
+      "headings": [
+        "Hola, Estudiante"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-movil-calendario",
+    "route": "calendario",
+    "theme": "oscuro",
+    "size": {
+      "name": "movil",
+      "width": 390,
+      "height": 844
+    },
+    "violations": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "nodes": [
+          {
+            "target": [
+              ".active[type=\"button\"]"
+            ],
+            "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.83 (foreground color: #cbd2df, background color: #4d5bc3, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1",
+            "html": "<button _ngcontent-ng-c3923189511=\"\" type=\"button\" class=\"active\" aria-pressed=\"true\">Mes</button>"
+          }
+        ]
+      },
+      {
+        "id": "label-content-name-mismatch",
+        "impact": "serious",
+        "help": "Elements must have their visible text as part of their accessible name",
+        "nodes": [
+          {
+            "target": [
+              ".bg-\\[\\#FFFEFA\\].border-\\[\\#D9D3C2\\].calendar-cell:nth-child(10) > .calendar-day-select[aria-controls=\"calendar-day-agenda\"][type=\"button\"]"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c3923189511=\"\" type=\"button\" aria-controls=\"calendar-day-agenda\" class=\"calendar-day-select\" aria-label=\"7, 1 tareas. miércoles, 7 de octubre de 2026\" aria-pressed=\"false\">"
+          },
+          {
+            "target": [
+              ".bg-\\[\\#FFFEFA\\].border-\\[\\#D9D3C2\\].calendar-cell:nth-child(11) > .calendar-day-select[aria-controls=\"calendar-day-agenda\"][type=\"button\"]"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c3923189511=\"\" type=\"button\" aria-controls=\"calendar-day-agenda\" class=\"calendar-day-select\" aria-label=\"8, 1 tareas. jueves, 8 de octubre de 2026\" aria-pressed=\"false\">"
+          },
+          {
+            "target": [
+              ".bg-\\[\\#FFFEFA\\].border-\\[\\#D9D3C2\\].calendar-cell:nth-child(13) > .calendar-day-select[aria-controls=\"calendar-day-agenda\"][type=\"button\"]"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c3923189511=\"\" type=\"button\" aria-controls=\"calendar-day-agenda\" class=\"calendar-day-select\" aria-label=\"10, 1 tareas. sábado, 10 de octubre de 2026\" aria-pressed=\"false\">"
+          },
+          {
+            "target": [
+              ".bg-\\[\\#FFFEFA\\].border-\\[\\#D9D3C2\\].calendar-cell:nth-child(15) > .calendar-day-select[aria-controls=\"calendar-day-agenda\"][type=\"button\"]"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c3923189511=\"\" type=\"button\" aria-controls=\"calendar-day-agenda\" class=\"calendar-day-select\" aria-label=\"12, 1 tareas. lunes, 12 de octubre de 2026\" aria-pressed=\"false\">"
+          }
+        ]
+      }
+    ],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 390,
+      "documentWidth": 390,
+      "mainWidth": 390,
+      "mainScrollWidth": 390,
+      "headings": [
+        "Calendario"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-tablet-inicio",
+    "route": "inicio",
+    "theme": "oscuro",
+    "size": {
+      "name": "tablet",
+      "width": 768,
+      "height": 1024
+    },
+    "violations": [
+      {
+        "id": "label-content-name-mismatch",
+        "impact": "serious",
+        "help": "Elements must have their visible text as part of their accessible name",
+        "nodes": [
+          {
+            "target": [
+              ".weekly-day[aria-controls=\"weekly-day-agenda\"][type=\"button\"]:nth-child(1)"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c363609396=\"\" type=\"button\" aria-controls=\"weekly-day-agenda\" class=\"weekly-day\" aria-pressed=\"false\" aria-label=\"L 5. lunes, 5 de octubre de 2026: 0 tareas\">"
+          },
+          {
+            "target": [
+              ".weekly-day[aria-controls=\"weekly-day-agenda\"][type=\"button\"]:nth-child(2)"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c363609396=\"\" type=\"button\" aria-controls=\"weekly-day-agenda\" class=\"weekly-day\" aria-pressed=\"false\" aria-label=\"M 6. martes, 6 de octubre de 2026: 0 tareas\">"
+          },
+          {
+            "target": [
+              ".weekly-day[aria-controls=\"weekly-day-agenda\"][type=\"button\"]:nth-child(3)"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c363609396=\"\" type=\"button\" aria-controls=\"weekly-day-agenda\" class=\"weekly-day\" aria-pressed=\"false\" aria-label=\"M 7. miércoles, 7 de octubre de 2026: 1 tareas\">"
+          },
+          {
+            "target": [
+              ".weekly-day[aria-controls=\"weekly-day-agenda\"][type=\"button\"]:nth-child(4)"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c363609396=\"\" type=\"button\" aria-controls=\"weekly-day-agenda\" class=\"weekly-day\" aria-pressed=\"false\" aria-label=\"J 8. jueves, 8 de octubre de 2026: 1 tareas\">"
+          },
+          {
+            "target": [
+              ".is-selected"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c363609396=\"\" type=\"button\" aria-controls=\"weekly-day-agenda\" class=\"weekly-day is-selected\" aria-pressed=\"true\" aria-current=\"date\" aria-label=\"V 9. viernes, 9 de octubre de 2026: 0 tareas\">"
+          },
+          {
+            "target": [
+              ".weekly-day[aria-controls=\"weekly-day-agenda\"][type=\"button\"]:nth-child(6)"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c363609396=\"\" type=\"button\" aria-controls=\"weekly-day-agenda\" class=\"weekly-day\" aria-pressed=\"false\" aria-label=\"S 10. sábado, 10 de octubre de 2026: 1 tareas\">"
+          },
+          {
+            "target": [
+              ".weekly-day[aria-controls=\"weekly-day-agenda\"][type=\"button\"]:nth-child(7)"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c363609396=\"\" type=\"button\" aria-controls=\"weekly-day-agenda\" class=\"weekly-day\" aria-pressed=\"false\" aria-label=\"D 11. domingo, 11 de octubre de 2026: 0 tareas\">"
+          }
+        ]
+      }
+    ],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 768,
+      "documentWidth": 768,
+      "mainWidth": 768,
+      "mainScrollWidth": 768,
+      "headings": [
+        "Hola, Estudiante"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-tablet-calendario",
+    "route": "calendario",
+    "theme": "oscuro",
+    "size": {
+      "name": "tablet",
+      "width": 768,
+      "height": 1024
+    },
+    "violations": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "nodes": [
+          {
+            "target": [
+              ".active[type=\"button\"]"
+            ],
+            "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.83 (foreground color: #cbd2df, background color: #4d5bc3, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1",
+            "html": "<button _ngcontent-ng-c3923189511=\"\" type=\"button\" class=\"active\" aria-pressed=\"true\">Mes</button>"
+          }
+        ]
+      }
+    ],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 768,
+      "documentWidth": 768,
+      "mainWidth": 768,
+      "mainScrollWidth": 768,
+      "headings": [
+        "Calendario"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-escritorio-inicio",
+    "route": "inicio",
+    "theme": "oscuro",
+    "size": {
+      "name": "escritorio",
+      "width": 1440,
+      "height": 1000
+    },
+    "violations": [
+      {
+        "id": "label-content-name-mismatch",
+        "impact": "serious",
+        "help": "Elements must have their visible text as part of their accessible name",
+        "nodes": [
+          {
+            "target": [
+              ".weekly-day[aria-controls=\"weekly-day-agenda\"][type=\"button\"]:nth-child(1)"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c363609396=\"\" type=\"button\" aria-controls=\"weekly-day-agenda\" class=\"weekly-day\" aria-pressed=\"false\" aria-label=\"L 5. lunes, 5 de octubre de 2026: 0 tareas\">"
+          },
+          {
+            "target": [
+              ".weekly-day[aria-controls=\"weekly-day-agenda\"][type=\"button\"]:nth-child(2)"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c363609396=\"\" type=\"button\" aria-controls=\"weekly-day-agenda\" class=\"weekly-day\" aria-pressed=\"false\" aria-label=\"M 6. martes, 6 de octubre de 2026: 0 tareas\">"
+          },
+          {
+            "target": [
+              ".weekly-day[aria-controls=\"weekly-day-agenda\"][type=\"button\"]:nth-child(3)"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c363609396=\"\" type=\"button\" aria-controls=\"weekly-day-agenda\" class=\"weekly-day\" aria-pressed=\"false\" aria-label=\"M 7. miércoles, 7 de octubre de 2026: 1 tareas\">"
+          },
+          {
+            "target": [
+              ".weekly-day[aria-controls=\"weekly-day-agenda\"][type=\"button\"]:nth-child(4)"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c363609396=\"\" type=\"button\" aria-controls=\"weekly-day-agenda\" class=\"weekly-day\" aria-pressed=\"false\" aria-label=\"J 8. jueves, 8 de octubre de 2026: 1 tareas\">"
+          },
+          {
+            "target": [
+              ".is-selected"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c363609396=\"\" type=\"button\" aria-controls=\"weekly-day-agenda\" class=\"weekly-day is-selected\" aria-pressed=\"true\" aria-current=\"date\" aria-label=\"V 9. viernes, 9 de octubre de 2026: 0 tareas\">"
+          },
+          {
+            "target": [
+              ".weekly-day[aria-controls=\"weekly-day-agenda\"][type=\"button\"]:nth-child(6)"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c363609396=\"\" type=\"button\" aria-controls=\"weekly-day-agenda\" class=\"weekly-day\" aria-pressed=\"false\" aria-label=\"S 10. sábado, 10 de octubre de 2026: 1 tareas\">"
+          },
+          {
+            "target": [
+              ".weekly-day[aria-controls=\"weekly-day-agenda\"][type=\"button\"]:nth-child(7)"
+            ],
+            "summary": "Fix any of the following:\n  Text inside the element is not included in the accessible name",
+            "html": "<button _ngcontent-ng-c363609396=\"\" type=\"button\" aria-controls=\"weekly-day-agenda\" class=\"weekly-day\" aria-pressed=\"false\" aria-label=\"D 11. domingo, 11 de octubre de 2026: 0 tareas\">"
+          }
+        ]
+      }
+    ],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 1440,
+      "documentWidth": 1440,
+      "mainWidth": 1286,
+      "mainScrollWidth": 1286,
+      "headings": [
+        "Hola, Estudiante"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-escritorio-calendario",
+    "route": "calendario",
+    "theme": "oscuro",
+    "size": {
+      "name": "escritorio",
+      "width": 1440,
+      "height": 1000
+    },
+    "violations": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "nodes": [
+          {
+            "target": [
+              ".active[type=\"button\"]"
+            ],
+            "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.83 (foreground color: #cbd2df, background color: #4d5bc3, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1",
+            "html": "<button _ngcontent-ng-c3923189511=\"\" type=\"button\" class=\"active\" aria-pressed=\"true\">Mes</button>"
+          }
+        ]
+      }
+    ],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 1440,
+      "documentWidth": 1440,
+      "mainWidth": 1286,
+      "mainScrollWidth": 1286,
+      "headings": [
+        "Calendario"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  }
+]

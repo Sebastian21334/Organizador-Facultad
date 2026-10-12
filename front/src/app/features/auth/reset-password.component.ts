@@ -1,7 +1,7 @@
-import { passwordBytes } from '../../core/services/password-policy';
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { passwordBytes, passwordLength } from '../../core/services/password-policy';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { Location } from '@angular/common';
 
@@ -35,9 +35,11 @@ import { Location } from '@angular/common';
             <p class="text-sm text-[#245834] mt-2 leading-relaxed">
               {{ success() }}
             </p>
+            <a routerLink="/login" class="button-primary mt-5">Iniciar sesión</a>
           </div>
         } @else {
           <form (ngSubmit)="submit()" [formGroup]="form" class="space-y-4">
+            <p class="text-xs text-[#5E534B]">Todos los campos son obligatorios.</p>
             <!-- Nueva Contraseña -->
             <div>
               <label for="nuevaPassword" class="block text-xs font-semibold uppercase tracking-wider text-[#5E534B] mb-1.5">
@@ -52,6 +54,9 @@ import { Location } from '@angular/common';
                   [class.field-error]="(form.controls.nuevaPassword.hasError('minlength') || form.controls.nuevaPassword.invalid) && form.controls.nuevaPassword.touched"
                   placeholder="Mínimo 15 caracteres"
                   autocomplete="new-password"
+                  required
+                  [attr.aria-invalid]="form.controls.nuevaPassword.invalid && form.controls.nuevaPassword.touched"
+                  [attr.aria-describedby]="form.controls.nuevaPassword.invalid && form.controls.nuevaPassword.touched ? 'password-help password-error' : 'password-help'"
                 />
                 <button
                   type="button"
@@ -71,12 +76,13 @@ import { Location } from '@angular/common';
                   }
                 </button>
               </div>
-              @if (form.controls.nuevaPassword.hasError('minlength') && form.controls.nuevaPassword.touched) {
-                <p class="field-error-msg flex items-center gap-1 mt-1.5">
+              <p id="password-help" class="text-xs text-[#5E534B] mt-2">Usá una frase de al menos 15 caracteres. Máximo 72 bytes; los emojis y algunas letras ocupan varios bytes.</p>
+              @if (form.controls.nuevaPassword.invalid && form.controls.nuevaPassword.touched) {
+                <p id="password-error" class="field-error-msg flex items-center gap-1 mt-1.5">
                   <svg class="w-3.5 h-3.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
                   </svg>
-                  La contraseña debe tener al menos 15 caracteres.
+                  {{ form.controls.nuevaPassword.hasError('required') ? 'Ingresá una nueva contraseña.' : form.controls.nuevaPassword.hasError('passwordBytes') || form.controls.nuevaPassword.hasError('maxlength') ? 'La contraseña supera el máximo de 72 bytes. Acortá la frase.' : 'La contraseña debe tener al menos 15 caracteres.' }}
                 </p>
               }
             </div>
@@ -95,6 +101,9 @@ import { Location } from '@angular/common';
                   [class.field-error]="(form.hasError('passwordMismatch') || form.controls.confirmarPassword.invalid) && form.controls.confirmarPassword.touched"
                   placeholder="Repetí la nueva contraseña"
                   autocomplete="new-password"
+                  required
+                  [attr.aria-invalid]="(form.hasError('passwordMismatch') || form.controls.confirmarPassword.invalid) && form.controls.confirmarPassword.touched"
+                  [attr.aria-describedby]="(form.hasError('passwordMismatch') || form.controls.confirmarPassword.invalid) && form.controls.confirmarPassword.touched ? 'confirmar-password-error' : null"
                 />
                 <button
                   type="button"
@@ -114,12 +123,12 @@ import { Location } from '@angular/common';
                   }
                 </button>
               </div>
-              @if (form.hasError('passwordMismatch') && form.controls.confirmarPassword.touched) {
-                <p class="field-error-msg flex items-center gap-1 mt-1.5">
+              @if ((form.hasError('passwordMismatch') || form.controls.confirmarPassword.invalid) && form.controls.confirmarPassword.touched) {
+                <p id="confirmar-password-error" class="field-error-msg flex items-center gap-1 mt-1.5">
                   <svg class="w-3.5 h-3.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
                   </svg>
-                  Las contraseñas no coinciden.
+                  {{ form.controls.confirmarPassword.hasError('required') ? 'Repetí la nueva contraseña.' : 'Las contraseñas no coinciden.' }}
                 </p>
               }
             </div>
@@ -132,10 +141,13 @@ import { Location } from '@angular/common';
                 <span>{{ error() }}</span>
               </div>
             }
+            @if (!token) {
+              <a routerLink="/olvide-password" class="block text-sm text-[#6E1F2B] underline">Solicitar un nuevo enlace</a>
+            }
 
             <button
               type="submit"
-              [disabled]="loading()"
+              [disabled]="loading() || !token"
               class="button-primary w-full mt-2"
             >
               @if (loading()) {
@@ -148,7 +160,6 @@ import { Location } from '@angular/common';
                 <span>Cambiar contraseña</span>
               }
             </button>
-          <p class="text-xs text-[#7A6F66] mt-2">Usá una frase de 15 caracteres o más. Máximo 72 bytes; los emojis ocupan varios bytes.</p>
         </form>
         }
 
@@ -179,14 +190,15 @@ import { Location } from '@angular/common';
   `,
 })
 export class ResetPasswordComponent implements OnInit {
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+  private readonly changeDetector = inject(ChangeDetectorRef);
   private readonly location = inject(Location);
   private readonly formBuilder = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
-  private readonly router = inject(Router);
   private readonly auth = inject(AuthService);
-  private token = '';
+  protected token = '';
   protected readonly form = this.formBuilder.nonNullable.group({
-    nuevaPassword: ['', [Validators.required, Validators.minLength(15), Validators.maxLength(72), passwordBytes]],
+    nuevaPassword: ['', [Validators.required, passwordLength, passwordBytes]],
     confirmarPassword: ['', Validators.required],
   }, { validators: (group) => group.get('nuevaPassword')?.value === group.get('confirmarPassword')?.value ? null : { passwordMismatch: true } });
   protected readonly loading = signal(false);
@@ -200,16 +212,22 @@ export class ResetPasswordComponent implements OnInit {
     const url = new URL(window.location.href);
     url.searchParams.delete('token');
     this.location.replaceState(url.pathname + url.search + url.hash);
-    if (!this.token) this.error.set('El link es inválido o expiró.');
+    if (!/^[a-f0-9]{64}$/.test(this.token)) {
+      this.token = '';
+      this.error.set('El enlace no es válido. Solicitá uno nuevo para cambiar la contraseña.');
+    }
   }
 
   protected submit(): void {
+    if (this.loading() || this.success()) return;
     if (!this.token) {
-      this.error.set('El link es inválido o expiró.');
+      this.error.set('El enlace no es válido. Solicitá uno nuevo para cambiar la contraseña.');
       return;
     }
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+      this.changeDetector.detectChanges();
+      this.host.nativeElement.querySelector<HTMLElement>('input[aria-invalid="true"]')?.focus();
       return;
     }
     this.loading.set(true);
@@ -217,8 +235,9 @@ export class ResetPasswordComponent implements OnInit {
     this.auth.resetPassword({ token: this.token, nuevaPassword: this.form.getRawValue().nuevaPassword }).subscribe({
       next: ({ mensaje }) => {
         this.loading.set(false);
-        this.success.set(mensaje || 'Contraseña actualizada. Te redirigiremos al inicio de sesión.');
-        setTimeout(() => void this.router.navigate(['/login']), 2500);
+        this.success.set(mensaje || 'Tu contraseña se actualizó. Ya podés iniciar sesión.');
+        this.form.reset();
+        this.token = '';
       },
       error: (error) => {
         this.loading.set(false);

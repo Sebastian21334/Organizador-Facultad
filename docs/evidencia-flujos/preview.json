@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "checks": [
+    "HTML disponible",
+    "gzip negociado y Vary",
+    "contenido descomprimido idéntico",
+    "q=0 conserva identidad",
+    "HEAD coherente sin cuerpo",
+    "recurso inexistente conserva 404"
+  ],
+  "resource": "main-CTVWVXTX.js",
+  "plainBytes": 245801,
+  "gzipBytes": 53498
+}

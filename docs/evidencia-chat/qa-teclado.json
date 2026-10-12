@@ -1,0 +1,34 @@
+{
+  "focus": [
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "label": "Cerrar sesión",
+      "text": ""
+    },
+    {
+      "tag": "SECTION",
+      "id": "",
+      "label": "Conversación con apunte",
+      "text": "Cargar mensajes anterioresVOSVos: Mensaje 71: preparar el pa"
+    },
+    {
+      "tag": "BUTTON",
+      "id": "",
+      "label": null,
+      "text": "Cargar mensajes anteriores"
+    },
+    {
+      "tag": "INPUT",
+      "id": "chat-message",
+      "label": null,
+      "text": ""
+    }
+  ],
+  "passed": [
+    "Tab alcanza región desplazable y compositor",
+    "Enter envía mensaje",
+    "Tab y Enter cierran sesión",
+    "Tab recorre email/password/submit y Enter inicia sesión"
+  ]
+}

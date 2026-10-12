@@ -50,7 +50,7 @@ export class MensajesService {
     //    coincidencias semánticas (ej: "Bases" -> "Bases de Datos"), y reutilizamos la misma
     //    lista después como respaldo con fuzzy match, sin pegarle dos veces a la base.
     const materiasExistentes =
-      await this.materiasRepository.buscarPorUsuario(usuarioId);
+      await this.materiasRepository.buscarTodasPorUsuario(usuarioId);
     const resultadoIA = await this.iaService.extraerTarea(
       texto,
       materiasExistentes.map((m) => m.nombre),
@@ -67,7 +67,7 @@ export class MensajesService {
       return actualizado!;
     }
 
-    // 3. Buscamos la materia por nombre (tolerando typos/mayúsculas), o la creamos si no existe.
+    // 3. Buscamos una materia existente por nombre, sin crear ni elegir vínculos dudosos.
     //    Esto queda como red de seguridad por si la IA no devolvió el nombre exacto.
     let materia: Materia | undefined;
     if (resultadoIA.materia) {
@@ -100,7 +100,8 @@ export class MensajesService {
         descripcion: resultadoIA.descripcion ?? undefined,
         tipo: resultadoIA.tipo as TipoTarea,
         fechaLimite: resultadoIA.fecha
-          ? new Date(resultadoIA.fecha)
+          ? // Una fecha sin hora vence al terminar ese día en Argentina.
+            new Date(`${resultadoIA.fecha}T23:59:59.999-03:00`)
           : undefined,
         materia,
         origen:
@@ -134,18 +135,32 @@ export class MensajesService {
     const normalizadoDetectado = this.normalizar(nombreDetectado);
     const todas =
       materiasPrecargadas ??
-      (await this.materiasRepository.buscarPorUsuario(usuarioId));
+      (await this.materiasRepository.buscarTodasPorUsuario(usuarioId));
+
+    const exactas = todas.filter(
+      (m) => this.normalizar(m.nombre) === normalizadoDetectado,
+    );
+    if (exactas.length) return exactas.length === 1 ? exactas[0] : undefined;
+
+    // I/II, 1/2 y otros niveles son parte del nombre, no errores de tipeo.
+    const niveles = (nombre: string) =>
+      nombre.split(' ').filter((p) => /^(?:\d+|[ivxlcdm]+)$/.test(p));
+    const nivelesDetectados = niveles(normalizadoDetectado);
 
     let mejorCoincidencia: Materia | undefined;
     let mejorDistancia = Infinity;
     let cantidadCoincidenciasFuertes = 0;
+    let cantidadMejores = 0;
 
     for (const m of todas) {
       const normalizadoExistente = this.normalizar(m.nombre);
 
-      if (normalizadoExistente === normalizadoDetectado) {
-        return m;
-      }
+      const nivelesExistentes = niveles(normalizadoExistente);
+      if (
+        nivelesDetectados.length &&
+        nivelesDetectados.join(' ') !== nivelesExistentes.join(' ')
+      )
+        continue;
 
       if (
         normalizadoExistente.includes(normalizadoDetectado) ||
@@ -170,13 +185,18 @@ export class MensajesService {
       if (distanciaRelativa <= 0.2 && distancia < mejorDistancia) {
         mejorCoincidencia = m;
         mejorDistancia = distancia;
+        cantidadMejores = 1;
+      } else if (distanciaRelativa <= 0.2 && distancia === mejorDistancia) {
+        cantidadMejores++;
       }
     }
 
     // Si más de una materia parece coincidir, no elegimos arbitrariamente.
     if (
       mejorCoincidencia &&
-      (cantidadCoincidenciasFuertes <= 1 || mejorDistancia > 0)
+      (mejorDistancia === 0
+        ? cantidadCoincidenciasFuertes === 1
+        : cantidadMejores === 1)
     ) {
       return mejorCoincidencia;
     }
@@ -191,15 +211,6 @@ export class MensajesService {
       .toLowerCase()
       .trim()
       .replace(/\s+/g, ' ');
-  }
-
-  private capitalizar(texto: string): string {
-    return texto
-      .split(' ')
-      .map((palabra) =>
-        palabra ? palabra[0].toUpperCase() + palabra.slice(1) : palabra,
-      )
-      .join(' ');
   }
 
   private distanciaLevenshtein(a: string, b: string): number {

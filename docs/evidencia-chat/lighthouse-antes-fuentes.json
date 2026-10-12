@@ -1,0 +1,55 @@
+[
+  {
+    "page": "login",
+    "device": "mobile",
+    "url": "http://127.0.0.1:3001/login",
+    "performance": 0.88,
+    "accessibility": 1,
+    "bestPractices": 1,
+    "seo": 1,
+    "LCP": 1975.2372999999998,
+    "CLS": 0,
+    "TBT": 455.7627,
+    "failedAccessibility": [],
+    "run": 2
+  },
+  {
+    "page": "login",
+    "device": "desktop",
+    "url": "http://127.0.0.1:3001/login",
+    "performance": 1,
+    "accessibility": 1,
+    "bestPractices": 1,
+    "seo": 1,
+    "LCP": 549.2076,
+    "CLS": 0.000163,
+    "TBT": 0,
+    "failedAccessibility": []
+  },
+  {
+    "page": "chat",
+    "device": "mobile",
+    "url": "http://127.0.0.1:3001/chat",
+    "performance": 0.93,
+    "accessibility": 1,
+    "bestPractices": 1,
+    "seo": 1,
+    "LCP": 3056.6622,
+    "CLS": 0,
+    "TBT": 114,
+    "failedAccessibility": []
+  },
+  {
+    "page": "chat",
+    "device": "desktop",
+    "url": "http://127.0.0.1:3001/chat",
+    "performance": 1,
+    "accessibility": 1,
+    "bestPractices": 1,
+    "seo": 1,
+    "LCP": 623.98575,
+    "CLS": 0,
+    "TBT": 0,
+    "failedAccessibility": []
+  }
+]

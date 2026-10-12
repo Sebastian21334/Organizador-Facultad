@@ -1,0 +1,186 @@
+{
+  "date": "2026-10-10T00:58:08.466Z",
+  "environment": "Next producción con API ficticia local; Origin de POST sustituido por Playwright para probar la política HTTPS sin debilitarla.",
+  "screens": [
+    "movil-login.png",
+    "movil-login-error.png",
+    "movil-historial.png",
+    "movil-tarea-creada.png",
+    "movil-envio-error.png",
+    "movil-logout-error.png",
+    "movil-sesion-vencida.png",
+    "movil-historial-error.png",
+    "movil-vacio.png",
+    "movil-cargando.png",
+    "tablet-login.png",
+    "tablet-login-error.png",
+    "tablet-historial.png",
+    "tablet-tarea-creada.png",
+    "tablet-envio-error.png",
+    "tablet-logout-error.png",
+    "tablet-sesion-vencida.png",
+    "tablet-historial-error.png",
+    "tablet-vacio.png",
+    "tablet-cargando.png",
+    "escritorio-login.png",
+    "escritorio-login-error.png",
+    "escritorio-historial.png",
+    "escritorio-tarea-creada.png",
+    "escritorio-envio-error.png",
+    "escritorio-logout-error.png",
+    "escritorio-sesion-vencida.png",
+    "escritorio-historial-error.png",
+    "escritorio-vacio.png",
+    "escritorio-cargando.png"
+  ],
+  "checks": [
+    {
+      "size": "movil",
+      "screen": "login",
+      "overflow": {
+        "width": 390,
+        "document": 390,
+        "height": 844,
+        "documentHeight": 844
+      },
+      "violations": []
+    },
+    {
+      "size": "movil",
+      "screen": "historial",
+      "overflow": {
+        "width": 390,
+        "document": 390,
+        "height": 844,
+        "documentHeight": 844
+      },
+      "violations": []
+    },
+    {
+      "size": "movil",
+      "screen": "envio-error",
+      "overflow": {
+        "width": 390,
+        "document": 390,
+        "height": 844,
+        "documentHeight": 844
+      },
+      "violations": []
+    },
+    {
+      "size": "movil",
+      "screen": "vacio",
+      "overflow": {
+        "width": 390,
+        "document": 390,
+        "height": 844,
+        "documentHeight": 844
+      },
+      "violations": []
+    },
+    {
+      "size": "movil",
+      "flows": "login inválido/válido, historial 3 páginas, envío, borradores conservados, 401, logout fallido/exitoso, error/reintento, vacío, carga, teclado, reduced-motion",
+      "passed": true
+    },
+    {
+      "size": "tablet",
+      "screen": "login",
+      "overflow": {
+        "width": 768,
+        "document": 768,
+        "height": 1024,
+        "documentHeight": 1024
+      },
+      "violations": []
+    },
+    {
+      "size": "tablet",
+      "screen": "historial",
+      "overflow": {
+        "width": 768,
+        "document": 768,
+        "height": 1024,
+        "documentHeight": 1024
+      },
+      "violations": []
+    },
+    {
+      "size": "tablet",
+      "screen": "envio-error",
+      "overflow": {
+        "width": 768,
+        "document": 768,
+        "height": 1024,
+        "documentHeight": 1024
+      },
+      "violations": []
+    },
+    {
+      "size": "tablet",
+      "screen": "vacio",
+      "overflow": {
+        "width": 768,
+        "document": 768,
+        "height": 1024,
+        "documentHeight": 1024
+      },
+      "violations": []
+    },
+    {
+      "size": "tablet",
+      "flows": "login inválido/válido, historial 3 páginas, envío, borradores conservados, 401, logout fallido/exitoso, error/reintento, vacío, carga, teclado, reduced-motion",
+      "passed": true
+    },
+    {
+      "size": "escritorio",
+      "screen": "login",
+      "overflow": {
+        "width": 1440,
+        "document": 1440,
+        "height": 900,
+        "documentHeight": 900
+      },
+      "violations": []
+    },
+    {
+      "size": "escritorio",
+      "screen": "historial",
+      "overflow": {
+        "width": 1440,
+        "document": 1440,
+        "height": 900,
+        "documentHeight": 900
+      },
+      "violations": []
+    },
+    {
+      "size": "escritorio",
+      "screen": "envio-error",
+      "overflow": {
+        "width": 1440,
+        "document": 1440,
+        "height": 900,
+        "documentHeight": 900
+      },
+      "violations": []
+    },
+    {
+      "size": "escritorio",
+      "screen": "vacio",
+      "overflow": {
+        "width": 1440,
+        "document": 1440,
+        "height": 900,
+        "documentHeight": 900
+      },
+      "violations": []
+    },
+    {
+      "size": "escritorio",
+      "flows": "login inválido/válido, historial 3 páginas, envío, borradores conservados, 401, logout fallido/exitoso, error/reintento, vacío, carga, teclado, reduced-motion",
+      "passed": true
+    }
+  ],
+  "errors": []
+}

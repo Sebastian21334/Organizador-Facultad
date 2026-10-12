@@ -42,7 +42,7 @@ export class Tarea {
 
   @ManyToOne(() => Materia, { nullable: true, onDelete: 'SET NULL' })
   @JoinColumn({ name: 'materia_id' })
-  materia?: Materia;
+  materia?: Materia | null;
 
   @Column({ type: 'enum', enum: TipoTarea, default: TipoTarea.TAREA })
   tipo?: TipoTarea;
@@ -51,7 +51,7 @@ export class Tarea {
   estado?: EstadoTarea;
 
   @Column({ type: 'timestamptz', nullable: true })
-  fechaLimite?: Date;
+  fechaLimite?: Date | null;
 
   @Column({ type: 'integer', nullable: true })
   recordatorioMinutos?: number | null;
@@ -77,5 +77,4 @@ export class Tarea {
 
   @Column()
   usuarioId!: string;
-    
 }

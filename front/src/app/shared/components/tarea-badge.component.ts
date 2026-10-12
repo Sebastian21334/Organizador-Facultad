@@ -15,6 +15,12 @@ const estadoColor: Record<EstadoTarea, string> = {
   [EstadoTarea.HECHA]: 'badge-hecha',
 };
 
+const estadoTexto: Record<EstadoTarea, string> = {
+  [EstadoTarea.PENDIENTE]: 'Pendiente',
+  [EstadoTarea.EN_PROGRESO]: 'En progreso',
+  [EstadoTarea.HECHA]: 'Hecha',
+};
+
 @Component({
   selector: 'app-tarea-badge',
   imports: [],
@@ -26,7 +32,7 @@ const estadoColor: Record<EstadoTarea, string> = {
     }
     @if (estado) {
       <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium {{ estadoColor[estado] }}">
-        {{ estado }}
+        {{ estadoTexto[estado] }}
       </span>
     }
   `,
@@ -47,4 +53,5 @@ export class TareaBadgeComponent {
 
   protected readonly tipoColor = tipoColor;
   protected readonly estadoColor = estadoColor;
+  protected readonly estadoTexto = estadoTexto;
 }

@@ -46,6 +46,8 @@ export class MotionDirective {
         for (const candidato of candidatos) {
           if (!(candidato instanceof HTMLElement) || vistos.has(candidato)) continue;
           vistos.add(candidato);
+          // Título y presentación principal orientan desde el primer pintado, sin esperar una entrada.
+          if (candidato.matches('h1') || candidato.querySelector('h1') || candidato.closest('.hero-copy')) continue;
           // Avoid layered transitions and keep the preview a faithful static view.
           if (preferencia.matches || candidato.closest('[inert]') || candidato.parentElement?.closest(BLOQUES)) continue;
           pendientes.add(candidato);

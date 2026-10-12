@@ -8,8 +8,8 @@ export function proxy(request: NextRequest) {
   const csp = [
     "default-src 'self'",
     "script-src 'self' 'nonce-" + nonce + "' 'strict-dynamic'" + (dev ? " 'unsafe-eval'" : ''),
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-    "font-src 'self' https://fonts.gstatic.com",
+    "style-src 'self' 'unsafe-inline'",
+    "font-src 'self'",
     "img-src 'self' data:", "connect-src 'self'" + (dev ? ' ws: http://localhost:3001' : ''),
     "object-src 'none'", "base-uri 'self'", "form-action 'self'", "frame-ancestors 'none'",
     ...(dev ? [] : ['upgrade-insecure-requests']),

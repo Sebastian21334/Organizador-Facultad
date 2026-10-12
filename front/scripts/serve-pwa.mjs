@@ -3,6 +3,10 @@ import { createServer, request as httpRequest } from 'node:http';
 import { request as httpsRequest } from 'node:https';
 import { readFile, stat } from 'node:fs/promises';
 import { resolve, extname, sep } from 'node:path';
+import { gzip as gzipCallback } from 'node:zlib';
+import { promisify } from 'node:util';
+
+const gzip = promisify(gzipCallback);
 
 const root = resolve('dist/organizador-facultad/browser');
 const api = new URL(process.env.PWA_API_URL || 'http://localhost:3000');
@@ -73,7 +77,23 @@ createServer(async (req, res) => {
       content = await readFile(resolve(root, 'index.html'));
       type = 'text/html';
     }
-    res.writeHead(200, { 'Content-Type': type });
+    const headers = { 'Content-Type': type };
+    if (/^(?:text\/|application\/(?:json|manifest\+json)|image\/svg)/.test(type)) {
+      headers.Vary = 'Accept-Encoding';
+      const acceptsGzip = (req.headers['accept-encoding'] || '').toLowerCase().split(',').some((coding) => {
+        const [name, ...parameters] = coding.trim().split(';');
+        const q = parameters.find((parameter) => parameter.trim().startsWith('q='));
+        const quality = q ? Number(q.trim().slice(2)) : 1;
+        return name.trim() === 'gzip' && quality > 0 && quality <= 1;
+      });
+      // Sólo recursos estáticos de texto; las respuestas de API se reenvían intactas.
+      if (acceptsGzip && content.length > 1024) {
+        content = await gzip(content);
+        headers['Content-Encoding'] = 'gzip';
+      }
+    }
+    headers['Content-Length'] = content.length;
+    res.writeHead(200, headers);
     res.end(req.method === 'HEAD' ? undefined : content);
   } catch {
     res.writeHead(400);

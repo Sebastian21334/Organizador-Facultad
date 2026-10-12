@@ -1,5 +1,5 @@
-import { passwordBytes } from '../../core/services/password-policy';
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { passwordBytes, passwordLength } from '../../core/services/password-policy';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../core/services/auth.service';
 import { PushPreferencesComponent } from '../../shared/components/push-preferences.component';
@@ -8,30 +8,38 @@ import { PushPreferencesComponent } from '../../shared/components/push-preferenc
   selector: 'app-perfil',
   imports: [ReactiveFormsModule, PushPreferencesComponent],
   template: `
-    <main class="max-w-md mx-auto space-y-6 py-8">
+    <div class="max-w-md mx-auto space-y-6 py-8">
       <section class="card">
         <p class="section-label">Perfil</p>
         <h1 class="page-title">Tu perfil</h1>
+        @if (loadingPerfil()) {
+          <p class="help-text" role="status">Cargando tu perfil…</p>
+        }
+        @if (!loadingPerfil() && !perfilCargado()) {
+          <button type="button" class="button-primary mt-4" (click)="cargarPerfil()">Reintentar carga</button>
+        }
 
         @if (successNombre()) {
           <p class="message-success" role="status">{{ successNombre() }}</p>
         }
 
-        <form (ngSubmit)="guardarNombre()" [formGroup]="nombreForm" class="space-y-4 mt-5">
+        <form id="perfil-nombre-form" (ngSubmit)="guardarNombre()" [formGroup]="nombreForm" class="space-y-4 mt-5">
           <label class="block text-sm text-[#5B5748]">
-            Nombre completo
-            <input type="text" formControlName="nombre" class="field" autocomplete="name" />
+            Nombre completo (obligatorio)
+            <input type="text" formControlName="nombre" class="field" autocomplete="name" required
+              [attr.aria-invalid]="nombreForm.controls.nombre.invalid && nombreForm.controls.nombre.touched"
+              [attr.aria-describedby]="nombreForm.controls.nombre.invalid && nombreForm.controls.nombre.touched ? 'nombre-error' : null" />
           </label>
 
           @if (nombreForm.controls.nombre.invalid && nombreForm.controls.nombre.touched) {
-            <p class="message-error">Ingresá tu nombre.</p>
+            <p id="nombre-error" class="message-error">{{ nombreForm.controls.nombre.hasError('maxlength') ? 'El nombre debe tener hasta 80 caracteres.' : 'Ingresá tu nombre; no puede contener sólo espacios.' }}</p>
           }
 
           @if (errorNombre()) {
             <p class="message-error" role="alert">{{ errorNombre() }}</p>
           }
 
-          <button type="submit" [disabled]="loadingNombre()" class="button-primary w-full">
+          <button type="submit" [disabled]="loadingNombre() || loadingRecordatorio() || !perfilCargado()" class="button-primary w-full">
             {{ loadingNombre() ? 'Guardando...' : 'Guardar cambios' }}
           </button>
         </form>
@@ -52,7 +60,7 @@ import { PushPreferencesComponent } from '../../shared/components/push-preferenc
           <p class="message-success" role="status">{{ successRecordatorio() }}</p>
         }
 
-        <form (ngSubmit)="guardarRecordatorio()" [formGroup]="recordatorioForm" class="space-y-4 mt-5">
+        <form id="perfil-recordatorio-form" (ngSubmit)="guardarRecordatorio()" [formGroup]="recordatorioForm" class="space-y-4 mt-5">
           <label class="toggle-row">
             <input type="checkbox" formControlName="habilitado" />
             <span>Recibir recordatorios por email</span>
@@ -61,8 +69,10 @@ import { PushPreferencesComponent } from '../../shared/components/push-preferenc
           @if (recordatorioForm.controls.habilitado.value) {
             <div class="reminder-fields">
               <label class="block text-sm text-[#5B5748]">
-                Avisar con anticipación de
-                <input type="number" formControlName="cantidad" min="1" max="30" class="field" />
+                Anticipación (obligatoria)
+                <input type="number" formControlName="cantidad" min="1" max="30" step="1" class="field" required
+                  [attr.aria-invalid]="recordatorioForm.controls.cantidad.invalid && recordatorioForm.controls.cantidad.touched"
+                  [attr.aria-describedby]="recordatorioForm.controls.cantidad.invalid && recordatorioForm.controls.cantidad.touched ? 'cantidad-help cantidad-error' : 'cantidad-help'" />
               </label>
 
               <label class="block text-sm text-[#5B5748]">
@@ -73,13 +83,17 @@ import { PushPreferencesComponent } from '../../shared/components/push-preferenc
                 </select>
               </label>
             </div>
+            <p id="cantidad-help" class="help-text">Elegí un número entero entre 1 y 30, en horas o días.</p>
+            @if (recordatorioForm.controls.cantidad.invalid && recordatorioForm.controls.cantidad.touched) {
+              <p id="cantidad-error" class="message-error">Ingresá un número entero entre 1 y 30.</p>
+            }
           }
 
           @if (errorRecordatorio()) {
             <p class="message-error" role="alert">{{ errorRecordatorio() }}</p>
           }
 
-          <button type="submit" [disabled]="loadingRecordatorio()" class="button-primary w-full">
+          <button type="submit" [disabled]="loadingRecordatorio() || loadingNombre() || !perfilCargado()" class="button-primary w-full">
             {{ loadingRecordatorio() ? 'Guardando...' : 'Guardar recordatorio' }}
           </button>
         </form>
@@ -95,29 +109,38 @@ import { PushPreferencesComponent } from '../../shared/components/push-preferenc
           <p class="message-success" role="status">{{ successPassword() }}</p>
         }
 
-        <form (ngSubmit)="cambiarPassword()" [formGroup]="passwordForm" class="space-y-4 mt-5">
+        <form id="perfil-password-form" (ngSubmit)="cambiarPassword()" [formGroup]="passwordForm" class="space-y-4 mt-5">
+          <p class="help-text">Los tres campos son obligatorios.</p>
           <label class="block text-sm text-[#5B5748]">
             Contraseña actual
-            <input type="password" formControlName="contraseñaActual" class="field" autocomplete="current-password" />
+            <input type="password" formControlName="contraseñaActual" class="field" autocomplete="current-password" required
+              [attr.aria-invalid]="passwordForm.controls['contraseñaActual'].invalid && passwordForm.controls['contraseñaActual'].touched"
+              [attr.aria-describedby]="passwordForm.controls['contraseñaActual'].invalid && passwordForm.controls['contraseñaActual'].touched ? 'password-actual-error' : null" />
           </label>
+          @if (passwordForm.controls['contraseñaActual'].invalid && passwordForm.controls['contraseñaActual'].touched) {
+            <p id="password-actual-error" class="message-error">Ingresá tu contraseña actual.</p>
+          }
 
           <label class="block text-sm text-[#5B5748]">
             Nueva contraseña
-            <input type="password" formControlName="nuevaPassword" class="field" autocomplete="new-password" />
+            <input type="password" formControlName="nuevaPassword" class="field" autocomplete="new-password" required
+              [attr.aria-invalid]="passwordForm.controls.nuevaPassword.invalid && passwordForm.controls.nuevaPassword.touched"
+              [attr.aria-describedby]="passwordForm.controls.nuevaPassword.invalid && passwordForm.controls.nuevaPassword.touched ? 'password-help password-error' : 'password-help'" />
           </label>
+          <p id="password-help" class="help-text">Usá una frase de al menos 15 caracteres. Máximo 72 bytes; los emojis y algunas letras ocupan varios bytes.</p>
+          @if (passwordForm.controls.nuevaPassword.invalid && passwordForm.controls.nuevaPassword.touched) {
+            <p id="password-error" class="message-error">{{ passwordForm.controls.nuevaPassword.hasError('required') ? 'Ingresá una nueva contraseña.' : passwordForm.controls.nuevaPassword.hasError('passwordBytes') || passwordForm.controls.nuevaPassword.hasError('maxlength') ? 'La contraseña supera el máximo de 72 bytes. Acortá la frase.' : 'La contraseña debe tener al menos 15 caracteres.' }}</p>
+          }
 
           <label class="block text-sm text-[#5B5748]">
             Confirmar nueva contraseña
-            <input type="password" formControlName="confirmarPassword" class="field" autocomplete="new-password" />
+            <input type="password" formControlName="confirmarPassword" class="field" autocomplete="new-password" required
+              [attr.aria-invalid]="(passwordForm.hasError('passwordMismatch') || passwordForm.controls.confirmarPassword.invalid) && passwordForm.controls.confirmarPassword.touched"
+              [attr.aria-describedby]="(passwordForm.hasError('passwordMismatch') || passwordForm.controls.confirmarPassword.invalid) && passwordForm.controls.confirmarPassword.touched ? 'confirmar-password-error' : null" />
           </label>
 
-          @if (passwordForm.controls.nuevaPassword.invalid && passwordForm.controls.nuevaPassword.touched) {
-            <p class="message-error">La contraseña debe tener al menos 15 caracteres.</p>
-            <p class="message-error">Máximo 72 bytes; los emojis ocupan varios bytes.</p>
-          }
-
-          @if (passwordForm.hasError('passwordMismatch') && passwordForm.controls.confirmarPassword.touched) {
-            <p class="message-error">Las contraseñas no coinciden.</p>
+          @if ((passwordForm.hasError('passwordMismatch') || passwordForm.controls.confirmarPassword.invalid) && passwordForm.controls.confirmarPassword.touched) {
+            <p id="confirmar-password-error" class="message-error">{{ passwordForm.controls.confirmarPassword.hasError('required') ? 'Repetí la nueva contraseña.' : 'Las contraseñas no coinciden.' }}</p>
           }
 
           @if (errorPassword()) {
@@ -129,7 +152,7 @@ import { PushPreferencesComponent } from '../../shared/components/push-preferenc
           </button>
         </form>
       </section>
-    </main>
+    </div>
   `,
   styles: `
     :host {
@@ -274,17 +297,19 @@ import { PushPreferencesComponent } from '../../shared/components/push-preferenc
   `,
 })
 export class PerfilComponent implements OnInit {
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+  private readonly changeDetector = inject(ChangeDetectorRef);
   private readonly formBuilder = inject(FormBuilder);
   private readonly auth = inject(AuthService);
 
   protected readonly nombreForm = this.formBuilder.nonNullable.group({
-    nombre: ['', Validators.required],
+    nombre: ['', [Validators.required, Validators.pattern(/\S/), Validators.maxLength(80)]],
   });
 
   protected readonly passwordForm = this.formBuilder.nonNullable.group(
     {
       contraseñaActual: ['', Validators.required],
-      nuevaPassword: ['', [Validators.required, Validators.minLength(15), Validators.maxLength(72), passwordBytes]],
+      nuevaPassword: ['', [Validators.required, passwordLength, passwordBytes]],
       confirmarPassword: ['', Validators.required],
     },
     {
@@ -296,6 +321,9 @@ export class PerfilComponent implements OnInit {
   );
 
   protected readonly loadingNombre = signal(false);
+  protected readonly loadingPerfil = signal(false);
+  protected readonly perfilCargado = signal(false);
+  private nombreConfirmado = '';
   protected readonly loadingPassword = signal(false);
   protected readonly errorNombre = signal<string | null>(null);
   protected readonly errorPassword = signal<string | null>(null);
@@ -308,20 +336,32 @@ export class PerfilComponent implements OnInit {
 
   protected readonly recordatorioForm = this.formBuilder.nonNullable.group({
     habilitado: false,
-    cantidad: [1, [Validators.required, Validators.min(1), Validators.max(30)]],
+    cantidad: [1, [Validators.required, Validators.min(1), Validators.max(30), Validators.pattern(/^\d+$/)]],
     unidad: 'dias' as 'horas' | 'dias',
   });
 
   ngOnInit(): void {
     const claveAviso = 'tempo-recordatorios-perfil-v1';
-    const esPrimeraVisita = localStorage.getItem(claveAviso) !== 'visto';
-    this.mostrarAvisoInicial.set(esPrimeraVisita);
-    if (esPrimeraVisita) {
-      localStorage.setItem(claveAviso, 'visto');
+    try {
+      const esPrimeraVisita = localStorage.getItem(claveAviso) !== 'visto';
+      this.mostrarAvisoInicial.set(esPrimeraVisita);
+      if (esPrimeraVisita) localStorage.setItem(claveAviso, 'visto');
+    } catch {
+      // El aviso es opcional: una preferencia bloqueada no debe impedir cargar el perfil.
+      this.mostrarAvisoInicial.set(true);
     }
+    this.cargarPerfil();
+  }
 
+  protected cargarPerfil(): void {
+    if (this.loadingPerfil()) return;
+    this.loadingPerfil.set(true);
+    this.errorNombre.set(null);
     this.auth.getPerfil().subscribe({
       next: ({ nombre, recordatorioEmailHabilitado, recordatorioMinutos }) => {
+        this.loadingPerfil.set(false);
+        this.perfilCargado.set(true);
+        this.nombreConfirmado = nombre ?? '';
         this.nombreForm.patchValue({ nombre: nombre ?? '' });
         if (recordatorioEmailHabilitado) {
           this.mostrarAvisoInicial.set(false);
@@ -333,14 +373,22 @@ export class PerfilComponent implements OnInit {
         });
       },
       error: (error) => {
+        this.loadingPerfil.set(false);
         this.errorNombre.set(this.messageFromError(error, 'No se pudo cargar tu perfil.'));
       },
     });
   }
 
   protected guardarRecordatorio(): void {
-    if (this.recordatorioForm.invalid) {
+    if (this.loadingRecordatorio() || this.loadingNombre() || !this.perfilCargado()) return;
+    if (this.recordatorioForm.controls.habilitado.value && this.recordatorioForm.invalid) {
       this.recordatorioForm.markAllAsTouched();
+      this.focusFirstInvalid('perfil-recordatorio-form');
+      return;
+    }
+    if (!this.nombreConfirmado.trim()) {
+      this.errorRecordatorio.set('Guardá tu nombre en la sección Perfil antes de configurar recordatorios.');
+      this.host.nativeElement.querySelector<HTMLElement>('#perfil-nombre-form input')?.focus();
       return;
     }
 
@@ -350,9 +398,8 @@ export class PerfilComponent implements OnInit {
 
     const { habilitado, cantidad, unidad } = this.recordatorioForm.getRawValue();
     const minutos = habilitado ? cantidad * (unidad === 'dias' ? 1440 : 60) : null;
-    const nombre = this.nombreForm.controls.nombre.value;
-
-    this.auth.actualizarPerfil(nombre, {
+    // Esta acción guarda preferencias; nunca debe guardar un borrador del nombre.
+    this.auth.actualizarPerfil(this.nombreConfirmado, {
       recordatorioEmailHabilitado: habilitado,
       recordatorioMinutos: minutos,
     }).subscribe({
@@ -369,8 +416,10 @@ export class PerfilComponent implements OnInit {
   }
 
   protected guardarNombre(): void {
+    if (this.loadingNombre() || this.loadingRecordatorio() || !this.perfilCargado()) return;
     if (this.nombreForm.invalid) {
       this.nombreForm.markAllAsTouched();
+      this.focusFirstInvalid('perfil-nombre-form');
       return;
     }
 
@@ -378,11 +427,12 @@ export class PerfilComponent implements OnInit {
     this.errorNombre.set(null);
     this.successNombre.set(null);
 
-    const { nombre } = this.nombreForm.getRawValue();
+    const nombre = this.nombreForm.getRawValue().nombre.trim();
 
     this.auth.actualizarPerfil(nombre).subscribe({
       next: ({ mensaje }) => {
         this.loadingNombre.set(false);
+        this.nombreConfirmado = nombre;
         this.successNombre.set(mensaje || 'Nombre actualizado con éxito.');
       },
       error: (error) => {
@@ -393,8 +443,10 @@ export class PerfilComponent implements OnInit {
   }
 
   protected cambiarPassword(): void {
+    if (this.loadingPassword()) return;
     if (this.passwordForm.invalid) {
       this.passwordForm.markAllAsTouched();
+      this.focusFirstInvalid('perfil-password-form');
       return;
     }
 
@@ -419,6 +471,11 @@ export class PerfilComponent implements OnInit {
         this.errorPassword.set(this.messageFromError(error, 'No se pudo cambiar la contraseña.'));
       },
     });
+  }
+
+  private focusFirstInvalid(formId: string): void {
+    this.changeDetector.detectChanges();
+    this.host.nativeElement.querySelector<HTMLElement>(`#${formId} input[aria-invalid="true"]`)?.focus();
   }
 
   private messageFromError(error: { error?: { message?: string | string[] } }, fallback: string): string {

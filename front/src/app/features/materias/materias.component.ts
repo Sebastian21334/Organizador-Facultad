@@ -17,22 +17,24 @@ import { ImportarPlanComponent } from './importar-plan.component';
       <h1 class="title-bar">Materias</h1>
 
       <div class="max-w-6xl mx-auto space-y-6 px-4 md:px-8 py-6">
-      <app-importar-plan [materiasExistentes]="materias()" (importado)="agregarImportadas($event)" />
+      @if (!cargando() && !error()) {
+        <app-importar-plan [materiasExistentes]="materias()" (importado)="agregarImportadas($event)" />
+      }
       <section data-motion class="bg-[#FFFEFA] rounded-lg border border-[#D9D3C2] shadow-sm p-5">
         <h2 class="text-sm font-semibold text-[#1A2540] mb-4">Nueva materia</h2>
         <form [formGroup]="form" (ngSubmit)="crear()" class="grid gap-3 sm:grid-cols-2">
           <div class="flex flex-col gap-1 sm:col-span-2">
             <label for="materia-nombre" class="text-xs font-medium text-[#8C8570]">Nombre *</label>
-            <input id="materia-nombre" formControlName="nombre" class="field" placeholder="Análisis Matemático II" />
+            <input id="materia-nombre" formControlName="nombre" class="field" maxlength="150" [attr.aria-invalid]="form.controls.nombre.touched && form.controls.nombre.invalid" aria-describedby="materia-nombre-error" placeholder="Análisis Matemático II" />
             @if (form.controls.nombre.touched && form.controls.nombre.invalid) {
-              <span class="text-xs text-[#A62828]">El nombre es obligatorio.</span>
+              <span id="materia-nombre-error" class="text-xs text-[#A62828]">Escribí un nombre de hasta 150 caracteres.</span>
             }
           </div>
           <div class="flex flex-col gap-1">
             <label for="materia-anio" class="text-xs font-medium text-[#8C8570]">Año de cursado</label>
-            <input id="materia-anio" formControlName="anioCursado" type="number" min="1" step="1" class="field" placeholder="1" />
+            <input id="materia-anio" formControlName="anioCursado" type="number" min="1" max="20" step="1" class="field" [attr.aria-invalid]="form.controls.anioCursado.touched && form.controls.anioCursado.invalid" aria-describedby="materia-anio-error" placeholder="1" />
             @if (form.controls.anioCursado.touched && form.controls.anioCursado.invalid) {
-              <span class="text-xs text-[#A62828]">Indicá un año de cursado válido.</span>
+              <span id="materia-anio-error" class="text-xs text-[#A62828]">Indicá un año entero entre 1 y 20, o dejalo sin definir.</span>
             }
           </div>
           <div class="flex flex-col gap-1">
@@ -56,7 +58,7 @@ import { ImportarPlanComponent } from './importar-plan.component';
             </select>
           </div>
           <div class="sm:col-span-2">
-            <button type="submit" [disabled]="enviando()" class="button-primary">{{ enviando() ? 'Creando...' : 'Crear materia' }}</button>
+            <button type="submit" [disabled]="enviando() || cargando()" class="button-primary">{{ enviando() ? 'Creando...' : 'Crear materia' }}</button>
           </div>
         </form>
       </section>
@@ -84,8 +86,10 @@ import { ImportarPlanComponent } from './importar-plan.component';
                       <article class="materia-card">
                         @if (editandoId() === m.id) {
                           <form [formGroup]="editForm" (ngSubmit)="guardarEdicion(m.id)" class="grid gap-2 sm:grid-cols-2">
-                            <input formControlName="nombre" class="field sm:col-span-2" placeholder="Nombre" aria-label="Nombre de la materia" />
-                            <input formControlName="anioCursado" type="number" min="1" step="1" class="field" placeholder="Año de cursado" aria-label="Año de cursado" />
+                            <input formControlName="nombre" class="field sm:col-span-2" placeholder="Nombre" maxlength="150" aria-label="Nombre de la materia" [attr.aria-invalid]="editForm.controls.nombre.touched && editForm.controls.nombre.invalid" aria-describedby="editar-materia-nombre-error" />
+                            @if (editForm.controls.nombre.touched && editForm.controls.nombre.invalid) { <small id="editar-materia-nombre-error" class="text-xs text-[#A62828] sm:col-span-2">Escribí un nombre de hasta 150 caracteres.</small> }
+                            <input formControlName="anioCursado" type="number" min="1" max="20" step="1" class="field" placeholder="Año de cursado" aria-label="Año de cursado" [attr.aria-invalid]="editForm.controls.anioCursado.touched && editForm.controls.anioCursado.invalid" aria-describedby="editar-materia-anio-error" />
+                            @if (editForm.controls.anioCursado.touched && editForm.controls.anioCursado.invalid) { <small id="editar-materia-anio-error" class="text-xs text-[#A62828] sm:col-span-2">Indicá un año entero entre 1 y 20, o dejalo sin definir.</small> }
                             <select formControlName="cuatrimestre" class="field" aria-label="Cuatrimestre">
                               <option value="">Sin definir</option>
                               <option [value]="Cuatrimestre.PRIMERO">Primero</option>
@@ -228,14 +232,14 @@ export class MateriasComponent implements OnInit {
   protected readonly eliminandoId = signal<string | null>(null);
 
   protected readonly form = this.fb.group({
-    nombre: this.fb.nonNullable.control('', Validators.required),
-    anioCursado: this.fb.control<number | null>(null, Validators.min(1)),
+    nombre: this.fb.nonNullable.control('', [Validators.required, Validators.maxLength(150)]),
+    anioCursado: this.fb.control<number | null>(null, [Validators.min(1), Validators.max(20), Validators.pattern(/^\d+$/)]),
     cuatrimestre: this.fb.control<Cuatrimestre | ''>(''),
     estado: this.fb.nonNullable.control(EstadoMateria.REGULAR),
   });
   protected readonly editForm = this.fb.group({
-    nombre: this.fb.nonNullable.control('', Validators.required),
-    anioCursado: this.fb.control<number | null>(null, Validators.min(1)),
+    nombre: this.fb.nonNullable.control('', [Validators.required, Validators.maxLength(150)]),
+    anioCursado: this.fb.control<number | null>(null, [Validators.min(1), Validators.max(20), Validators.pattern(/^\d+$/)]),
     cuatrimestre: this.fb.control<Cuatrimestre | ''>(''),
     estado: this.fb.nonNullable.control(EstadoMateria.REGULAR),
   });
@@ -247,6 +251,7 @@ export class MateriasComponent implements OnInit {
   }
 
   protected cargar(): void {
+    if (this.enviando() || this.guardandoEdicion() || this.eliminandoId()) return;
     this.cargando.set(true);
     this.error.set(null);
     this.materiasService.listar().subscribe({
@@ -256,7 +261,7 @@ export class MateriasComponent implements OnInit {
   }
 
   protected crear(): void {
-    if (this.enviando()) return;
+    if (this.enviando() || this.cargando()) return;
     this.form.controls.nombre.setValue(this.form.controls.nombre.value.trim());
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     this.enviando.set(true);
@@ -326,13 +331,9 @@ export class MateriasComponent implements OnInit {
       const porCuatrimestre = new Map<string, Materia[]>();
       for (const materia of grupo.materias) {
         const key = materia.cuatrimestre ?? 'sin-definir';
-        const label = this.nombreCuatrimestre(materia.cuatrimestre);
         const bucket = porCuatrimestre.get(key) ?? [];
         bucket.push(materia);
         porCuatrimestre.set(key, bucket);
-        if (!key) {
-          // no-op for compatibility
-        }
       }
 
       const grupos = [...porCuatrimestre.entries()].sort(([a], [b]) => {
@@ -341,7 +342,7 @@ export class MateriasComponent implements OnInit {
       }).map(([cuatrimestre, materias]) => ({
         key: cuatrimestre,
         label: cuatrimestre === 'sin-definir' ? 'Sin definir' : cuatrimestre === '1' ? '1ER CUATRIMESTRE' : cuatrimestre === '2' ? '2DO CUATRIMESTRE' : 'ANUAL',
-        materias: materias.reverse(),
+        materias,
       }));
 
       return {

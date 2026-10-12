@@ -1,5 +1,5 @@
-import { passwordBytes } from '../../core/services/password-policy';
-import { Component, inject, signal } from '@angular/core';
+import { passwordBytes, passwordLength } from '../../core/services/password-policy';
+import { ChangeDetectorRef, Component, ElementRef, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
@@ -43,6 +43,7 @@ import { AuthService } from '../../core/services/auth.service';
           </div>
         } @else {
           <form (ngSubmit)="submit()" [formGroup]="form" class="space-y-4">
+            <p class="text-xs text-[#5E534B]">Todos los campos son obligatorios.</p>
             <!-- Nombre -->
             <div>
               <label for="nombre" class="block text-xs font-semibold uppercase tracking-wider text-[#5E534B] mb-1.5">
@@ -56,13 +57,16 @@ import { AuthService } from '../../core/services/auth.service';
                 [class.field-error]="form.controls.nombre.invalid && form.controls.nombre.touched"
                 placeholder="Tu nombre y apellido"
                 autocomplete="name"
+                required
+                [attr.aria-invalid]="form.controls.nombre.invalid && form.controls.nombre.touched"
+                [attr.aria-describedby]="form.controls.nombre.invalid && form.controls.nombre.touched ? 'nombre-error' : null"
               />
               @if (form.controls.nombre.invalid && form.controls.nombre.touched) {
-                <p class="field-error-msg flex items-center gap-1 mt-1.5">
+                <p id="nombre-error" class="field-error-msg flex items-center gap-1 mt-1.5">
                   <svg class="w-3.5 h-3.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
                   </svg>
-                  Ingresá tu nombre.
+                  {{ form.controls.nombre.hasError('maxlength') ? 'El nombre debe tener hasta 80 caracteres.' : 'Ingresá tu nombre.' }}
                 </p>
               }
             </div>
@@ -80,13 +84,16 @@ import { AuthService } from '../../core/services/auth.service';
                 [class.field-error]="form.controls.email.invalid && form.controls.email.touched"
                 placeholder="ejemplo@facultad.edu.ar"
                 autocomplete="email"
+                required
+                [attr.aria-invalid]="form.controls.email.invalid && form.controls.email.touched"
+                [attr.aria-describedby]="form.controls.email.invalid && form.controls.email.touched ? 'email-error' : null"
               />
               @if (form.controls.email.invalid && form.controls.email.touched) {
-                <p class="field-error-msg flex items-center gap-1 mt-1.5">
+                <p id="email-error" class="field-error-msg flex items-center gap-1 mt-1.5">
                   <svg class="w-3.5 h-3.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
                   </svg>
-                  Ingresá un email válido.
+                  {{ form.controls.email.hasError('maxlength') ? 'El correo debe tener hasta 254 caracteres.' : 'Ingresá un email válido.' }}
                 </p>
               }
             </div>
@@ -105,6 +112,9 @@ import { AuthService } from '../../core/services/auth.service';
                   [class.field-error]="(form.controls.password.hasError('minlength') || form.controls.password.invalid) && form.controls.password.touched"
                   placeholder="Mínimo 15 caracteres"
                   autocomplete="new-password"
+                  required
+                  [attr.aria-invalid]="form.controls.password.invalid && form.controls.password.touched"
+                  [attr.aria-describedby]="form.controls.password.invalid && form.controls.password.touched ? 'password-help password-error' : 'password-help'"
                 />
                 <button
                   type="button"
@@ -124,12 +134,13 @@ import { AuthService } from '../../core/services/auth.service';
                   }
                 </button>
               </div>
-              @if (form.controls.password.hasError('minlength') && form.controls.password.touched) {
-                <p class="field-error-msg flex items-center gap-1 mt-1.5">
+              <p id="password-help" class="text-xs text-[#5E534B] mt-2">Usá una frase de al menos 15 caracteres. Máximo 72 bytes; los emojis y algunas letras ocupan varios bytes.</p>
+              @if (form.controls.password.invalid && form.controls.password.touched) {
+                <p id="password-error" class="field-error-msg flex items-center gap-1 mt-1.5">
                   <svg class="w-3.5 h-3.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
                   </svg>
-                  La contraseña debe tener al menos 15 caracteres.
+                  {{ form.controls.password.hasError('required') ? 'Ingresá una contraseña.' : form.controls.password.hasError('passwordBytes') || form.controls.password.hasError('maxlength') ? 'La contraseña supera el máximo de 72 bytes. Acortá la frase.' : 'La contraseña debe tener al menos 15 caracteres.' }}
                 </p>
               }
             </div>
@@ -148,6 +159,9 @@ import { AuthService } from '../../core/services/auth.service';
                   [class.field-error]="(form.hasError('passwordMismatch') || form.controls.confirmarPassword.invalid) && form.controls.confirmarPassword.touched"
                   placeholder="Repetí tu contraseña"
                   autocomplete="new-password"
+                  required
+                  [attr.aria-invalid]="(form.hasError('passwordMismatch') || form.controls.confirmarPassword.invalid) && form.controls.confirmarPassword.touched"
+                  [attr.aria-describedby]="(form.hasError('passwordMismatch') || form.controls.confirmarPassword.invalid) && form.controls.confirmarPassword.touched ? 'confirmar-password-error' : null"
                 />
                 <button
                   type="button"
@@ -167,12 +181,12 @@ import { AuthService } from '../../core/services/auth.service';
                   }
                 </button>
               </div>
-              @if (form.hasError('passwordMismatch') && form.controls.confirmarPassword.touched) {
-                <p class="field-error-msg flex items-center gap-1 mt-1.5">
+              @if ((form.hasError('passwordMismatch') || form.controls.confirmarPassword.invalid) && form.controls.confirmarPassword.touched) {
+                <p id="confirmar-password-error" class="field-error-msg flex items-center gap-1 mt-1.5">
                   <svg class="w-3.5 h-3.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
                   </svg>
-                  Las contraseñas no coinciden.
+                  {{ form.controls.confirmarPassword.hasError('required') ? 'Repetí la contraseña.' : 'Las contraseñas no coinciden.' }}
                 </p>
               }
             </div>
@@ -203,7 +217,6 @@ import { AuthService } from '../../core/services/auth.service';
                 <span>Registrarme en Tempo</span>
               }
             </button>
-          <p class="text-xs text-[#7A6F66] mt-2">Usá una frase de 15 caracteres o más. Máximo 72 bytes; los emojis ocupan varios bytes.</p>
         </form>
         }
 
@@ -237,12 +250,14 @@ import { AuthService } from '../../core/services/auth.service';
   `,
 })
 export class RegisterComponent {
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+  private readonly changeDetector = inject(ChangeDetectorRef);
   private readonly formBuilder = inject(FormBuilder);
   private readonly auth = inject(AuthService);
   protected readonly form = this.formBuilder.nonNullable.group({
-    nombre: ['', Validators.required],
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(15), Validators.maxLength(72), passwordBytes]],
+    nombre: ['', [Validators.required, Validators.pattern(/\S/), Validators.maxLength(80)]],
+    email: ['', [Validators.required, Validators.email, Validators.maxLength(254)]],
+    password: ['', [Validators.required, passwordLength, passwordBytes]],
     confirmarPassword: ['', Validators.required],
   }, { validators: (group) => group.get('password')?.value === group.get('confirmarPassword')?.value ? null : { passwordMismatch: true } });
   protected readonly loading = signal(false);
@@ -252,14 +267,17 @@ export class RegisterComponent {
   protected readonly mostrarConfirmPassword = signal(false);
 
   protected submit(): void {
+    if (this.loading() || this.success()) return;
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+      this.changeDetector.detectChanges();
+      this.host.nativeElement.querySelector<HTMLElement>('input[aria-invalid="true"]')?.focus();
       return;
     }
     this.loading.set(true);
     this.error.set(null);
     const { email, password, nombre } = this.form.getRawValue();
-    this.auth.register({ email, password, nombre }).subscribe({
+    this.auth.register({ email, password, nombre: nombre.trim() }).subscribe({
       next: ({ mensaje }) => { this.loading.set(false); this.success.set(mensaje || 'Revisá tu email para confirmar tu cuenta.'); },
       error: (error) => { this.loading.set(false); this.error.set(this.messageFromError(error, 'No se pudo crear la cuenta.')); },
     });

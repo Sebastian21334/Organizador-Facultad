@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { listarPaginas } from '../../core/services/paginacion';
-import { Tarea, CrearTareaDto, EstadoTarea } from '../../core/models';
+import { Tarea, CrearTareaDto, ActualizarTareaDto } from '../../core/models';
 
 @Injectable({ providedIn: 'root' })
 export class TareasService {
@@ -25,7 +25,7 @@ export class TareasService {
     return this.http.post<Tarea>('/tareas', dto);
   }
 
-  actualizar(id: string, cambios: Partial<CrearTareaDto> & { estado?: EstadoTarea }): Observable<Tarea> {
+  actualizar(id: string, cambios: ActualizarTareaDto): Observable<Tarea> {
     return this.http.patch<Tarea>(`/tareas/${id}`, cambios);
   }
 

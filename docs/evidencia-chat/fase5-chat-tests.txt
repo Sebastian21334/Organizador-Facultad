@@ -1,0 +1,20 @@
+
+> my-project@0.1.0 test
+> node --experimental-strip-types --test lib/*.test.mjs
+
+✔ el historial reciente primero pasa a cronología sin mutar la página (2.1724ms)
+✔ cargar anteriores conserva mensajes nuevos y evita duplicados de páginas solapadas (0.2055ms)
+✔ un historial con forma inválida se convierte en error recuperable (0.8006ms)
+✔ un mensaje pendiente de backend tiene explicación visible (0.2072ms)
+✔ logout fallido rechaza en vez de anunciar sesión cerrada (19.7994ms)
+✔ logout exitoso usa POST y espera la respuesta (0.3833ms)
+✔ 401 y errores de validación conservan código y texto accionable (0.415ms)
+✔ un error sin JSON no filtra HTML del proveedor (0.4037ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 201.9516

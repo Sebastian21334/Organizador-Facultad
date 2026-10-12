@@ -1,0 +1,2108 @@
+[
+  {
+    "name": "claro-movil-portada",
+    "route": "/",
+    "requestedUrl": "http://127.0.0.1:8080/",
+    "finalUrl": "http://127.0.0.1:8080/",
+    "theme": "claro",
+    "size": {
+      "name": "movil",
+      "width": 390,
+      "height": 844
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 390,
+      "documentWidth": 390,
+      "mainWidth": 390,
+      "mainScrollWidth": 390,
+      "headings": [
+        "Tu vida universitaria,en su justo tempo.",
+        "Hola, Seba"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "claro-movil-login",
+    "route": "login",
+    "requestedUrl": "http://127.0.0.1:8080/login",
+    "finalUrl": "http://127.0.0.1:8080/login",
+    "theme": "claro",
+    "size": {
+      "name": "movil",
+      "width": 390,
+      "height": 844
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 390,
+      "documentWidth": 390,
+      "mainWidth": 390,
+      "mainScrollWidth": 390,
+      "headings": [
+        "Tempo"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "claro-movil-register",
+    "route": "register",
+    "requestedUrl": "http://127.0.0.1:8080/register",
+    "finalUrl": "http://127.0.0.1:8080/register",
+    "theme": "claro",
+    "size": {
+      "name": "movil",
+      "width": 390,
+      "height": 844
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 390,
+      "documentWidth": 390,
+      "mainWidth": 390,
+      "mainScrollWidth": 390,
+      "headings": [
+        "Tempo"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "claro-movil-olvide-password",
+    "route": "olvide-password",
+    "requestedUrl": "http://127.0.0.1:8080/olvide-password",
+    "finalUrl": "http://127.0.0.1:8080/olvide-password",
+    "theme": "claro",
+    "size": {
+      "name": "movil",
+      "width": 390,
+      "height": 844
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 390,
+      "documentWidth": 390,
+      "mainWidth": 390,
+      "mainScrollWidth": 390,
+      "headings": [
+        "Tempo"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "claro-movil-resetear-password",
+    "route": "resetear-password",
+    "requestedUrl": "http://127.0.0.1:8080/resetear-password",
+    "finalUrl": "http://127.0.0.1:8080/resetear-password",
+    "theme": "claro",
+    "size": {
+      "name": "movil",
+      "width": 390,
+      "height": 844
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 390,
+      "documentWidth": 390,
+      "mainWidth": 390,
+      "mainScrollWidth": 390,
+      "headings": [
+        "Tempo"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "claro-movil-verificar-email",
+    "route": "verificar-email",
+    "requestedUrl": "http://127.0.0.1:8080/verificar-email",
+    "finalUrl": "http://127.0.0.1:8080/verificar-email",
+    "theme": "claro",
+    "size": {
+      "name": "movil",
+      "width": 390,
+      "height": 844
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 390,
+      "documentWidth": 390,
+      "mainWidth": 390,
+      "mainScrollWidth": 390,
+      "headings": [
+        "Tempo"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "claro-movil-instalar",
+    "route": "instalar",
+    "requestedUrl": "http://127.0.0.1:8080/instalar",
+    "finalUrl": "http://127.0.0.1:8080/instalar",
+    "theme": "claro",
+    "size": {
+      "name": "movil",
+      "width": 390,
+      "height": 844
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 390,
+      "documentWidth": 390,
+      "mainWidth": 390,
+      "mainScrollWidth": 390,
+      "headings": [
+        "Instalar app"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "claro-movil-contacto",
+    "route": "contacto",
+    "requestedUrl": "http://127.0.0.1:8080/contacto",
+    "finalUrl": "http://127.0.0.1:8080/contacto",
+    "theme": "claro",
+    "size": {
+      "name": "movil",
+      "width": 390,
+      "height": 844
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 390,
+      "documentWidth": 390,
+      "mainWidth": 390,
+      "mainScrollWidth": 390,
+      "headings": [
+        "¿Algo no funciona?Contame."
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "claro-movil-inicio",
+    "route": "inicio",
+    "requestedUrl": "http://127.0.0.1:8080/inicio",
+    "finalUrl": "http://127.0.0.1:8080/inicio",
+    "theme": "claro",
+    "size": {
+      "name": "movil",
+      "width": 390,
+      "height": 844
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 390,
+      "documentWidth": 390,
+      "mainWidth": 390,
+      "mainScrollWidth": 390,
+      "headings": [
+        "Hola, Estudiante"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "claro-movil-calendario",
+    "route": "calendario",
+    "requestedUrl": "http://127.0.0.1:8080/calendario",
+    "finalUrl": "http://127.0.0.1:8080/calendario",
+    "theme": "claro",
+    "size": {
+      "name": "movil",
+      "width": 390,
+      "height": 844
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 390,
+      "documentWidth": 390,
+      "mainWidth": 390,
+      "mainScrollWidth": 390,
+      "headings": [
+        "Calendario"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "claro-movil-tareas",
+    "route": "tareas",
+    "requestedUrl": "http://127.0.0.1:8080/tareas",
+    "finalUrl": "http://127.0.0.1:8080/tareas",
+    "theme": "claro",
+    "size": {
+      "name": "movil",
+      "width": 390,
+      "height": 844
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 390,
+      "documentWidth": 390,
+      "mainWidth": 390,
+      "mainScrollWidth": 390,
+      "headings": [
+        "Tareas"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "claro-movil-materias",
+    "route": "materias",
+    "requestedUrl": "http://127.0.0.1:8080/materias",
+    "finalUrl": "http://127.0.0.1:8080/materias",
+    "theme": "claro",
+    "size": {
+      "name": "movil",
+      "width": 390,
+      "height": 844
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 390,
+      "documentWidth": 390,
+      "mainWidth": 390,
+      "mainScrollWidth": 390,
+      "headings": [
+        "Materias"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "claro-movil-mensajes",
+    "route": "mensajes",
+    "requestedUrl": "http://127.0.0.1:8080/mensajes",
+    "finalUrl": "http://127.0.0.1:8080/mensajes",
+    "theme": "claro",
+    "size": {
+      "name": "movil",
+      "width": 390,
+      "height": 844
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 390,
+      "documentWidth": 390,
+      "mainWidth": 390,
+      "mainScrollWidth": 390,
+      "headings": [
+        "Tempo Asistente"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "claro-movil-perfil",
+    "route": "perfil",
+    "requestedUrl": "http://127.0.0.1:8080/perfil",
+    "finalUrl": "http://127.0.0.1:8080/perfil",
+    "theme": "claro",
+    "size": {
+      "name": "movil",
+      "width": 390,
+      "height": 844
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 390,
+      "documentWidth": 390,
+      "mainWidth": 390,
+      "mainScrollWidth": 390,
+      "headings": [
+        "Tu perfil"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "claro-tablet-portada",
+    "route": "/",
+    "requestedUrl": "http://127.0.0.1:8080/",
+    "finalUrl": "http://127.0.0.1:8080/",
+    "theme": "claro",
+    "size": {
+      "name": "tablet",
+      "width": 768,
+      "height": 1024
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 768,
+      "documentWidth": 768,
+      "mainWidth": 768,
+      "mainScrollWidth": 768,
+      "headings": [
+        "Tu vida universitaria,en su justo tempo.",
+        "Hola, Seba"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "claro-tablet-login",
+    "route": "login",
+    "requestedUrl": "http://127.0.0.1:8080/login",
+    "finalUrl": "http://127.0.0.1:8080/login",
+    "theme": "claro",
+    "size": {
+      "name": "tablet",
+      "width": 768,
+      "height": 1024
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 768,
+      "documentWidth": 768,
+      "mainWidth": 768,
+      "mainScrollWidth": 768,
+      "headings": [
+        "Tempo"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "claro-tablet-register",
+    "route": "register",
+    "requestedUrl": "http://127.0.0.1:8080/register",
+    "finalUrl": "http://127.0.0.1:8080/register",
+    "theme": "claro",
+    "size": {
+      "name": "tablet",
+      "width": 768,
+      "height": 1024
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 768,
+      "documentWidth": 768,
+      "mainWidth": 768,
+      "mainScrollWidth": 768,
+      "headings": [
+        "Tempo"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "claro-tablet-olvide-password",
+    "route": "olvide-password",
+    "requestedUrl": "http://127.0.0.1:8080/olvide-password",
+    "finalUrl": "http://127.0.0.1:8080/olvide-password",
+    "theme": "claro",
+    "size": {
+      "name": "tablet",
+      "width": 768,
+      "height": 1024
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 768,
+      "documentWidth": 768,
+      "mainWidth": 768,
+      "mainScrollWidth": 768,
+      "headings": [
+        "Tempo"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "claro-tablet-resetear-password",
+    "route": "resetear-password",
+    "requestedUrl": "http://127.0.0.1:8080/resetear-password",
+    "finalUrl": "http://127.0.0.1:8080/resetear-password",
+    "theme": "claro",
+    "size": {
+      "name": "tablet",
+      "width": 768,
+      "height": 1024
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 768,
+      "documentWidth": 768,
+      "mainWidth": 768,
+      "mainScrollWidth": 768,
+      "headings": [
+        "Tempo"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "claro-tablet-verificar-email",
+    "route": "verificar-email",
+    "requestedUrl": "http://127.0.0.1:8080/verificar-email",
+    "finalUrl": "http://127.0.0.1:8080/verificar-email",
+    "theme": "claro",
+    "size": {
+      "name": "tablet",
+      "width": 768,
+      "height": 1024
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 768,
+      "documentWidth": 768,
+      "mainWidth": 768,
+      "mainScrollWidth": 768,
+      "headings": [
+        "Tempo"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "claro-tablet-instalar",
+    "route": "instalar",
+    "requestedUrl": "http://127.0.0.1:8080/instalar",
+    "finalUrl": "http://127.0.0.1:8080/instalar",
+    "theme": "claro",
+    "size": {
+      "name": "tablet",
+      "width": 768,
+      "height": 1024
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 768,
+      "documentWidth": 768,
+      "mainWidth": 768,
+      "mainScrollWidth": 768,
+      "headings": [
+        "Instalar app"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "claro-tablet-contacto",
+    "route": "contacto",
+    "requestedUrl": "http://127.0.0.1:8080/contacto",
+    "finalUrl": "http://127.0.0.1:8080/contacto",
+    "theme": "claro",
+    "size": {
+      "name": "tablet",
+      "width": 768,
+      "height": 1024
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 768,
+      "documentWidth": 768,
+      "mainWidth": 768,
+      "mainScrollWidth": 768,
+      "headings": [
+        "¿Algo no funciona?Contame."
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "claro-tablet-inicio",
+    "route": "inicio",
+    "requestedUrl": "http://127.0.0.1:8080/inicio",
+    "finalUrl": "http://127.0.0.1:8080/inicio",
+    "theme": "claro",
+    "size": {
+      "name": "tablet",
+      "width": 768,
+      "height": 1024
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 768,
+      "documentWidth": 768,
+      "mainWidth": 768,
+      "mainScrollWidth": 768,
+      "headings": [
+        "Hola, Estudiante"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "claro-tablet-calendario",
+    "route": "calendario",
+    "requestedUrl": "http://127.0.0.1:8080/calendario",
+    "finalUrl": "http://127.0.0.1:8080/calendario",
+    "theme": "claro",
+    "size": {
+      "name": "tablet",
+      "width": 768,
+      "height": 1024
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 768,
+      "documentWidth": 768,
+      "mainWidth": 768,
+      "mainScrollWidth": 768,
+      "headings": [
+        "Calendario"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "claro-tablet-tareas",
+    "route": "tareas",
+    "requestedUrl": "http://127.0.0.1:8080/tareas",
+    "finalUrl": "http://127.0.0.1:8080/tareas",
+    "theme": "claro",
+    "size": {
+      "name": "tablet",
+      "width": 768,
+      "height": 1024
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 768,
+      "documentWidth": 768,
+      "mainWidth": 768,
+      "mainScrollWidth": 768,
+      "headings": [
+        "Tareas"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "claro-tablet-materias",
+    "route": "materias",
+    "requestedUrl": "http://127.0.0.1:8080/materias",
+    "finalUrl": "http://127.0.0.1:8080/materias",
+    "theme": "claro",
+    "size": {
+      "name": "tablet",
+      "width": 768,
+      "height": 1024
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 768,
+      "documentWidth": 768,
+      "mainWidth": 768,
+      "mainScrollWidth": 768,
+      "headings": [
+        "Materias"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "claro-tablet-mensajes",
+    "route": "mensajes",
+    "requestedUrl": "http://127.0.0.1:8080/mensajes",
+    "finalUrl": "http://127.0.0.1:8080/mensajes",
+    "theme": "claro",
+    "size": {
+      "name": "tablet",
+      "width": 768,
+      "height": 1024
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 768,
+      "documentWidth": 768,
+      "mainWidth": 768,
+      "mainScrollWidth": 768,
+      "headings": [
+        "Tempo Asistente"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "claro-tablet-perfil",
+    "route": "perfil",
+    "requestedUrl": "http://127.0.0.1:8080/perfil",
+    "finalUrl": "http://127.0.0.1:8080/perfil",
+    "theme": "claro",
+    "size": {
+      "name": "tablet",
+      "width": 768,
+      "height": 1024
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 768,
+      "documentWidth": 768,
+      "mainWidth": 768,
+      "mainScrollWidth": 768,
+      "headings": [
+        "Tu perfil"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "claro-escritorio-portada",
+    "route": "/",
+    "requestedUrl": "http://127.0.0.1:8080/",
+    "finalUrl": "http://127.0.0.1:8080/",
+    "theme": "claro",
+    "size": {
+      "name": "escritorio",
+      "width": 1440,
+      "height": 1000
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 1440,
+      "documentWidth": 1440,
+      "mainWidth": 1440,
+      "mainScrollWidth": 1440,
+      "headings": [
+        "Tu vida universitaria,en su justo tempo.",
+        "Hola, Seba"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "claro-escritorio-login",
+    "route": "login",
+    "requestedUrl": "http://127.0.0.1:8080/login",
+    "finalUrl": "http://127.0.0.1:8080/login",
+    "theme": "claro",
+    "size": {
+      "name": "escritorio",
+      "width": 1440,
+      "height": 1000
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 1440,
+      "documentWidth": 1440,
+      "mainWidth": 1440,
+      "mainScrollWidth": 1440,
+      "headings": [
+        "Tempo"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "claro-escritorio-register",
+    "route": "register",
+    "requestedUrl": "http://127.0.0.1:8080/register",
+    "finalUrl": "http://127.0.0.1:8080/register",
+    "theme": "claro",
+    "size": {
+      "name": "escritorio",
+      "width": 1440,
+      "height": 1000
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 1440,
+      "documentWidth": 1440,
+      "mainWidth": 1440,
+      "mainScrollWidth": 1440,
+      "headings": [
+        "Tempo"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "claro-escritorio-olvide-password",
+    "route": "olvide-password",
+    "requestedUrl": "http://127.0.0.1:8080/olvide-password",
+    "finalUrl": "http://127.0.0.1:8080/olvide-password",
+    "theme": "claro",
+    "size": {
+      "name": "escritorio",
+      "width": 1440,
+      "height": 1000
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 1440,
+      "documentWidth": 1440,
+      "mainWidth": 1440,
+      "mainScrollWidth": 1440,
+      "headings": [
+        "Tempo"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "claro-escritorio-resetear-password",
+    "route": "resetear-password",
+    "requestedUrl": "http://127.0.0.1:8080/resetear-password",
+    "finalUrl": "http://127.0.0.1:8080/resetear-password",
+    "theme": "claro",
+    "size": {
+      "name": "escritorio",
+      "width": 1440,
+      "height": 1000
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 1440,
+      "documentWidth": 1440,
+      "mainWidth": 1440,
+      "mainScrollWidth": 1440,
+      "headings": [
+        "Tempo"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "claro-escritorio-verificar-email",
+    "route": "verificar-email",
+    "requestedUrl": "http://127.0.0.1:8080/verificar-email",
+    "finalUrl": "http://127.0.0.1:8080/verificar-email",
+    "theme": "claro",
+    "size": {
+      "name": "escritorio",
+      "width": 1440,
+      "height": 1000
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 1440,
+      "documentWidth": 1440,
+      "mainWidth": 1440,
+      "mainScrollWidth": 1440,
+      "headings": [
+        "Tempo"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "claro-escritorio-instalar",
+    "route": "instalar",
+    "requestedUrl": "http://127.0.0.1:8080/instalar",
+    "finalUrl": "http://127.0.0.1:8080/instalar",
+    "theme": "claro",
+    "size": {
+      "name": "escritorio",
+      "width": 1440,
+      "height": 1000
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 1440,
+      "documentWidth": 1440,
+      "mainWidth": 1440,
+      "mainScrollWidth": 1440,
+      "headings": [
+        "Instalar app"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "claro-escritorio-contacto",
+    "route": "contacto",
+    "requestedUrl": "http://127.0.0.1:8080/contacto",
+    "finalUrl": "http://127.0.0.1:8080/contacto",
+    "theme": "claro",
+    "size": {
+      "name": "escritorio",
+      "width": 1440,
+      "height": 1000
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 1440,
+      "documentWidth": 1440,
+      "mainWidth": 1440,
+      "mainScrollWidth": 1440,
+      "headings": [
+        "¿Algo no funciona?Contame."
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "claro-escritorio-inicio",
+    "route": "inicio",
+    "requestedUrl": "http://127.0.0.1:8080/inicio",
+    "finalUrl": "http://127.0.0.1:8080/inicio",
+    "theme": "claro",
+    "size": {
+      "name": "escritorio",
+      "width": 1440,
+      "height": 1000
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 1440,
+      "documentWidth": 1440,
+      "mainWidth": 1286,
+      "mainScrollWidth": 1286,
+      "headings": [
+        "Hola, Estudiante"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "claro-escritorio-calendario",
+    "route": "calendario",
+    "requestedUrl": "http://127.0.0.1:8080/calendario",
+    "finalUrl": "http://127.0.0.1:8080/calendario",
+    "theme": "claro",
+    "size": {
+      "name": "escritorio",
+      "width": 1440,
+      "height": 1000
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 1440,
+      "documentWidth": 1440,
+      "mainWidth": 1286,
+      "mainScrollWidth": 1286,
+      "headings": [
+        "Calendario"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "claro-escritorio-tareas",
+    "route": "tareas",
+    "requestedUrl": "http://127.0.0.1:8080/tareas",
+    "finalUrl": "http://127.0.0.1:8080/tareas",
+    "theme": "claro",
+    "size": {
+      "name": "escritorio",
+      "width": 1440,
+      "height": 1000
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 1440,
+      "documentWidth": 1440,
+      "mainWidth": 1286,
+      "mainScrollWidth": 1286,
+      "headings": [
+        "Tareas"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "claro-escritorio-materias",
+    "route": "materias",
+    "requestedUrl": "http://127.0.0.1:8080/materias",
+    "finalUrl": "http://127.0.0.1:8080/materias",
+    "theme": "claro",
+    "size": {
+      "name": "escritorio",
+      "width": 1440,
+      "height": 1000
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 1440,
+      "documentWidth": 1440,
+      "mainWidth": 1286,
+      "mainScrollWidth": 1286,
+      "headings": [
+        "Materias"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "claro-escritorio-mensajes",
+    "route": "mensajes",
+    "requestedUrl": "http://127.0.0.1:8080/mensajes",
+    "finalUrl": "http://127.0.0.1:8080/mensajes",
+    "theme": "claro",
+    "size": {
+      "name": "escritorio",
+      "width": 1440,
+      "height": 1000
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 1440,
+      "documentWidth": 1440,
+      "mainWidth": 1286,
+      "mainScrollWidth": 1286,
+      "headings": [
+        "Tempo Asistente"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "claro-escritorio-perfil",
+    "route": "perfil",
+    "requestedUrl": "http://127.0.0.1:8080/perfil",
+    "finalUrl": "http://127.0.0.1:8080/perfil",
+    "theme": "claro",
+    "size": {
+      "name": "escritorio",
+      "width": 1440,
+      "height": 1000
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 1440,
+      "documentWidth": 1440,
+      "mainWidth": 1286,
+      "mainScrollWidth": 1286,
+      "headings": [
+        "Tu perfil"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-movil-portada",
+    "route": "/",
+    "requestedUrl": "http://127.0.0.1:8080/",
+    "finalUrl": "http://127.0.0.1:8080/",
+    "theme": "oscuro",
+    "size": {
+      "name": "movil",
+      "width": 390,
+      "height": 844
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 390,
+      "documentWidth": 390,
+      "mainWidth": 390,
+      "mainScrollWidth": 390,
+      "headings": [
+        "Tu vida universitaria,en su justo tempo.",
+        "Hola, Seba"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-movil-login",
+    "route": "login",
+    "requestedUrl": "http://127.0.0.1:8080/login",
+    "finalUrl": "http://127.0.0.1:8080/login",
+    "theme": "oscuro",
+    "size": {
+      "name": "movil",
+      "width": 390,
+      "height": 844
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 390,
+      "documentWidth": 390,
+      "mainWidth": 390,
+      "mainScrollWidth": 390,
+      "headings": [
+        "Tempo"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-movil-register",
+    "route": "register",
+    "requestedUrl": "http://127.0.0.1:8080/register",
+    "finalUrl": "http://127.0.0.1:8080/register",
+    "theme": "oscuro",
+    "size": {
+      "name": "movil",
+      "width": 390,
+      "height": 844
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 390,
+      "documentWidth": 390,
+      "mainWidth": 390,
+      "mainScrollWidth": 390,
+      "headings": [
+        "Tempo"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-movil-olvide-password",
+    "route": "olvide-password",
+    "requestedUrl": "http://127.0.0.1:8080/olvide-password",
+    "finalUrl": "http://127.0.0.1:8080/olvide-password",
+    "theme": "oscuro",
+    "size": {
+      "name": "movil",
+      "width": 390,
+      "height": 844
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 390,
+      "documentWidth": 390,
+      "mainWidth": 390,
+      "mainScrollWidth": 390,
+      "headings": [
+        "Tempo"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-movil-resetear-password",
+    "route": "resetear-password",
+    "requestedUrl": "http://127.0.0.1:8080/resetear-password",
+    "finalUrl": "http://127.0.0.1:8080/resetear-password",
+    "theme": "oscuro",
+    "size": {
+      "name": "movil",
+      "width": 390,
+      "height": 844
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 390,
+      "documentWidth": 390,
+      "mainWidth": 390,
+      "mainScrollWidth": 390,
+      "headings": [
+        "Tempo"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-movil-verificar-email",
+    "route": "verificar-email",
+    "requestedUrl": "http://127.0.0.1:8080/verificar-email",
+    "finalUrl": "http://127.0.0.1:8080/verificar-email",
+    "theme": "oscuro",
+    "size": {
+      "name": "movil",
+      "width": 390,
+      "height": 844
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 390,
+      "documentWidth": 390,
+      "mainWidth": 390,
+      "mainScrollWidth": 390,
+      "headings": [
+        "Tempo"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-movil-instalar",
+    "route": "instalar",
+    "requestedUrl": "http://127.0.0.1:8080/instalar",
+    "finalUrl": "http://127.0.0.1:8080/instalar",
+    "theme": "oscuro",
+    "size": {
+      "name": "movil",
+      "width": 390,
+      "height": 844
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 390,
+      "documentWidth": 390,
+      "mainWidth": 390,
+      "mainScrollWidth": 390,
+      "headings": [
+        "Instalar app"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-movil-contacto",
+    "route": "contacto",
+    "requestedUrl": "http://127.0.0.1:8080/contacto",
+    "finalUrl": "http://127.0.0.1:8080/contacto",
+    "theme": "oscuro",
+    "size": {
+      "name": "movil",
+      "width": 390,
+      "height": 844
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 390,
+      "documentWidth": 390,
+      "mainWidth": 390,
+      "mainScrollWidth": 390,
+      "headings": [
+        "¿Algo no funciona?Contame."
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-movil-inicio",
+    "route": "inicio",
+    "requestedUrl": "http://127.0.0.1:8080/inicio",
+    "finalUrl": "http://127.0.0.1:8080/inicio",
+    "theme": "oscuro",
+    "size": {
+      "name": "movil",
+      "width": 390,
+      "height": 844
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 390,
+      "documentWidth": 390,
+      "mainWidth": 390,
+      "mainScrollWidth": 390,
+      "headings": [
+        "Hola, Estudiante"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-movil-calendario",
+    "route": "calendario",
+    "requestedUrl": "http://127.0.0.1:8080/calendario",
+    "finalUrl": "http://127.0.0.1:8080/calendario",
+    "theme": "oscuro",
+    "size": {
+      "name": "movil",
+      "width": 390,
+      "height": 844
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 390,
+      "documentWidth": 390,
+      "mainWidth": 390,
+      "mainScrollWidth": 390,
+      "headings": [
+        "Calendario"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-movil-tareas",
+    "route": "tareas",
+    "requestedUrl": "http://127.0.0.1:8080/tareas",
+    "finalUrl": "http://127.0.0.1:8080/tareas",
+    "theme": "oscuro",
+    "size": {
+      "name": "movil",
+      "width": 390,
+      "height": 844
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 390,
+      "documentWidth": 390,
+      "mainWidth": 390,
+      "mainScrollWidth": 390,
+      "headings": [
+        "Tareas"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-movil-materias",
+    "route": "materias",
+    "requestedUrl": "http://127.0.0.1:8080/materias",
+    "finalUrl": "http://127.0.0.1:8080/materias",
+    "theme": "oscuro",
+    "size": {
+      "name": "movil",
+      "width": 390,
+      "height": 844
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 390,
+      "documentWidth": 390,
+      "mainWidth": 390,
+      "mainScrollWidth": 390,
+      "headings": [
+        "Materias"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-movil-mensajes",
+    "route": "mensajes",
+    "requestedUrl": "http://127.0.0.1:8080/mensajes",
+    "finalUrl": "http://127.0.0.1:8080/mensajes",
+    "theme": "oscuro",
+    "size": {
+      "name": "movil",
+      "width": 390,
+      "height": 844
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 390,
+      "documentWidth": 390,
+      "mainWidth": 390,
+      "mainScrollWidth": 390,
+      "headings": [
+        "Tempo Asistente"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-movil-perfil",
+    "route": "perfil",
+    "requestedUrl": "http://127.0.0.1:8080/perfil",
+    "finalUrl": "http://127.0.0.1:8080/perfil",
+    "theme": "oscuro",
+    "size": {
+      "name": "movil",
+      "width": 390,
+      "height": 844
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 390,
+      "documentWidth": 390,
+      "mainWidth": 390,
+      "mainScrollWidth": 390,
+      "headings": [
+        "Tu perfil"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-tablet-portada",
+    "route": "/",
+    "requestedUrl": "http://127.0.0.1:8080/",
+    "finalUrl": "http://127.0.0.1:8080/",
+    "theme": "oscuro",
+    "size": {
+      "name": "tablet",
+      "width": 768,
+      "height": 1024
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 768,
+      "documentWidth": 768,
+      "mainWidth": 768,
+      "mainScrollWidth": 768,
+      "headings": [
+        "Tu vida universitaria,en su justo tempo.",
+        "Hola, Seba"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-tablet-login",
+    "route": "login",
+    "requestedUrl": "http://127.0.0.1:8080/login",
+    "finalUrl": "http://127.0.0.1:8080/login",
+    "theme": "oscuro",
+    "size": {
+      "name": "tablet",
+      "width": 768,
+      "height": 1024
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 768,
+      "documentWidth": 768,
+      "mainWidth": 768,
+      "mainScrollWidth": 768,
+      "headings": [
+        "Tempo"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-tablet-register",
+    "route": "register",
+    "requestedUrl": "http://127.0.0.1:8080/register",
+    "finalUrl": "http://127.0.0.1:8080/register",
+    "theme": "oscuro",
+    "size": {
+      "name": "tablet",
+      "width": 768,
+      "height": 1024
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 768,
+      "documentWidth": 768,
+      "mainWidth": 768,
+      "mainScrollWidth": 768,
+      "headings": [
+        "Tempo"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-tablet-olvide-password",
+    "route": "olvide-password",
+    "requestedUrl": "http://127.0.0.1:8080/olvide-password",
+    "finalUrl": "http://127.0.0.1:8080/olvide-password",
+    "theme": "oscuro",
+    "size": {
+      "name": "tablet",
+      "width": 768,
+      "height": 1024
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 768,
+      "documentWidth": 768,
+      "mainWidth": 768,
+      "mainScrollWidth": 768,
+      "headings": [
+        "Tempo"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-tablet-resetear-password",
+    "route": "resetear-password",
+    "requestedUrl": "http://127.0.0.1:8080/resetear-password",
+    "finalUrl": "http://127.0.0.1:8080/resetear-password",
+    "theme": "oscuro",
+    "size": {
+      "name": "tablet",
+      "width": 768,
+      "height": 1024
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 768,
+      "documentWidth": 768,
+      "mainWidth": 768,
+      "mainScrollWidth": 768,
+      "headings": [
+        "Tempo"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-tablet-verificar-email",
+    "route": "verificar-email",
+    "requestedUrl": "http://127.0.0.1:8080/verificar-email",
+    "finalUrl": "http://127.0.0.1:8080/verificar-email",
+    "theme": "oscuro",
+    "size": {
+      "name": "tablet",
+      "width": 768,
+      "height": 1024
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 768,
+      "documentWidth": 768,
+      "mainWidth": 768,
+      "mainScrollWidth": 768,
+      "headings": [
+        "Tempo"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-tablet-instalar",
+    "route": "instalar",
+    "requestedUrl": "http://127.0.0.1:8080/instalar",
+    "finalUrl": "http://127.0.0.1:8080/instalar",
+    "theme": "oscuro",
+    "size": {
+      "name": "tablet",
+      "width": 768,
+      "height": 1024
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 768,
+      "documentWidth": 768,
+      "mainWidth": 768,
+      "mainScrollWidth": 768,
+      "headings": [
+        "Instalar app"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-tablet-contacto",
+    "route": "contacto",
+    "requestedUrl": "http://127.0.0.1:8080/contacto",
+    "finalUrl": "http://127.0.0.1:8080/contacto",
+    "theme": "oscuro",
+    "size": {
+      "name": "tablet",
+      "width": 768,
+      "height": 1024
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 768,
+      "documentWidth": 768,
+      "mainWidth": 768,
+      "mainScrollWidth": 768,
+      "headings": [
+        "¿Algo no funciona?Contame."
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-tablet-inicio",
+    "route": "inicio",
+    "requestedUrl": "http://127.0.0.1:8080/inicio",
+    "finalUrl": "http://127.0.0.1:8080/inicio",
+    "theme": "oscuro",
+    "size": {
+      "name": "tablet",
+      "width": 768,
+      "height": 1024
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 768,
+      "documentWidth": 768,
+      "mainWidth": 768,
+      "mainScrollWidth": 768,
+      "headings": [
+        "Hola, Estudiante"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-tablet-calendario",
+    "route": "calendario",
+    "requestedUrl": "http://127.0.0.1:8080/calendario",
+    "finalUrl": "http://127.0.0.1:8080/calendario",
+    "theme": "oscuro",
+    "size": {
+      "name": "tablet",
+      "width": 768,
+      "height": 1024
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 768,
+      "documentWidth": 768,
+      "mainWidth": 768,
+      "mainScrollWidth": 768,
+      "headings": [
+        "Calendario"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-tablet-tareas",
+    "route": "tareas",
+    "requestedUrl": "http://127.0.0.1:8080/tareas",
+    "finalUrl": "http://127.0.0.1:8080/tareas",
+    "theme": "oscuro",
+    "size": {
+      "name": "tablet",
+      "width": 768,
+      "height": 1024
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 768,
+      "documentWidth": 768,
+      "mainWidth": 768,
+      "mainScrollWidth": 768,
+      "headings": [
+        "Tareas"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-tablet-materias",
+    "route": "materias",
+    "requestedUrl": "http://127.0.0.1:8080/materias",
+    "finalUrl": "http://127.0.0.1:8080/materias",
+    "theme": "oscuro",
+    "size": {
+      "name": "tablet",
+      "width": 768,
+      "height": 1024
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 768,
+      "documentWidth": 768,
+      "mainWidth": 768,
+      "mainScrollWidth": 768,
+      "headings": [
+        "Materias"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-tablet-mensajes",
+    "route": "mensajes",
+    "requestedUrl": "http://127.0.0.1:8080/mensajes",
+    "finalUrl": "http://127.0.0.1:8080/mensajes",
+    "theme": "oscuro",
+    "size": {
+      "name": "tablet",
+      "width": 768,
+      "height": 1024
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 768,
+      "documentWidth": 768,
+      "mainWidth": 768,
+      "mainScrollWidth": 768,
+      "headings": [
+        "Tempo Asistente"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-tablet-perfil",
+    "route": "perfil",
+    "requestedUrl": "http://127.0.0.1:8080/perfil",
+    "finalUrl": "http://127.0.0.1:8080/perfil",
+    "theme": "oscuro",
+    "size": {
+      "name": "tablet",
+      "width": 768,
+      "height": 1024
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 768,
+      "documentWidth": 768,
+      "mainWidth": 768,
+      "mainScrollWidth": 768,
+      "headings": [
+        "Tu perfil"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-escritorio-portada",
+    "route": "/",
+    "requestedUrl": "http://127.0.0.1:8080/",
+    "finalUrl": "http://127.0.0.1:8080/",
+    "theme": "oscuro",
+    "size": {
+      "name": "escritorio",
+      "width": 1440,
+      "height": 1000
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 1440,
+      "documentWidth": 1440,
+      "mainWidth": 1440,
+      "mainScrollWidth": 1440,
+      "headings": [
+        "Tu vida universitaria,en su justo tempo.",
+        "Hola, Seba"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-escritorio-login",
+    "route": "login",
+    "requestedUrl": "http://127.0.0.1:8080/login",
+    "finalUrl": "http://127.0.0.1:8080/login",
+    "theme": "oscuro",
+    "size": {
+      "name": "escritorio",
+      "width": 1440,
+      "height": 1000
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 1440,
+      "documentWidth": 1440,
+      "mainWidth": 1440,
+      "mainScrollWidth": 1440,
+      "headings": [
+        "Tempo"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-escritorio-register",
+    "route": "register",
+    "requestedUrl": "http://127.0.0.1:8080/register",
+    "finalUrl": "http://127.0.0.1:8080/register",
+    "theme": "oscuro",
+    "size": {
+      "name": "escritorio",
+      "width": 1440,
+      "height": 1000
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 1440,
+      "documentWidth": 1440,
+      "mainWidth": 1440,
+      "mainScrollWidth": 1440,
+      "headings": [
+        "Tempo"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-escritorio-olvide-password",
+    "route": "olvide-password",
+    "requestedUrl": "http://127.0.0.1:8080/olvide-password",
+    "finalUrl": "http://127.0.0.1:8080/olvide-password",
+    "theme": "oscuro",
+    "size": {
+      "name": "escritorio",
+      "width": 1440,
+      "height": 1000
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 1440,
+      "documentWidth": 1440,
+      "mainWidth": 1440,
+      "mainScrollWidth": 1440,
+      "headings": [
+        "Tempo"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-escritorio-resetear-password",
+    "route": "resetear-password",
+    "requestedUrl": "http://127.0.0.1:8080/resetear-password",
+    "finalUrl": "http://127.0.0.1:8080/resetear-password",
+    "theme": "oscuro",
+    "size": {
+      "name": "escritorio",
+      "width": 1440,
+      "height": 1000
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 1440,
+      "documentWidth": 1440,
+      "mainWidth": 1440,
+      "mainScrollWidth": 1440,
+      "headings": [
+        "Tempo"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-escritorio-verificar-email",
+    "route": "verificar-email",
+    "requestedUrl": "http://127.0.0.1:8080/verificar-email",
+    "finalUrl": "http://127.0.0.1:8080/verificar-email",
+    "theme": "oscuro",
+    "size": {
+      "name": "escritorio",
+      "width": 1440,
+      "height": 1000
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 1440,
+      "documentWidth": 1440,
+      "mainWidth": 1440,
+      "mainScrollWidth": 1440,
+      "headings": [
+        "Tempo"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-escritorio-instalar",
+    "route": "instalar",
+    "requestedUrl": "http://127.0.0.1:8080/instalar",
+    "finalUrl": "http://127.0.0.1:8080/instalar",
+    "theme": "oscuro",
+    "size": {
+      "name": "escritorio",
+      "width": 1440,
+      "height": 1000
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 1440,
+      "documentWidth": 1440,
+      "mainWidth": 1440,
+      "mainScrollWidth": 1440,
+      "headings": [
+        "Instalar app"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-escritorio-contacto",
+    "route": "contacto",
+    "requestedUrl": "http://127.0.0.1:8080/contacto",
+    "finalUrl": "http://127.0.0.1:8080/contacto",
+    "theme": "oscuro",
+    "size": {
+      "name": "escritorio",
+      "width": 1440,
+      "height": 1000
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 1440,
+      "documentWidth": 1440,
+      "mainWidth": 1440,
+      "mainScrollWidth": 1440,
+      "headings": [
+        "¿Algo no funciona?Contame."
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-escritorio-inicio",
+    "route": "inicio",
+    "requestedUrl": "http://127.0.0.1:8080/inicio",
+    "finalUrl": "http://127.0.0.1:8080/inicio",
+    "theme": "oscuro",
+    "size": {
+      "name": "escritorio",
+      "width": 1440,
+      "height": 1000
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 1440,
+      "documentWidth": 1440,
+      "mainWidth": 1286,
+      "mainScrollWidth": 1286,
+      "headings": [
+        "Hola, Estudiante"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-escritorio-calendario",
+    "route": "calendario",
+    "requestedUrl": "http://127.0.0.1:8080/calendario",
+    "finalUrl": "http://127.0.0.1:8080/calendario",
+    "theme": "oscuro",
+    "size": {
+      "name": "escritorio",
+      "width": 1440,
+      "height": 1000
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 1440,
+      "documentWidth": 1440,
+      "mainWidth": 1286,
+      "mainScrollWidth": 1286,
+      "headings": [
+        "Calendario"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-escritorio-tareas",
+    "route": "tareas",
+    "requestedUrl": "http://127.0.0.1:8080/tareas",
+    "finalUrl": "http://127.0.0.1:8080/tareas",
+    "theme": "oscuro",
+    "size": {
+      "name": "escritorio",
+      "width": 1440,
+      "height": 1000
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 1440,
+      "documentWidth": 1440,
+      "mainWidth": 1286,
+      "mainScrollWidth": 1286,
+      "headings": [
+        "Tareas"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-escritorio-materias",
+    "route": "materias",
+    "requestedUrl": "http://127.0.0.1:8080/materias",
+    "finalUrl": "http://127.0.0.1:8080/materias",
+    "theme": "oscuro",
+    "size": {
+      "name": "escritorio",
+      "width": 1440,
+      "height": 1000
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 1440,
+      "documentWidth": 1440,
+      "mainWidth": 1286,
+      "mainScrollWidth": 1286,
+      "headings": [
+        "Materias"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-escritorio-mensajes",
+    "route": "mensajes",
+    "requestedUrl": "http://127.0.0.1:8080/mensajes",
+    "finalUrl": "http://127.0.0.1:8080/mensajes",
+    "theme": "oscuro",
+    "size": {
+      "name": "escritorio",
+      "width": 1440,
+      "height": 1000
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 1440,
+      "documentWidth": 1440,
+      "mainWidth": 1286,
+      "mainScrollWidth": 1286,
+      "headings": [
+        "Tempo Asistente"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  },
+  {
+    "name": "oscuro-escritorio-perfil",
+    "route": "perfil",
+    "requestedUrl": "http://127.0.0.1:8080/perfil",
+    "finalUrl": "http://127.0.0.1:8080/perfil",
+    "theme": "oscuro",
+    "size": {
+      "name": "escritorio",
+      "width": 1440,
+      "height": 1000
+    },
+    "violations": [],
+    "bottomViolations": [],
+    "layout": {
+      "viewport": 1440,
+      "documentWidth": 1440,
+      "mainWidth": 1286,
+      "mainScrollWidth": 1286,
+      "headings": [
+        "Tu perfil"
+      ],
+      "overflow": []
+    },
+    "pageErrors": []
+  }
+]

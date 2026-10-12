@@ -1,7 +1,8 @@
-import { Component, OnInit, computed, signal, inject } from '@angular/core';
+import { Component, DestroyRef, OnInit, computed, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { interval } from 'rxjs';
+import { interval, Subscription } from 'rxjs';
+import { mismoDiaLocal } from '../../core/services/fechas';
 import { TareasService } from '../tareas/tareas.service';
 import { Tarea, TipoTarea, EstadoTarea } from '../../core/models';
 import { LoaderComponent } from '../../shared/components/loader.component';
@@ -32,15 +33,15 @@ interface DiaCalendario {
         </div>
         <div class="calendar-actions">
           <div class="view-toggle" aria-label="Vista del calendario">
-            <button type="button" [class.active]="vista() === 'mes'" (click)="cambiarVista('mes')">Mes</button>
-            <button type="button" [class.active]="vista() === 'semana'" (click)="cambiarVista('semana')">Semana</button>
+            <button type="button" [class.active]="vista() === 'mes'" [attr.aria-pressed]="vista() === 'mes'" (click)="cambiarVista('mes')">Mes</button>
+            <button type="button" [class.active]="vista() === 'semana'" [attr.aria-pressed]="vista() === 'semana'" (click)="cambiarVista('semana')">Semana</button>
           </div>
           <a routerLink="/tareas" class="new-task">＋ Nueva tarea</a>
         </div>
       </header>
 
       <div class="calendar-layout">
-      <main class="calendar-main">
+      <section class="calendar-main" aria-label="Fechas del calendario">
         <div class="calendar-toolbar">
           <button (click)="periodoAnterior()" [attr.aria-label]="vista() === 'mes' ? 'Mes anterior' : 'Semana anterior'">‹</button>
           <strong>{{ periodoLabel() }}</strong>
@@ -51,7 +52,7 @@ interface DiaCalendario {
       @if (cargando()) {
         <app-loader mensaje="Cargando tareas del calendario..." />
       } @else if (error()) {
-        <app-error [mensaje]="error()" />
+        <app-error [mensaje]="error()" [permitirReintento]="true" (reintentar)="cargar()" />
       } @else {
         <div class="dias-semana-header grid grid-cols-7 text-center text-[11px] font-mono uppercase tracking-wide">
           @for (d of diasSemana; track d; let i = $index) {
@@ -74,11 +75,11 @@ interface DiaCalendario {
               [class.extra-week]="i >= cantidadDiasMovil()"
             >
               <button type="button" class="calendar-day-select" (click)="seleccionarDia(dia.fecha)"
-                [attr.aria-label]="(dia.fecha | date: 'fullDate' : undefined : 'es-AR') + ': ' + dia.tareas.length + ' tareas'"
+                [attr.aria-label]="(dia.fecha | date: 'd') + (dia.tareas.length ? ', ' + dia.tareas.length + ' tareas. ' : '. ') + (dia.fecha | date: 'fullDate' : undefined : 'es-AR')"
                 [attr.aria-pressed]="dia.fecha.getTime() === fechaSeleccionada().getTime()"
                 [attr.aria-current]="dia.esHoy ? 'date' : null" aria-controls="calendar-day-agenda">
-                <span>{{ dia.fecha | date: 'd' }}</span>
-                @if (dia.tareas.length) { <span class="day-count">{{ dia.tareas.length }}</span> }
+                <span>{{ (dia.fecha | date: 'd') + ' ' }}</span>
+                @if (dia.tareas.length) { <span class="day-count" aria-hidden="true">{{ dia.tareas.length }}</span> }
               </button>
               <div class="calendar-day-number font-medium mb-1" [class.hoy-texto]="dia.esHoy">
                 {{ dia.fecha | date: 'd' }}
@@ -106,12 +107,12 @@ interface DiaCalendario {
         <section class="month-tasks">
           <h2>{{ tituloFechas() }}</h2>
           @if (tareasDelMes().length === 0) {
-            <p class="text-sm text-[#7A6B57] mt-3">No hay tareas cargadas para este mes.</p>
+            <p class="text-sm text-[#7A6B57] mt-3">No hay tareas cargadas para {{ vista() === 'mes' ? 'este mes' : 'esta semana' }}.</p>
           } @else {
             <div class="mt-3 divide-y divide-[#D8CBAE]">
               @for (t of tareasDelMes(); track t.id) {
                 <button type="button" class="month-task" (click)="seleccionarTarea(t)">
-                  <span class="month-task-date">{{ t.fechaLimite | date: 'd MMM' : 'UTC' : 'es-AR' }}</span>
+                  <span class="month-task-date">{{ t.fechaLimite | date: 'd MMM' : undefined : 'es-AR' }}</span>
                   <span class="month-task-copy">
                     <strong>{{ t.titulo }}</strong>
                     <small>{{ t.materia?.nombre ?? 'Sin materia' }}</small>
@@ -127,13 +128,14 @@ interface DiaCalendario {
       @if (tareaSeleccionada(); as tarea) {
         <app-tarea-calendario-dialog [tarea]="tarea" (cancelada)="cerrarDetalle()" (actualizada)="tareaActualizada()" />
       }
-      </main>
+      </section>
+      @if (!cargando() && !error()) {
       <aside class="upcoming-panel">
         <section class="upcoming-section" aria-labelledby="proximas-title">
         <div class="upcoming-title"><h2 id="proximas-title">Próximas fechas</h2><span>{{ tareasPendientes().length }} pendientes</span></div>
         @for (t of tareasPendientes().slice(0, 3); track t.id) {
           <button class="upcoming-card" (click)="seleccionarTarea(t)">
-            <span class="upcoming-date">{{ t.fechaLimite | date: 'd' : 'UTC' }}<small>{{ t.fechaLimite | date: 'MMM' : 'UTC' : 'es-AR' }}</small></span>
+            <span class="upcoming-date">{{ t.fechaLimite | date: 'd' : undefined }}<small>{{ t.fechaLimite | date: 'MMM' : undefined : 'es-AR' }}</small></span>
             <span class="upcoming-copy"><strong>{{ t.titulo }}</strong><small>{{ t.materia?.nombre ?? 'Sin materia' }}</small><em>{{ t.tipo }}</em></span>
           </button>
         } @empty { <p class="empty-upcoming">No hay próximas fechas pendientes.</p> }
@@ -143,7 +145,7 @@ interface DiaCalendario {
           <div class="overdue-list">
             @for (t of tareasVencidas(); track t.id) {
               <button type="button" class="upcoming-card overdue-card" (click)="seleccionarTarea(t)">
-                <span class="upcoming-date">{{ t.fechaLimite | date: 'd' : 'UTC' }}<small>{{ t.fechaLimite | date: 'MMM' : 'UTC' : 'es-AR' }}</small></span>
+                <span class="upcoming-date">{{ t.fechaLimite | date: 'd' : undefined }}<small>{{ t.fechaLimite | date: 'MMM' : undefined : 'es-AR' }}</small></span>
                 <span class="upcoming-copy"><strong>{{ t.titulo }}</strong><small>{{ t.materia?.nombre ?? 'Sin materia' }}</small><em>Vencida · {{ t.tipo }}</em></span>
               </button>
             } @empty { <p class="empty-upcoming">No hay tareas vencidas pendientes.</p> }
@@ -151,6 +153,7 @@ interface DiaCalendario {
         </section>
         <a routerLink="/tareas" class="all-tasks">Ver todas las tareas →</a>
       </aside>
+      }
       </div>
       </div>
     </div>
@@ -174,7 +177,7 @@ interface DiaCalendario {
     .calendar-heading { display:flex; justify-content:space-between; align-items:end; gap:1rem; padding:1.4rem .4rem 1.2rem; }
     .calendar-eyebrow { color:#8c8570; font:600 .72rem/1 'JetBrains Mono',monospace; letter-spacing:.16em; }
     .calendar-heading p { margin:0; color:var(--muted); font-size:.95rem; }
-    .calendar-actions { display:flex; align-items:center; gap:1rem; }
+    .calendar-actions { display:flex; flex-wrap:wrap; align-items:center; gap:1rem; }
     .view-toggle { display:flex; padding:.2rem; background:#efebe1; border:1px solid #d9d3c2; border-radius:.55rem; }
     .view-toggle button { border:0; color:#7a6f66; background:transparent; padding:.55rem 1.1rem; border-radius:.4rem; }
     .view-toggle .active { background:#6e1f2b; color:#fff; }
@@ -217,8 +220,6 @@ interface DiaCalendario {
     :host-context(.dark) .calendar-main,
     :host-context(.dark) .upcoming-panel { background:linear-gradient(145deg,#171d25,#121820); border-color:#2d3745; }
     :host-context(.dark) .view-toggle button { color:#9aa5b6; }
-    :host-context(.dark) .view-toggle .active,
-    :host-context(.dark) .new-task { background:linear-gradient(135deg,#8794ff,#6574e8); color:#fff; }
     :host-context(.dark) .calendar-toolbar button { border-color:#344052; background:#202936; color:#dce1ff; }
     :host-context(.dark) .dias-semana-header { color:#98a1b0; }
     :host-context(.dark) .calendar-grid { border-color:#2f3845; }
@@ -266,6 +267,8 @@ interface DiaCalendario {
 })
 export class CalendarioComponent implements OnInit {
   private readonly tareasService = inject(TareasService);
+  private readonly destroyRef = inject(DestroyRef);
+  private carga?: Subscription;
   private readonly ahora = signal(new Date());
 
   protected readonly cargando = signal(true);
@@ -291,16 +294,11 @@ export class CalendarioComponent implements OnInit {
   protected readonly diasSemanaCortos = ['LUN', 'MAR', 'MIÉ', 'JUE', 'VIE', 'SÁB', 'DOM'];
   protected readonly tareasMes = signal<Tarea[]>([]);
   protected readonly tareasDelMes = computed(() => [...this.tareasMes()].sort((a, b) => new Date(a.fechaLimite!).getTime() - new Date(b.fechaLimite!).getTime()));
-  private readonly inicioHoy = computed(() => {
-    const ahora = this.ahora();
-    // Calendar dates use UTC fields, but today is the user's local calendar day.
-    return Date.UTC(ahora.getFullYear(), ahora.getMonth(), ahora.getDate());
-  });
   protected readonly tareasPendientes = computed(() => this.tareasDelMes().filter((t) =>
-    t.estado !== EstadoTarea.HECHA && !!t.fechaLimite && new Date(t.fechaLimite).getTime() >= this.inicioHoy(),
+    t.estado !== EstadoTarea.HECHA && !!t.fechaLimite && new Date(t.fechaLimite).getTime() >= this.ahora().getTime(),
   ));
   protected readonly tareasVencidas = computed(() => this.tareasDelMes().filter((t) =>
-    t.estado !== EstadoTarea.HECHA && !!t.fechaLimite && new Date(t.fechaLimite).getTime() < this.inicioHoy(),
+    t.estado !== EstadoTarea.HECHA && !!t.fechaLimite && new Date(t.fechaLimite).getTime() < this.ahora().getTime(),
   ));
   protected readonly periodoLabel = computed(() => {
     const base = this.mesActual();
@@ -321,33 +319,41 @@ export class CalendarioComponent implements OnInit {
 
   constructor() {
     // Recompute upcoming dates when the day changes, even if the page stays open.
-    interval(60_000).pipe(takeUntilDestroyed()).subscribe(() => this.ahora.set(new Date()));
+    interval(60_000).pipe(takeUntilDestroyed()).subscribe(() => {
+      const ahora = new Date();
+      this.ahora.set(ahora);
+      this.dias.update(dias => dias.map(dia => ({ ...dia, esHoy: mismoDiaLocal(dia.fecha, ahora) })));
+    });
   }
 
   ngOnInit(): void {
     this.cargar();
   }
 
-  private cargar(): void {
+  protected cargar(): void {
+    this.carga?.unsubscribe();
     this.cargando.set(true);
     this.error.set(null);
 
     const mesActual = this.mesActual();
-    const inicioLocal = this.vista() === 'mes'
+    const vista = this.vista();
+    const inicioLocal = vista === 'mes'
       ? new Date(mesActual.getFullYear(), mesActual.getMonth(), 1)
       : this.inicioDeSemana(mesActual);
-    const desde = new Date(Date.UTC(inicioLocal.getFullYear(), inicioLocal.getMonth(), inicioLocal.getDate()));
-    const hasta = this.vista() === 'mes'
-      ? new Date(Date.UTC(mesActual.getFullYear(), mesActual.getMonth() + 1, 1) - 1)
-      : new Date(desde.getTime() + 7 * 24 * 60 * 60 * 1000 - 1);
+    // Pedimos todos los días visibles, incluidos los bordes del mes. setDate
+    // respeta días locales de 23/25 horas cuando cambia el horario de verano.
+    const desde = vista === 'mes' ? this.inicioDeSemana(inicioLocal) : inicioLocal;
+    const hasta = new Date(desde);
+    hasta.setDate(hasta.getDate() + (vista === 'mes' ? 42 : 7));
+    hasta.setMilliseconds(hasta.getMilliseconds() - 1);
 
-    this.tareasService.listarCalendario(desde, hasta).subscribe({
+    this.carga = this.tareasService.listarCalendario(desde, hasta).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (tareas: Tarea[]) => {
         this.tareasMes.set(tareas.filter((t) => {
           if (!t.fechaLimite) return false;
-          if (this.vista() === 'semana') return true;
+          if (vista === 'semana') return true;
           const fecha = new Date(t.fechaLimite);
-          return fecha.getUTCFullYear() === mesActual.getFullYear() && fecha.getUTCMonth() === mesActual.getMonth();
+          return fecha.getFullYear() === mesActual.getFullYear() && fecha.getMonth() === mesActual.getMonth();
         }));
         this.construirPeriodo(tareas);
         this.cargando.set(false);
@@ -370,23 +376,18 @@ export class CalendarioComponent implements OnInit {
     hoy.setHours(0, 0, 0, 0);
 
     const cantidadDias = this.vista() === 'mes' ? 42 : 7;
+    const tareasPorDia = new Map<string, Tarea[]>();
+    for (const tarea of tareas) {
+      if (!tarea.fechaLimite) continue;
+      const key = new Date(tarea.fechaLimite).toDateString();
+      const grupo = tareasPorDia.get(key) ?? [];
+      grupo.push(tarea);
+      tareasPorDia.set(key, grupo);
+    }
     for (let i = 0; i < cantidadDias; i++) {
       const fecha = new Date(inicio);
       fecha.setDate(inicio.getDate() + i);
-      const tareasDelDia = tareas.filter((t) => {
-        if (!t.fechaLimite) return false;
-        const f = new Date(t.fechaLimite);
-        // Usamos los getters UTC porque fechaLimite viaja como medianoche UTC
-        // (ej: 2026-08-28T00:00:00.000Z). Si se leyera con getFullYear/getMonth/getDate
-        // "normales", Angular los interpreta en horario local (UTC-3 en Argentina)
-        // y la fecha se corre un día para atrás. Esto mantiene el día "real" que
-        // calculó el backend/la IA, sin que el timezone del navegador lo afecte.
-        return (
-          f.getUTCFullYear() === fecha.getFullYear() &&
-          f.getUTCMonth() === fecha.getMonth() &&
-          f.getUTCDate() === fecha.getDate()
-        );
-      });
+      const tareasDelDia = tareasPorDia.get(fecha.toDateString()) ?? [];
       celdas.push({
         fecha,
         tareas: tareasDelDia,

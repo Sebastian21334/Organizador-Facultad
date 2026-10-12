@@ -1,0 +1,15 @@
+
+> organizador-facultad-backend@0.0.1 test
+> node --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand
+
+(node:7416) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+[Nest] 7416  - 09/10/2026, 10:41:29    WARN [MailService] No se pudo confirmar un correo; revisar el estado del proveedor
+[Nest] 7416  - 09/10/2026, 10:41:29    WARN [MailService] No se pudo confirmar un correo; revisar el estado del proveedor
+[Nest] 7416  - 09/10/2026, 10:41:29    WARN [MailService] El push falló; el correo sigue su flujo.
+
+Test Suites: 20 passed, 20 total
+Tests:       143 passed, 143 total
+Snapshots:   0 total
+Time:        50.51 s
+Ran all test suites.
