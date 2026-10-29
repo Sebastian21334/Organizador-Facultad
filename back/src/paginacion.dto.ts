@@ -2,7 +2,7 @@ import { Transform } from 'class-transformer';
 import { IsInt, Max, Min } from 'class-validator';
 
 export class PaginacionDto {
-  @Transform(({ value }) =>
+  @Transform(({ value }: { value: unknown }) =>
     typeof value === 'string' && /^\d+$/.test(value) ? Number(value) : value,
   )
   @IsInt()
@@ -10,7 +10,7 @@ export class PaginacionDto {
   @Max(100)
   limit = 100;
 
-  @Transform(({ value }) =>
+  @Transform(({ value }: { value: unknown }) =>
     typeof value === 'string' && /^\d+$/.test(value) ? Number(value) : value,
   )
   @IsInt()

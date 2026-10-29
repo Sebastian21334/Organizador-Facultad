@@ -1,3 +1,4 @@
+import type { SolicitudAutenticada } from '../../auth/types/solicitud-autenticada';
 import {
   Controller,
   Get,
@@ -28,27 +29,33 @@ export class MateriasController {
   ) {}
 
   @Post('plan/analizar')
-  analizarPlan(@Body() dto: AnalizarPlanDto, @Req() req) {
+  analizarPlan(@Body() dto: AnalizarPlanDto, @Req() req: SolicitudAutenticada) {
     return this.planEstudios.analizar(dto.texto, req.user.userId);
   }
 
   @Post('plan/importar')
-  importarPlan(@Body() dto: ImportarPlanDto, @Req() req) {
+  importarPlan(@Body() dto: ImportarPlanDto, @Req() req: SolicitudAutenticada) {
     return this.planEstudios.importar(dto.materias, req.user.userId);
   }
 
   @Get()
-  async obtenerTodas(@Req() req, @Query() paginacion: PaginacionDto) {
+  async obtenerTodas(
+    @Req() req: SolicitudAutenticada,
+    @Query() paginacion: PaginacionDto,
+  ) {
     return this.materiasService.obtenerTodas(req.user.userId, paginacion);
   }
 
   @Get(':id')
-  async obtenerPorId(@Param('id', ParseUUIDPipe) id: string, @Req() req) {
+  async obtenerPorId(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Req() req: SolicitudAutenticada,
+  ) {
     return this.materiasService.obtenerPorId(id, req.user.userId);
   }
 
   @Post()
-  async crear(@Body() dto: CrearMateriaDto, @Req() req) {
+  async crear(@Body() dto: CrearMateriaDto, @Req() req: SolicitudAutenticada) {
     return this.materiasService.crear(dto, req.user.userId);
   }
 
@@ -56,13 +63,16 @@ export class MateriasController {
   async actualizar(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: ActualizarMateriaDto,
-    @Req() req,
+    @Req() req: SolicitudAutenticada,
   ) {
     return this.materiasService.actualizar(id, dto, req.user.userId);
   }
 
   @Delete(':id')
-  async eliminar(@Param('id', ParseUUIDPipe) id: string, @Req() req) {
+  async eliminar(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Req() req: SolicitudAutenticada,
+  ) {
     await this.materiasService.eliminar(id, req.user.userId);
     return { mensaje: 'Materia eliminada correctamente' };
   }

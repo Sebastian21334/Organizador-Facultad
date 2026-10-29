@@ -9,16 +9,21 @@ export function allowedOrigins(env = process.env): string[] {
   return [
     ...new Set(
       [
-        ...(env.FRONTEND_URLS ?? '').split(',').map(value => ({ value, key: 'FRONTEND_URLS' })),
+        ...(env.FRONTEND_URLS ?? '')
+          .split(',')
+          .map((value) => ({ value, key: 'FRONTEND_URLS' })),
         { value: env.FRONTEND_URL ?? '', key: 'FRONTEND_URL' },
       ]
         .map(({ value, key }) => ({ value: value.trim(), key }))
         .filter(({ value }) => Boolean(value))
         .map(({ value, key }) => {
           let url: URL;
-          try { url = new URL(value); }
-          catch {
-            throw new Error(`${key} debe incluir URLs completas con http:// o https://; por ejemplo https://organizador-facultad-chat.vercel.app`);
+          try {
+            url = new URL(value);
+          } catch {
+            throw new Error(
+              `${key} debe incluir URLs completas con http:// o https://; por ejemplo https://organizador-facultad-chat.vercel.app`,
+            );
           }
           if (
             !['http:', 'https:'].includes(url.protocol) ||
@@ -85,7 +90,7 @@ export function databaseSsl(env = process.env) {
   };
 }
 
-export function validateEnvironment(env: Record<string, any>) {
+export function validateEnvironment(env: NodeJS.ProcessEnv) {
   const required = [
     'DB_HOST',
     'DB_USER',
@@ -104,12 +109,13 @@ export function validateEnvironment(env: Record<string, any>) {
     if (typeof env[key] !== 'string' || !env[key].trim())
       throw new Error(`Falta configurar ${key}`);
   }
-  if (Buffer.byteLength(env.JWT_SECRET) < 32)
+  // El bucle anterior comprueba la presencia y el tipo de estas variables.
+  if (Buffer.byteLength(env.JWT_SECRET!) < 32)
     throw new Error('JWT_SECRET debe tener al menos 32 bytes aleatorios');
-  if (!['production', 'development', 'test'].includes(env.NODE_ENV))
+  if (!['production', 'development', 'test'].includes(env.NODE_ENV!))
     throw new Error('NODE_ENV debe ser production, development o test');
   const origins = allowedOrigins(env);
-  const frontend = new URL(env.FRONTEND_URL);
+  const frontend = new URL(env.FRONTEND_URL!);
   if (
     !['http:', 'https:'].includes(frontend.protocol) ||
     frontend.username ||

@@ -37,23 +37,19 @@ export class SecurityExceptionFilter implements ExceptionFilter {
       ['entity.too.large', 'entity.parse.failed'].includes(parser?.type ?? '')
     ) {
       const status = parser.type === 'entity.too.large' ? 413 : 400;
-      res
-        .status(status)
-        .json({
-          statusCode: status,
-          message: 'El contenido es inválido o demasiado grande.',
-        });
+      res.status(status).json({
+        statusCode: status,
+        message: 'El contenido es inválido o demasiado grande.',
+      });
       return;
     }
     const requestId = randomUUID();
     // No registrar contraseñas, tokens, SQL, emails ni respuestas completas de proveedores.
     this.logger.error(`Error interno [${requestId}] en ${req.method}`);
-    res
-      .status(500)
-      .json({
-        statusCode: 500,
-        message: 'Ocurrió un error inesperado. Intentá de nuevo más tarde.',
-        requestId,
-      });
+    res.status(500).json({
+      statusCode: 500,
+      message: 'Ocurrió un error inesperado. Intentá de nuevo más tarde.',
+      requestId,
+    });
   }
 }

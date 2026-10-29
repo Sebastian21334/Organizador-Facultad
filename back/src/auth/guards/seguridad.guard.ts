@@ -28,12 +28,16 @@ export class SeguridadGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const req = context.switchToHttp().getRequest<Request>();
+    const req = context
+      .switchToHttp()
+      .getRequest<
+        Request<Record<string, string>, unknown, { email?: unknown }>
+      >();
     const res = context.switchToHttp().getResponse<Response>();
     const mutacion = ['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method);
     // Express ignora mayúsculas y admite slash final: ambos deben consumir el mismo límite.
-    const routePath =
-      typeof req.route?.path === 'string' ? req.route.path : req.path;
+    const route = req.route as { path?: unknown } | undefined;
+    const routePath = typeof route?.path === 'string' ? route.path : req.path;
     const ruta = routePath.toLowerCase().replace(/\/+$/, '') || '/';
     if (ruta === '/health' || ruta === '/') return true;
     const cookie = sessionCookie(req);
@@ -56,11 +60,14 @@ export class SeguridadGuard implements CanActivate {
         ].includes(ruta);
         if (!publica) {
           try {
-            const payload = this.jwt.verify(cookie, {
-              algorithms: ['HS256'],
-              issuer: JWT_ISSUER,
-              audience: JWT_AUDIENCE,
-            });
+            const payload = this.jwt.verify<{ type?: unknown; jti?: unknown }>(
+              cookie,
+              {
+                algorithms: ['HS256'],
+                issuer: JWT_ISSUER,
+                audience: JWT_AUDIENCE,
+              },
+            );
             const recibido = req.headers['x-csrf-token'];
             if (
               payload.type !== 'session' ||

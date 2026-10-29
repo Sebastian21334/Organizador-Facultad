@@ -1,3 +1,4 @@
+import type { SolicitudAutenticada } from '../types/solicitud-autenticada';
 import {
   Body,
   Controller,
@@ -8,7 +9,7 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import type { Response } from 'express';
+import type { Request, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import {
   csrfToken,
@@ -41,7 +42,7 @@ export class AuthController {
   async login(
     @Body() dto: LoginDto,
     @Res({ passthrough: true }) res: Response,
-    @Req() req,
+    @Req() req: Request,
   ) {
     const result = await this.authService.login(dto);
     res.cookie(
@@ -60,7 +61,7 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get('session')
-  async session(@Req() req) {
+  async session(@Req() req: SolicitudAutenticada) {
     return {
       ...(await this.authService.getPerfil(req.user.userId)),
       csrfToken: csrfToken(
@@ -72,7 +73,10 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Post('logout')
-  async logout(@Req() req, @Res({ passthrough: true }) res: Response) {
+  async logout(
+    @Req() req: SolicitudAutenticada,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     const result = await this.authService.logout(req.user.userId);
     res.clearCookie(sessionCookieName(), sessionCookieOptions());
     return result;
@@ -100,20 +104,23 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get('perfil')
-  getPerfil(@Req() req) {
+  getPerfil(@Req() req: SolicitudAutenticada) {
     return this.authService.getPerfil(req.user.userId);
   }
 
   @UseGuards(JwtAuthGuard)
   @Patch('perfil')
-  actualizarPerfil(@Req() req, @Body() dto: ActualizarPerfilDto) {
+  actualizarPerfil(
+    @Req() req: SolicitudAutenticada,
+    @Body() dto: ActualizarPerfilDto,
+  ) {
     return this.authService.actualizarPerfil(req.user.userId, dto);
   }
 
   @UseGuards(JwtAuthGuard)
   @Patch('cambiar-password')
   async cambiarPassword(
-    @Req() req,
+    @Req() req: SolicitudAutenticada,
     @Body() dto: CambiarPasswordDto,
     @Res({ passthrough: true }) res: Response,
   ) {

@@ -48,7 +48,7 @@ export function validarResultadoIA(value: unknown): ResultadoExtraccionTarea {
     return invalido();
   const texto = (campo: string, max: number, nullable = false) =>
     (nullable && data[campo] === null) ||
-    (typeof data[campo] === 'string' && (data[campo] as string).length <= max);
+    (typeof data[campo] === 'string' && data[campo].length <= max);
   if (
     !texto('titulo', 200) ||
     !texto('descripcion', 4000, true) ||

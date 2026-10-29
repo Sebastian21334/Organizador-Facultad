@@ -1,11 +1,12 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import helmet from 'helmet';
 import { allowedOrigins } from './security.config';
 import { SecurityExceptionFilter } from './security.filter';
 import { configurarBodyParsers } from './http-body-parsers';
+import type { NextFunction, Request, Response } from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -26,7 +27,7 @@ async function bootstrap() {
     }),
   );
   app.useGlobalFilters(new SecurityExceptionFilter());
-  app.use((_req, res, next) => {
+  app.use((_req: Request, res: Response, next: NextFunction) => {
     res.setHeader('Cache-Control', 'no-store');
     next();
   });
@@ -41,4 +42,7 @@ async function bootstrap() {
 
   await app.listen(process.env.PORT ?? 3000);
 }
-bootstrap();
+bootstrap().catch(() => {
+  Logger.error('No se pudo iniciar el backend', 'Bootstrap');
+  process.exit(1);
+});

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { MateriasController } from './controllers/materias.controller'; 
+import { MateriasController } from './controllers/materias.controller';
 import { MateriasService } from './services/materias.service';
 import { MateriasRepository } from './repositories/materias.repository';
 import { Materia } from './entities/materia.entity';

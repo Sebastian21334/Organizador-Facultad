@@ -122,7 +122,7 @@ export class TareasService implements OnModuleInit, OnModuleDestroy {
             tarea.id!,
             intentoId,
           );
-        } catch (error) {
+        } catch {
           // Mantener la reserva evita reintentos inmediatos y tormentas de correo.
           this.logger.warn(
             'No se pudo completar un recordatorio; se reintentará después de la reserva.',
@@ -214,7 +214,7 @@ export class TareasService implements OnModuleInit, OnModuleDestroy {
     );
     if (!actualizada) throw new NotFoundException('Tarea no encontrada');
     void this.reprogramar();
-    return actualizada!;
+    return actualizada;
   }
 
   async eliminar(id: string, usuarioId: string): Promise<void> {
@@ -244,7 +244,7 @@ export class TareasService implements OnModuleInit, OnModuleDestroy {
       seguros.materia = null;
     } else if (datos.materia) {
       const materia = await this.materiasRepository.findById(
-        datos.materia.id!,
+        datos.materia.id,
         usuarioId,
       );
       if (!materia) throw new NotFoundException('Materia no encontrada');

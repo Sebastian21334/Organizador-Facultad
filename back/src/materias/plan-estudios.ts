@@ -10,6 +10,10 @@ export interface MateriaPlan {
 }
 
 export function normalizarNombreMateria(nombre: string): string {
-  return nombre.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase().trim().replace(/\s+/g, ' ');
+  return nombre
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, ' ');
 }

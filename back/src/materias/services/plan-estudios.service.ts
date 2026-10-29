@@ -19,11 +19,17 @@ export class PlanEstudiosService {
     await this.limites.consumir('ia-global-dia', 'global', 500, 86_400_000);
     await this.limites.consumir('plan-usuario-dia', usuarioId, 5, 86_400_000);
     const resultado = await this.ia.extraerPlanEstudios(texto);
-    const existentes = new Set((await this.materias.buscarTodasPorUsuario(usuarioId))
-      .map(m => normalizarNombreMateria(m.nombre)));
+    const existentes = new Set(
+      (await this.materias.buscarTodasPorUsuario(usuarioId)).map((m) =>
+        normalizarNombreMateria(m.nombre),
+      ),
+    );
     return {
       ...resultado,
-      materias: resultado.materias.map(m => ({ ...m, existe: existentes.has(normalizarNombreMateria(m.nombre)) })),
+      materias: resultado.materias.map((m) => ({
+        ...m,
+        existe: existentes.has(normalizarNombreMateria(m.nombre)),
+      })),
     };
   }
 

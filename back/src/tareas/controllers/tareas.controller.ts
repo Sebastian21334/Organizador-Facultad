@@ -1,3 +1,4 @@
+import type { SolicitudAutenticada } from '../../auth/types/solicitud-autenticada';
 import {
   Controller,
   Get,
@@ -28,7 +29,7 @@ export class TareasController {
   async obtenerParaCalendario(
     @Query('desde') desde: string | undefined,
     @Query('hasta') hasta: string | undefined,
-    @Req() req,
+    @Req() req: SolicitudAutenticada,
   ) {
     if (!desde || !hasta) {
       return [];
@@ -54,17 +55,23 @@ export class TareasController {
   }
 
   @Get()
-  async obtenerTodas(@Req() req, @Query() paginacion: PaginacionDto) {
+  async obtenerTodas(
+    @Req() req: SolicitudAutenticada,
+    @Query() paginacion: PaginacionDto,
+  ) {
     return this.tareasService.obtenerTodas(req.user.userId, paginacion);
   }
 
   @Get(':id')
-  async obtenerPorId(@Param('id', ParseUUIDPipe) id: string, @Req() req) {
+  async obtenerPorId(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Req() req: SolicitudAutenticada,
+  ) {
     return this.tareasService.obtenerPorId(id, req.user.userId);
   }
 
   @Post()
-  async crear(@Body() dto: CrearTareaDto, @Req() req) {
+  async crear(@Body() dto: CrearTareaDto, @Req() req: SolicitudAutenticada) {
     const { materiaId, fechaLimite, ...resto } = dto;
     return this.tareasService.crear(
       {
@@ -77,7 +84,10 @@ export class TareasController {
   }
 
   @Patch(':id/completar')
-  async marcarComoHecha(@Param('id', ParseUUIDPipe) id: string, @Req() req) {
+  async marcarComoHecha(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Req() req: SolicitudAutenticada,
+  ) {
     return this.tareasService.marcarComoHecha(id, req.user.userId);
   }
 
@@ -85,7 +95,7 @@ export class TareasController {
   async actualizar(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: ActualizarTareaDto,
-    @Req() req,
+    @Req() req: SolicitudAutenticada,
   ) {
     const { materiaId, fechaLimite, recordatorioMinutos, ...resto } = dto;
     return this.tareasService.actualizar(
@@ -108,7 +118,10 @@ export class TareasController {
   }
 
   @Delete(':id')
-  async eliminar(@Param('id', ParseUUIDPipe) id: string, @Req() req) {
+  async eliminar(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Req() req: SolicitudAutenticada,
+  ) {
     await this.tareasService.eliminar(id, req.user.userId);
     return { mensaje: 'Tarea eliminada correctamente' };
   }

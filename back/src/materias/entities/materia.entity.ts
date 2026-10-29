@@ -1,5 +1,11 @@
 import { Usuario } from '../../usuarios/entities/usuario.entity';
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 
 export enum Cuatrimestre {
   PRIMERO = '1',
@@ -36,5 +42,4 @@ export class Materia {
 
   @Column()
   usuarioId!: string;
-
 }

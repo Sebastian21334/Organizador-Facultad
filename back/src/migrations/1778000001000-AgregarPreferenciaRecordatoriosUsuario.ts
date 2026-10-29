@@ -13,7 +13,11 @@ export class AgregarPreferenciaRecordatoriosUsuario1778000001000 implements Migr
   }
 
   async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`ALTER TABLE "usuarios" DROP COLUMN "recordatorioMinutos"`);
-    await queryRunner.query(`ALTER TABLE "usuarios" DROP COLUMN "recordatorioEmailHabilitado"`);
+    await queryRunner.query(
+      `ALTER TABLE "usuarios" DROP COLUMN "recordatorioMinutos"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "usuarios" DROP COLUMN "recordatorioEmailHabilitado"`,
+    );
   }
 }

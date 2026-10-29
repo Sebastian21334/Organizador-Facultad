@@ -62,7 +62,7 @@ export class MensajesService {
     if (resultadoIA.confianza < this.UMBRAL_CONFIANZA_MINIMA) {
       const actualizado = await this.mensajesRepository.update(mensaje.id, {
         procesado: true,
-        resultadoIA: resultadoIA as any,
+        resultadoIA: { ...resultadoIA },
       });
       return actualizado!;
     }
@@ -115,7 +115,7 @@ export class MensajesService {
     // 5. Actualizamos el mensaje con el resultado y la tarea generada
     const actualizado = await this.mensajesRepository.update(mensaje.id, {
       procesado: true,
-      resultadoIA: resultadoIA as any,
+      resultadoIA: { ...resultadoIA },
       tareaGenerada: tarea,
     });
 
@@ -217,7 +217,7 @@ export class MensajesService {
     const filas = a.length + 1;
     const columnas = b.length + 1;
     const matriz: number[][] = Array.from({ length: filas }, () =>
-      new Array(columnas).fill(0),
+      new Array<number>(columnas).fill(0),
     );
 
     for (let i = 0; i < filas; i++) matriz[i][0] = i;

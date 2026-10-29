@@ -1,3 +1,4 @@
+import type { SolicitudAutenticada } from '../../auth/types/solicitud-autenticada';
 import {
   Controller,
   Get,
@@ -18,12 +19,18 @@ export class MensajesController {
   constructor(private readonly mensajesService: MensajesService) {}
 
   @Get()
-  async obtenerTodos(@Req() req, @Query() paginacion: PaginacionDto) {
+  async obtenerTodos(
+    @Req() req: SolicitudAutenticada,
+    @Query() paginacion: PaginacionDto,
+  ) {
     return this.mensajesService.obtenerTodos(req.user.userId, paginacion);
   }
 
   @Post()
-  async procesar(@Body() dto: CrearMensajeDto, @Req() req) {
+  async procesar(
+    @Body() dto: CrearMensajeDto,
+    @Req() req: SolicitudAutenticada,
+  ) {
     return this.mensajesService.procesarMensaje(
       dto.texto,
       dto.fuente,

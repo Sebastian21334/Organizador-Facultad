@@ -4,7 +4,9 @@ import { Transform } from 'class-transformer';
 
 export class CrearMensajeDto {
   @IsString()
-  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
+  @Transform(({ value }: { value: unknown }) =>
+    typeof value === 'string' ? value.trim() : value,
+  )
   @Length(1, 4000)
   texto!: string;
 

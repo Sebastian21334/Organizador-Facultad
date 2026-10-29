@@ -1,14 +1,26 @@
 import { Type, Transform } from 'class-transformer';
 import {
-  ArrayMaxSize, ArrayMinSize, IsArray, IsEnum, IsInt, IsOptional,
-  IsString, Max, MaxLength, Min, MinLength, ValidateNested,
+  ArrayMaxSize,
+  ArrayMinSize,
+  IsArray,
+  IsEnum,
+  IsInt,
+  IsOptional,
+  IsString,
+  Max,
+  MaxLength,
+  Min,
+  MinLength,
+  ValidateNested,
 } from 'class-validator';
 import { Cuatrimestre } from '../entities/materia.entity';
 import { MAX_MATERIAS_PLAN, MAX_TEXTO_PLAN } from '../plan-estudios';
 
 export class AnalizarPlanDto {
   @IsString()
-  @Transform(({ value }) => typeof value === 'string' ? value.trim() : value)
+  @Transform(({ value }: { value: unknown }) =>
+    typeof value === 'string' ? value.trim() : value,
+  )
   @MinLength(20)
   @MaxLength(MAX_TEXTO_PLAN)
   texto!: string;
@@ -16,7 +28,9 @@ export class AnalizarPlanDto {
 
 export class MateriaPlanDto {
   @IsString()
-  @Transform(({ value }) => typeof value === 'string' ? value.trim() : value)
+  @Transform(({ value }: { value: unknown }) =>
+    typeof value === 'string' ? value.trim() : value,
+  )
   @MinLength(1)
   @MaxLength(150)
   nombre!: string;

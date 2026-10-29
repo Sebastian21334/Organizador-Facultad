@@ -50,29 +50,41 @@ export class MateriasRepository {
   }
 
   async buscarTodasPorUsuario(usuarioId: string): Promise<Materia[]> {
-    return this.repo.find({ where: { usuarioId }, order: { nombre: 'ASC', id: 'ASC' } });
+    return this.repo.find({
+      where: { usuarioId },
+      order: { nombre: 'ASC', id: 'ASC' },
+    });
   }
 
   async importarPlan(materias: MateriaPlanDto[], usuarioId: string) {
-    return this.repo.manager.transaction(async manager => {
+    return this.repo.manager.transaction(async (manager) => {
       // Serializa importaciones de esta cuenta, incluso entre distintas instancias.
-      await manager.query('SELECT id FROM usuarios WHERE id = $1 FOR UPDATE', [usuarioId]);
+      await manager.query('SELECT id FROM usuarios WHERE id = $1 FOR UPDATE', [
+        usuarioId,
+      ]);
       const repo = manager.getRepository(Materia);
       const existentes = await repo.find({ where: { usuarioId } });
-      const nombres = new Set(existentes.map(m => normalizarNombreMateria(m.nombre)));
+      const nombres = new Set(
+        existentes.map((m) => normalizarNombreMateria(m.nombre)),
+      );
       const nuevas: Materia[] = [];
       const omitidas: string[] = [];
       for (const materia of materias) {
         const nombre = materia.nombre.trim();
         const key = normalizarNombreMateria(nombre);
-        if (nombres.has(key)) { omitidas.push(nombre); continue; }
+        if (nombres.has(key)) {
+          omitidas.push(nombre);
+          continue;
+        }
         nombres.add(key);
-        nuevas.push(repo.create({
-          nombre,
-          anioCursado: materia.anioCursado ?? undefined,
-          cuatrimestre: materia.cuatrimestre ?? undefined,
-          usuarioId,
-        }));
+        nuevas.push(
+          repo.create({
+            nombre,
+            anioCursado: materia.anioCursado ?? undefined,
+            cuatrimestre: materia.cuatrimestre ?? undefined,
+            usuarioId,
+          }),
+        );
       }
       const creadas = nuevas.length ? await repo.save(nuevas) : [];
       return { creadas, omitidas };
