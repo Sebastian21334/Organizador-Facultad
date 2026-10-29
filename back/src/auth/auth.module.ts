@@ -8,9 +8,11 @@ import { AuthController } from './controllers/auth.controller';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { MailModule } from 'src/mail/mail.module';
 import { JWT_AUDIENCE, JWT_ISSUER, SESSION_SECONDS } from '../security.config';
+import { TareasModule } from '../tareas/tareas.module';
 
 @Module({
   imports: [
+    TareasModule,
     UsuariosModule,
     PassportModule,
     MailModule,

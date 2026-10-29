@@ -1,35 +1,25 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  Logger,
-  OnModuleDestroy,
-  OnModuleInit,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { createHash } from 'node:crypto';
 import { DataSource } from 'typeorm';
 
 @Injectable()
-export class LimitesService implements OnModuleInit, OnModuleDestroy {
+export class LimitesService {
   private readonly logger = new Logger(LimitesService.name);
-  private cleanup?: NodeJS.Timeout;
+  private ultimaLimpieza = 0;
   constructor(private readonly db: DataSource) {}
 
-  onModuleInit() {
-    this.cleanup = setInterval(() => {
-      void this.db
-        .query(
-          `DELETE FROM "limites_seguridad" WHERE "clave" IN
+  private limpiarSiCorresponde(): void {
+    const ahora = Date.now();
+    if (ahora - this.ultimaLimpieza < 300_000) return;
+    this.ultimaLimpieza = ahora;
+    void this.db
+      .query(
+        `DELETE FROM "limites_seguridad" WHERE "clave" IN
         (SELECT "clave" FROM "limites_seguridad" WHERE "vence" < NOW() LIMIT 1000)`,
-        )
-        .catch(() =>
-          this.logger.warn('No se pudieron limpiar los límites vencidos'),
-        );
-    }, 300_000);
-    this.cleanup.unref();
-  }
-  onModuleDestroy() {
-    if (this.cleanup) clearInterval(this.cleanup);
+      )
+      .catch(() =>
+        this.logger.warn('No se pudieron limpiar los límites vencidos'),
+      );
   }
 
   async consumir(
@@ -38,6 +28,7 @@ export class LimitesService implements OnModuleInit, OnModuleDestroy {
     maximo: number,
     ventanaMs: number,
   ): Promise<void> {
+    this.limpiarSiCorresponde();
     const clave = createHash('sha256')
       .update(`${scope}:${identidad}`)
       .digest('hex');

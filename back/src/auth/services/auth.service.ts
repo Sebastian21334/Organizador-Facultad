@@ -19,6 +19,7 @@ import { ForgotPasswordDto } from '../dto/forgot-password.dto';
 import { ResetPasswordDto } from '../dto/reset-password.dto';
 import { ActualizarPerfilDto } from '../dto/actualizar-perfil.dto';
 import { CambiarPasswordDto } from '../dto/cambiar-password.dto';
+import { TareasService } from '../../tareas/services/tareas.service';
 
 const DUMMY_HASH = bcrypt.hashSync('tempo-dummy-credential-not-an-account', 12);
 const REGISTRO = {
@@ -39,6 +40,7 @@ export class AuthService implements OnModuleDestroy {
     private readonly usuariosService: UsuariosService,
     private readonly jwtService: JwtService,
     private readonly mailService: MailService,
+    private readonly tareasService: TareasService,
   ) {}
 
   async onModuleDestroy() {
@@ -157,6 +159,7 @@ export class AuthService implements OnModuleDestroy {
       throw new BadRequestException(
         'El enlace o la contraseña son inválidos. Podés solicitar otro enlace o recuperar tu contraseña.',
       );
+    void this.tareasService.reprogramar();
     return { mensaje: 'Email verificado con éxito' };
   }
 
@@ -222,6 +225,7 @@ export class AuthService implements OnModuleDestroy {
       throw new BadRequestException(
         'Enlace inválido, usado o expirado. Solicitá uno nuevo.',
       );
+    void this.tareasService.reprogramar();
     return {
       mensaje: 'Contraseña actualizada. Iniciá sesión con tu nueva contraseña.',
     };
@@ -254,6 +258,12 @@ export class AuthService implements OnModuleDestroy {
         : {}),
       ...(recordatorioMinutos !== undefined ? { recordatorioMinutos } : {}),
     });
+    if (
+      recordatorioEmailHabilitado !== undefined ||
+      recordatorioMinutos !== undefined
+    ) {
+      void this.tareasService.reprogramar();
+    }
     return { mensaje: 'Perfil actualizado con éxito' };
   }
 

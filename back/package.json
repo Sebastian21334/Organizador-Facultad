@@ -6,6 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "test": "node --experimental-vm-modules --liftoff-only --wasm-num-compilation-tasks=1 node_modules/jest/bin/jest.js --runInBand",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",

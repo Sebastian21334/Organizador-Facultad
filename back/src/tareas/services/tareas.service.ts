@@ -17,7 +17,10 @@ import { PaginacionDto } from '../../paginacion.dto';
 @Injectable()
 export class TareasService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(TareasService.name);
-  private recordatoriosInterval?: NodeJS.Timeout;
+  private timer?: NodeJS.Timeout;
+  private static readonly MAX_ESPERA = 3_600_000;
+  private programacion = 0;
+  private destruido = false;
   private enviandoRecordatorios = false;
 
   constructor(
@@ -27,18 +30,40 @@ export class TareasService implements OnModuleInit, OnModuleDestroy {
     private readonly limites: LimitesService,
   ) {}
 
-  onModuleInit(): void {
-    void this.enviarRecordatorios();
-    this.recordatoriosInterval = setInterval(
-      () => void this.enviarRecordatorios(),
-      60_000,
-    );
+  async onModuleInit(): Promise<void> {
+    await this.reprogramar();
   }
 
   onModuleDestroy(): void {
-    if (this.recordatoriosInterval) {
-      clearInterval(this.recordatoriosInterval);
+    this.destruido = true;
+    this.programacion++;
+    clearTimeout(this.timer);
+  }
+
+  async reprogramar(): Promise<void> {
+    clearTimeout(this.timer);
+    if (this.destruido) return;
+    const programacion = ++this.programacion;
+    let espera = TareasService.MAX_ESPERA;
+    try {
+      const proximo = await this.tareasRepository.proximoAviso();
+      if (proximo) {
+        espera = Math.min(
+          Math.max(proximo.getTime() - Date.now(), 5_000),
+          TareasService.MAX_ESPERA,
+        );
+      }
+    } catch {
+      espera = 300_000;
     }
+    // Una consulta anterior o el cierre no deben dejar temporizadores huérfanos.
+    if (programacion !== this.programacion || this.destruido) return;
+    this.timer = setTimeout(() => void this.ciclo(), espera);
+  }
+
+  private async ciclo(): Promise<void> {
+    await this.enviarRecordatorios();
+    await this.reprogramar();
   }
 
   private async enviarRecordatorios(): Promise<void> {
@@ -145,7 +170,12 @@ export class TareasService implements OnModuleInit, OnModuleDestroy {
       86_400_000,
     );
     const seguros = await this.datosSeguros(datos, usuarioId);
-    return this.tareasRepository.create({ ...seguros, usuarioId });
+    const creada = await this.tareasRepository.create({
+      ...seguros,
+      usuarioId,
+    });
+    void this.reprogramar();
+    return creada;
   }
 
   async marcarComoHecha(id: string, usuarioId: string): Promise<Tarea> {
@@ -157,6 +187,7 @@ export class TareasService implements OnModuleInit, OnModuleDestroy {
       },
       usuarioId,
     );
+    void this.reprogramar();
     return actualizada!;
   }
 
@@ -182,12 +213,14 @@ export class TareasService implements OnModuleInit, OnModuleDestroy {
       usuarioId,
     );
     if (!actualizada) throw new NotFoundException('Tarea no encontrada');
+    void this.reprogramar();
     return actualizada!;
   }
 
   async eliminar(id: string, usuarioId: string): Promise<void> {
     await this.obtenerPorId(id, usuarioId);
     await this.tareasRepository.delete(id, usuarioId);
+    void this.reprogramar();
   }
 
   private async datosSeguros(

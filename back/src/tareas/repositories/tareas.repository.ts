@@ -44,6 +44,26 @@ export class TareasRepository {
     });
   }
 
+  async proximoAviso(): Promise<Date | null> {
+    const rows = await this.repo.query<{ proximo: Date | string | null }[]>(`
+      SELECT MIN(GREATEST(
+        t."fechaLimite" - COALESCE(t."recordatorioMinutos", u."recordatorioMinutos") * INTERVAL '1 minute',
+        COALESCE(t."recordatorioBloqueadoHasta", '-infinity'::timestamptz)
+      )) AS proximo
+      FROM tareas t
+      JOIN usuarios u ON u.id = t."usuarioId"
+      WHERE t."recordatorioEnviadoEn" IS NULL
+        AND t.estado != 'hecha'
+        AND u."emailVerificado" = true
+        AND u."recordatorioEmailHabilitado" = true
+        AND COALESCE(t."recordatorioMinutos", u."recordatorioMinutos") > 0
+        AND t."fechaLimite" >= NOW() - INTERVAL '1 day'
+        AND t."fechaLimite" <= NOW() + INTERVAL '30 days'
+    `);
+    const proximo = rows[0]?.proximo;
+    return proximo == null ? null : new Date(proximo);
+  }
+
   async findRecordatoriosVencidos(hasta: Date): Promise<Tarea[]> {
     return (
       this.repo

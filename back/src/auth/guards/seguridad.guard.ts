@@ -35,6 +35,7 @@ export class SeguridadGuard implements CanActivate {
     const routePath =
       typeof req.route?.path === 'string' ? req.route.path : req.path;
     const ruta = routePath.toLowerCase().replace(/\/+$/, '') || '/';
+    if (ruta === '/health' || ruta === '/') return true;
     const cookie = sessionCookie(req);
     const bearer = ExtractJwt.fromAuthHeaderAsBearerToken()(req);
     if (mutacion) {
