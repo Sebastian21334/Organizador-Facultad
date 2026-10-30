@@ -28,7 +28,7 @@ export class ThemeService {
       const guardado = localStorage.getItem(this.storageKey);
       if (guardado === 'claro' || guardado === 'oscuro') return guardado;
     } catch { /* El almacenamiento restringido no debe impedir abrir la app. */ }
-    return this.document.defaultView?.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'oscuro' : 'claro';
+    return 'claro';
   }
 
   private aplicar(tema: Tema): void {

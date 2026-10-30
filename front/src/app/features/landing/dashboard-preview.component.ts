@@ -32,9 +32,9 @@ import { InicioComponent } from '../inicio/inicio.component';
     .preview-nav { display: grid; place-items: center; width: 2.9rem; height: 2.9rem; border-radius: .9rem; color: #7a6b57; }
     .preview-nav.active { background: #6e1f2b; color: #faf6ee; }
     .preview-caption { margin: 14px 0 0; text-align: center; color: var(--muted); font-size: 11px; }
-    :host-context(.dark) .preview-sidebar { background: linear-gradient(180deg,#121821,#0c1118); }
-    :host-context(.dark) .preview-brand span, :host-context(.dark) .preview-nav.active { background: linear-gradient(145deg,#8794ff,#5364d9); }
-    :host-context(.dark) .preview-nav { color: #9aa5b6; }
+    :host-context(.dark) .preview-sidebar { background: linear-gradient(180deg,var(--card),var(--bg)); }
+    :host-context(.dark) .preview-brand span, :host-context(.dark) .preview-nav.active { background: var(--action-bg); }
+    :host-context(.dark) .preview-nav { color: var(--muted); }
     :host-context(.dark) .preview-nav.active { color: white; }
   `,
 })

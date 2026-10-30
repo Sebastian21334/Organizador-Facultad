@@ -67,8 +67,8 @@ footer .brand strong { font-size: 17px; }
 footer .brand i { width: 28px; height: 28px; border-radius: 8px; font-size: 17px; }
 footer p,footer>a:not(.brand) { color: var(--muted); font-size: 11px; }
 footer p:last-child { margin-left: auto; }
-:host-context(.dark) .features { background: #11172a; }
-:host-context(.dark) .benefits { background: #222a50; }
-:host-context(.dark) .features h2 em { color: #aeb7ff; }
+:host-context(.dark) .features { background: var(--card-strong); }
+:host-context(.dark) .benefits { background: var(--card-strong); }
+:host-context(.dark) .features h2 em { color: var(--accent); }
 @media(max-width:1000px) { nav { display: none; } .hero { grid-template-columns: 1fr; gap: 50px; text-align: center; } .hero-copy { display: flex; flex-direction: column; align-items: center; } .product { width: min(100%,800px); margin: auto; } .eyebrow { justify-content: center; } .features { gap: 45px; } }
 @media(max-width:640px) { .landing>header { min-height: 68px; padding: 12px 18px; gap: 12px; } .brand strong { font-size: 19px; } .login { display: none; } .header-actions { gap: 9px; } .small-cta { padding: 10px 13px; } .hero { min-height: auto; padding: 50px 20px 65px; gap: 40px; } h1 { font-size: clamp(39px,11vw,55px); } .lead { font-size: 14px; } .hero-actions { width: 100%; flex-direction: column; } .hero-actions a { width: min(100%,320px); justify-content: center; } .secondary { border: 1px solid var(--border); border-radius: 11px; } .benefits { grid-template-columns: 1fr; gap: 12px; padding: 24px; } .benefits p { justify-content: flex-start; } .how { padding: 70px 22px; } .section-title { text-align: center; } .steps { margin-top: 45px; grid-template-columns: 1fr; border-top: 0; } .steps article,.steps article+article { padding: 28px 0; border-left: 0; border-top: 1px solid var(--border); } .steps p { max-width: none; } .features { padding: 65px 24px; grid-template-columns: 1fr; } .features .eyebrow { justify-content: flex-start; } .final { padding: 70px 22px; } .landing>footer { padding: 24px; flex-wrap: wrap; } footer p:nth-child(2) { display: none; } }

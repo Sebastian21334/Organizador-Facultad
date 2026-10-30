@@ -266,7 +266,7 @@ import { ToastService } from '../../core/services/toast.service';
         <div class="max-w-4xl mx-auto">
           <form
             (ngSubmit)="enviar()"
-            class="flex items-center gap-2 bg-[#FFFEFA] border border-[#D8CBAE] focus-within:border-[#6E1F2B] focus-within:ring-2 focus-within:ring-[#6E1F2B]/20 rounded-full px-3 py-1.5 transition-all shadow-inner"
+            class="chat-composer flex items-center gap-2 bg-[#FFFEFA] border border-[#D8CBAE] focus-within:border-[#6E1F2B] focus-within:ring-2 focus-within:ring-[#6E1F2B]/20 rounded-full px-3 py-1.5 transition-all shadow-inner"
           >
             <input
               [(ngModel)]="texto"

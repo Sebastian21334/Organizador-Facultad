@@ -213,25 +213,23 @@ interface DiaCalendario {
     .upcoming-copy em { justify-self:start; font-style:normal; font-size:.65rem; color:#6e1f2b; background:#f3dfe2; border:1px solid #e2c2c7; border-radius:.3rem; padding:.18rem .42rem; }
     .all-tasks { display:block; text-align:center; padding:1rem 0; color:#6e1f2b; border-top:1px solid #d9d3c2; text-decoration:none; font-size:.85rem; }
     .empty-upcoming { color:var(--muted); font-size:.85rem; padding:1rem 0; }
-    :host-context(.dark) .calendar-eyebrow { color:#8793aa; }
+    :host-context(.dark) :is(.calendar-eyebrow, .view-toggle button, .dias-semana-header) { color:var(--muted); }
     :host-context(.dark) .calendar-toolbar strong,
-    :host-context(.dark) .upcoming-title h2 { color:#f4f6fb; }
+    :host-context(.dark) .upcoming-title h2 { color:var(--ink); }
     :host-context(.dark) .view-toggle,
     :host-context(.dark) .calendar-main,
-    :host-context(.dark) .upcoming-panel { background:linear-gradient(145deg,#171d25,#121820); border-color:#2d3745; }
-    :host-context(.dark) .view-toggle button { color:#9aa5b6; }
-    :host-context(.dark) .calendar-toolbar button { border-color:#344052; background:#202936; color:#dce1ff; }
-    :host-context(.dark) .dias-semana-header { color:#98a1b0; }
-    :host-context(.dark) .calendar-grid { border-color:#2f3845; }
-    :host-context(.dark) .calendar-cell { border-color:#2f3845; background:#131922; color:#dce1ea; }
-    :host-context(.dark) .calendar-cell[class*="F5F2E9"] { background:#0f141c; color:#667180; }
-    :host-context(.dark) .hoy-borde { border-color:#8794ff!important; }
-    :host-context(.dark) .hoy-fondo { background:#232b43!important; }
-    :host-context(.dark) .hoy-texto { color:#aab2ff; }
-    :host-context(.dark) .upcoming-card { border-color:#303a48; background:#19212b; color:#fff; }
-    :host-context(.dark) .upcoming-date { background:#202936; color:#8794ff; }
-    :host-context(.dark) .upcoming-copy em { color:#b9c0ff; background:#252d48; border-color:#46528d; }
-    :host-context(.dark) .all-tasks { color:#9da7ff; border-color:#2d3745; }
+    :host-context(.dark) .upcoming-panel { background:var(--card); border-color:var(--border); }
+    :host-context(.dark) .calendar-toolbar button { border-color:var(--border); background:var(--card-strong); color:var(--accent); }
+    :host-context(.dark) .calendar-grid { border-color:var(--border); }
+    :host-context(.dark) .calendar-cell { border-color:var(--border); background:var(--card); color:var(--ink); }
+    :host-context(.dark) .calendar-cell[class*="F5F2E9"] { background:var(--bg); color:var(--muted); }
+    :host-context(.dark) .hoy-borde { border-color:var(--action-bg)!important; }
+    :host-context(.dark) .hoy-fondo { background:var(--card-strong)!important; }
+    :host-context(.dark) .hoy-texto { color:var(--accent); }
+    :host-context(.dark) .upcoming-card { border-color:var(--border); background:var(--card); color:#fff; }
+    :host-context(.dark) .upcoming-date { background:var(--card-strong); color:var(--accent); }
+    :host-context(.dark) .upcoming-copy em { color:var(--accent); background:var(--card-strong); border-color:var(--border-strong); }
+    :host-context(.dark) .all-tasks { color:var(--accent); border-color:var(--border); }
     @media (max-width: 900px) { .calendar-layout { grid-template-columns:1fr; } .upcoming-panel { order:2; } }
     @media (max-width: 600px) { .calendar-heading { align-items:flex-start; flex-direction:column; } .calendar-actions { width:100%; justify-content:space-between; } }
     @media (max-width: 480px) {

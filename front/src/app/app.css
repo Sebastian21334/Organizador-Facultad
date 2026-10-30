@@ -411,9 +411,9 @@
 
   :host-context(.dark) .menu-toggle,
   :host-context(.dark) .mobile-theme-toggle {
-    background: #171d25;
-    border-color: #344052;
-    color: #9da7ff;
+    background: var(--card);
+    border-color: var(--border);
+    color: var(--accent);
   }
 
 
@@ -622,16 +622,16 @@
 
 :host-context(.dark) .app-sidebar,
 :host-context(.dark) .mobile-topbar {
-  background: linear-gradient(180deg, rgba(18, 24, 33, .99), rgba(12, 17, 24, .98));
-  border-color: #27303d;
+  background: linear-gradient(180deg, rgb(22 31 42 / .99), rgb(11 14 20 / .98));
+  border-color: var(--border);
   box-shadow: 8px 0 32px rgba(0, 0, 0, .32);
 }
 
-:host-context(.dark) .brand-mark { background: linear-gradient(145deg, #8794ff, #5364d9); box-shadow: 0 10px 24px rgba(83,100,217,.32); }
-:host-context(.dark) .brand-name { color: #f4f6fb; }
-:host-context(.dark) .brand-slogan { color: #808a99; }
-:host-context(.dark) .brand-block { border-color: #293240; }
-:host-context(.dark) .nav-item { color: #8e98a8; }
-:host-context(.dark) .nav-item:hover { color: #dce1ff; background: rgba(116,132,244,.13); border-color: rgba(135,148,255,.24); }
-:host-context(.dark) .nav-item.active { color: var(--on-accent); background: var(--action-bg); box-shadow: 0 10px 24px rgba(68,82,190,.3); }
-:host-context(.dark) .nav-item--logout { border-color: #293240; }
+:host-context(.dark) .brand-mark { background: var(--action-bg); box-shadow: 0 10px 24px rgb(58 90 134 / .32); }
+:host-context(.dark) .brand-name { color: var(--ink); }
+:host-context(.dark) .brand-slogan { color: var(--muted); }
+:host-context(.dark) .brand-block { border-color: var(--border); }
+:host-context(.dark) .nav-item { color: var(--muted); }
+:host-context(.dark) .nav-item:hover { color: var(--accent); background: rgb(58 90 134 / .13); border-color: rgb(58 90 134 / .24); }
+:host-context(.dark) .nav-item.active { color: var(--on-accent); background: var(--action-bg); box-shadow: 0 10px 24px rgb(58 90 134 / .3); }
+:host-context(.dark) .nav-item--logout { border-color: var(--border); }
