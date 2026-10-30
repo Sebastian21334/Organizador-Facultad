@@ -7,7 +7,7 @@ import {
   MensajeEntrante,
   FuenteMensaje,
 } from '../entities/mensaje-entrante.entity';
-import { Materia } from '../../materias/entities/materia.entity';
+import { EstadoMateria, Materia } from '../../materias/entities/materia.entity';
 import { TipoTarea, OrigenTarea } from '../../tareas/entities/tarea.entity';
 import { LimitesService } from '../../usuarios/services/limites.service';
 import { PaginacionDto } from '../../paginacion.dto';
@@ -51,9 +51,12 @@ export class MensajesService {
     //    lista después como respaldo con fuzzy match, sin pegarle dos veces a la base.
     const materiasExistentes =
       await this.materiasRepository.buscarTodasPorUsuario(usuarioId);
+    const materiasRegulares = materiasExistentes.filter(
+      (materia) => materia.estado === EstadoMateria.REGULAR,
+    );
     const resultadoIA = await this.iaService.extraerTarea(
       texto,
-      materiasExistentes.map((m) => m.nombre),
+      materiasRegulares.map((m) => m.nombre),
     );
 
     // Si la IA no está lo suficientemente segura, no creamos tarea: guardamos el mensaje
@@ -80,11 +83,11 @@ export class MensajesService {
       // Nunca vinculamos una tarea a una materia dudosa. La materia detectada
       // puede venir abreviada o inventada por el modelo; en ese caso dejamos
       // el mensaje procesado, pero pedimos confirmación antes de crear la tarea.
-      if (!materia) {
-        const opciones = materiasExistentes.map((m) => m.nombre).join(', ');
+      if (!materia || materia.estado !== EstadoMateria.REGULAR) {
+        const opciones = materiasRegulares.map((m) => m.nombre).join(', ');
         const aclaracion = opciones
-          ? `No pude relacionar “${resultadoIA.materia}” con una materia registrada. ¿A cuál te referís? Tus materias son: ${opciones}.`
-          : `Detecté la materia “${resultadoIA.materia}”, pero todavía no tenés materias registradas. Cargala primero desde Materias o enviame el mensaje sin materia.`;
+          ? `No pude relacionar “${resultadoIA.materia}” con una materia en estado Regular. ¿A cuál te referís? Tus materias regulares son: ${opciones}.`
+          : `Detecté la materia “${resultadoIA.materia}”, pero no tenés materias en estado Regular. Marcala como Regular desde Materias o enviame el mensaje sin materia.`;
         const actualizado = await this.mensajesRepository.update(mensaje.id, {
           procesado: true,
           resultadoIA: { ...resultadoIA, aclaracion },

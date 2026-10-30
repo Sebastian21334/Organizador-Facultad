@@ -60,7 +60,7 @@
         </div>
       }
     </div>
-    <p class="hint">Las coincidencias se omiten sin cambiar tus materias existentes. Los datos sin definir se pueden completar después. Las materias nuevas tendrán estado Regular.</p>
+    <p class="hint">Las coincidencias se omiten sin cambiar tus materias existentes. Los datos sin definir se pueden completar después. Las materias nuevas tendrán estado Libre; marcá como Regulares las que cursás para poder crearles tareas.</p>
     @if (hayInvalidas()) { <p class="error" role="alert">Corregí los nombres vacíos y los años inválidos de las materias seleccionadas antes de guardar.</p> }
     @if (!seleccionadas().length && !hayInvalidas()) { <p class="hint">No hay materias nuevas seleccionadas para agregar.</p> }
     <div class="plan-actions">

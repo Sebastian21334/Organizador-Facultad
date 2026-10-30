@@ -4,6 +4,88 @@ import { MailService } from '../../mail/services/mail.service';
 import { MateriasRepository } from '../../materias/repositories/materias.repository';
 import { LimitesService } from '../../usuarios/services/limites.service';
 import { EstadoTarea, Tarea } from '../entities/tarea.entity';
+import { EstadoMateria, Materia } from '../../materias/entities/materia.entity';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
+
+describe('TareasService: materias habilitadas al crear', () => {
+  const materia = {
+    id: 'materia',
+    nombre: 'Álgebra',
+    usuarioId: 'usuario',
+    estado: EstadoMateria.REGULAR,
+  } as Materia;
+  const tarea = { id: 'tarea', usuarioId: 'usuario' } as Tarea;
+  const findById = jest.fn<Promise<Materia | null>, [string, string]>();
+  const create = jest.fn<Promise<Tarea>, [Partial<Tarea>]>();
+  const update = jest.fn<Promise<Tarea>, [string, Partial<Tarea>, string]>();
+  let service: TareasService;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    findById.mockResolvedValue(materia);
+    create.mockResolvedValue(tarea);
+    update.mockResolvedValue(tarea);
+    service = new TareasService(
+      {
+        create,
+        update,
+        findById: jest.fn().mockResolvedValue(tarea),
+      } as unknown as TareasRepository,
+      {} as MailService,
+      { findById } as unknown as MateriasRepository,
+      {
+        consumir: jest.fn().mockResolvedValue(undefined),
+      } as unknown as LimitesService,
+    );
+    jest.spyOn(service, 'reprogramar').mockResolvedValue(undefined);
+  });
+
+  it('crea con una materia regular comprobada para el usuario', async () => {
+    await service.crear({ materia }, 'usuario');
+    expect(findById).toHaveBeenCalledWith('materia', 'usuario');
+    expect(create).toHaveBeenCalledWith(
+      expect.objectContaining({ materia, usuarioId: 'usuario' }),
+    );
+  });
+
+  it.each([EstadoMateria.LIBRE, EstadoMateria.APROBADO])(
+    'rechaza una materia %s aunque la entrada diga Regular',
+    async (estado) => {
+      findById.mockResolvedValue({ ...materia, estado });
+      await expect(
+        service.crear({ materia }, 'usuario'),
+      ).rejects.toBeInstanceOf(BadRequestException);
+      expect(create).not.toHaveBeenCalled();
+    },
+  );
+
+  it('rechaza materias inexistentes o de otra cuenta', async () => {
+    findById.mockResolvedValue(null);
+    await expect(service.crear({ materia }, 'usuario')).rejects.toBeInstanceOf(
+      NotFoundException,
+    );
+    expect(create).not.toHaveBeenCalled();
+  });
+
+  it('sigue permitiendo crear sin materia', async () => {
+    await service.crear({ titulo: 'Organizar apuntes' }, 'usuario');
+    expect(findById).not.toHaveBeenCalled();
+    expect(create).toHaveBeenCalledWith({
+      titulo: 'Organizar apuntes',
+      usuarioId: 'usuario',
+    });
+  });
+
+  it('permite editar tareas históricas sin volver a asociar su materia', async () => {
+    await service.actualizar('tarea', { titulo: 'Repasar' }, 'usuario');
+    expect(findById).not.toHaveBeenCalled();
+    expect(update).toHaveBeenCalledWith(
+      'tarea',
+      { titulo: 'Repasar' },
+      'usuario',
+    );
+  });
+});
 
 describe('TareasService: próximo aviso', () => {
   const ahora = new Date('2026-10-29T12:00:00Z');

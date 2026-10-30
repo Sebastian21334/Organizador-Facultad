@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, input, output, signal } from '@angular/core';
+import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
+  EstadoMateria,
   EstadoTarea,
   Materia,
   OrigenTarea,
@@ -46,10 +47,11 @@ import { finalize } from 'rxjs';
           <span>Materia</span>
           <select formControlName="materiaId" class="field">
             <option value="">Sin materia</option>
-            @for (materia of materias(); track materia.id) {
+            @for (materia of materiasRegulares(); track materia.id) {
               <option [value]="materia.id">{{ materia.nombre }}</option>
             }
           </select>
+          <em>Solo se muestran materias regulares. Podés cambiar su estado desde Materias.</em>
         </label>
 
         <label class="field-group">
@@ -138,6 +140,9 @@ export class TareaManualFormComponent {
   private readonly tareasService = inject(TareasService);
 
   readonly materias = input.required<Materia[]>();
+  protected readonly materiasRegulares = computed(() =>
+    this.materias().filter((materia) => materia.estado === EstadoMateria.REGULAR),
+  );
   readonly bloqueado = input(false);
   readonly creada = output<Tarea>();
   readonly cancelar = output<void>();

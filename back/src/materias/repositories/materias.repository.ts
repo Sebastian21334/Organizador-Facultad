@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Materia } from '../entities/materia.entity';
+import { EstadoMateria, Materia } from '../entities/materia.entity';
 import { PaginacionDto } from '../../paginacion.dto';
 import { MateriaPlanDto } from '../dto/plan-estudios.dto';
 import { normalizarNombreMateria } from '../plan-estudios';
@@ -82,6 +82,7 @@ export class MateriasRepository {
             nombre,
             anioCursado: materia.anioCursado ?? undefined,
             cuatrimestre: materia.cuatrimestre ?? undefined,
+            estado: EstadoMateria.LIBRE,
             usuarioId,
           }),
         );

@@ -2,7 +2,7 @@
 
 En **Materias → Cargá tu plan de estudios**, el usuario puede elegir un PDF con texto seleccionable o pegar el texto del plan. La IA integrada identifica nombre, año de cursado y primer/segundo cuatrimestre o anual. Los campos que no aparecen claramente quedan sin definir; se muestran advertencias para revisión.
 
-Antes de guardar, el usuario puede editar datos y desmarcar materias. Solo al confirmar se crean las seleccionadas, con estado Regular. Las materias existentes conservan todos sus datos y su estado.
+Antes de guardar, el usuario puede editar datos y desmarcar materias. Solo al confirmar se crean las seleccionadas, con estado Libre. Las materias existentes conservan todos sus datos y su estado. Después de importar, el usuario debe marcar como Regulares las materias que cursa: solo estas aparecen en el selector de creación de tareas y pueden asociarse a tareas nuevas, también desde el chat. Las tareas sin materia siguen permitidas.
 
 ## Formatos y límites
 

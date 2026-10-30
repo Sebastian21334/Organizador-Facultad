@@ -1,5 +1,6 @@
 import {
   Injectable,
+  BadRequestException,
   Logger,
   NotFoundException,
   ForbiddenException,
@@ -10,6 +11,7 @@ import { TareasRepository } from '../repositories/tareas.repository';
 import { Tarea, EstadoTarea } from '../entities/tarea.entity';
 import { MailService } from '../../mail/services/mail.service';
 import { MateriasRepository } from '../../materias/repositories/materias.repository';
+import { EstadoMateria } from '../../materias/entities/materia.entity';
 import { LimitesService } from '../../usuarios/services/limites.service';
 import { randomUUID } from 'node:crypto';
 import { PaginacionDto } from '../../paginacion.dto';
@@ -170,6 +172,11 @@ export class TareasService implements OnModuleInit, OnModuleDestroy {
       86_400_000,
     );
     const seguros = await this.datosSeguros(datos, usuarioId);
+    if (seguros.materia && seguros.materia.estado !== EstadoMateria.REGULAR) {
+      throw new BadRequestException(
+        'Solo podés crear tareas de materias en estado Regular.',
+      );
+    }
     const creada = await this.tareasRepository.create({
       ...seguros,
       usuarioId,
