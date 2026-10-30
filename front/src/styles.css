@@ -383,6 +383,7 @@ html.dark .app-content { color: var(--ink); }
 html.dark .title-bar { background: linear-gradient(110deg, var(--card), var(--card-strong) 62%, var(--card-strong)); color: var(--ink); border-bottom: 1px solid var(--border); box-shadow: 0 12px 30px rgba(0,0,0,.32); }
 
 html.dark [class*="bg-[#6E1F2B]"],
+html.dark .recordatorio-aviso-enlace,
 html.dark .button-primary,
 html.dark .btn-primario { background-color: var(--action-bg) !important; color: var(--on-accent) !important; }
 html.dark [class*="from-[#6E1F2B]"] { --tw-gradient-from: var(--action-bg) var(--tw-gradient-from-position) !important; }
@@ -457,6 +458,7 @@ html.dark textarea:focus { border-color: var(--action-bg) !important; box-shadow
 html.dark .card,
 html.dark .materia-card,
 html.dark .tareas-item,
+html.dark .tareas-vacio,
 html.dark .filtros-bar,
 html.dark .month-tasks,
 html.dark .stat-card,
@@ -493,7 +495,10 @@ html.dark .badge-examen,
 html.dark .badge-entrega,
 html.dark .badge-otro,
 html.dark .badge-pendiente,
-html.dark .badge-progreso { background: var(--card-strong) !important; color: var(--accent) !important; border-color: var(--border-strong) !important; }
+html.dark .badge-progreso,
+html.dark .semester-badge,
+html.dark .status-regular { background: var(--card-strong) !important; color: var(--accent) !important; border-color: var(--border-strong) !important; }
+html.dark .status-libre { background: var(--card-strong); color: var(--ink-secondary); border-color: var(--border); }
 html.dark .badge-tp,
 html.dark .badge-hecha,
 html.dark .status-aprobado { background: #183126 !important; color: #79c995 !important; border-color: #2e5940 !important; }
@@ -589,7 +594,7 @@ html.dark .inicio-page .tarea-row:hover .tarea-row-nombre {
   color: var(--ink) !important;
 }
 
-html.dark .app-content a:not(.button-primary):not(.nueva-tarea-btn),
+html.dark .app-content a:not(.button-primary):not(.nueva-tarea-btn):not(.recordatorio-aviso-enlace),
 html.dark .app-content button:not(.button-primary):not(.btn-primario):not(.btn-peligro):not(.nueva-tarea-btn) {
   color: var(--ink-secondary) !important;
 }
@@ -665,6 +670,10 @@ html:not(.dark) .app-content :is([class*="text-[#8C8570]"], [class*="text-[#A39C
   .badge-pendiente, .badge-entrega, .view-toggle button:not(.active)) { color: var(--muted); }
 html:not(.dark) .calendar-cell .tarea-hecha { opacity: 1; color: var(--muted); }
 html.dark .recordatorio-aviso { background: var(--accent-light) !important; border-color: var(--accent-border) !important; }
+html.dark .recordatorio-bienvenida { background: var(--accent-light); border-color: var(--accent-border); color: var(--accent); }
+html.dark .recordatorio-destacado { border-color: var(--accent-border); box-shadow: 0 0 0 4px rgb(58 90 134 / .18); }
+html.dark input:is([type="checkbox"], [type="radio"]) { accent-color: var(--action-bg); }
+html.dark :is(.punto-bordo, .inicio-welcome-divider, .is-selected .weekly-day-dot) { background: var(--accent); }
 html.dark .app-content .message-success { background: var(--success-bg); border-color: var(--success-border); color: var(--success-text) !important; }
 html.dark .landing .benefits span { opacity: 1; color: var(--ink-secondary); }
 html.dark .app-content .calendario-page .calendar-actions :is(.new-task, .view-toggle button.active) { background: var(--action-bg) !important; color: var(--on-accent) !important; }
