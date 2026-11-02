@@ -15,6 +15,8 @@ describe('Resumen diario de objetivos', () => {
       CREATE TABLE usuarios (id text PRIMARY KEY, email text, "emailVerificado" boolean);
       CREATE TABLE objetivos (id text PRIMARY KEY, "usuarioId" text, titulo text, fecha date, completado boolean, "creadoEn" timestamptz DEFAULT now());
       CREATE TABLE recordatorios_objetivos ("usuarioId" text, fecha date, "bloqueadoHasta" timestamptz, enviado boolean DEFAULT false, PRIMARY KEY ("usuarioId", fecha));
+      CREATE TABLE objetivos_recurrentes (id text PRIMARY KEY, "usuarioId" text, titulo text, "fechaInicio" date, "creadoEn" timestamptz DEFAULT now());
+      CREATE TABLE objetivos_recurrentes_cumplidos ("objetivoId" text, fecha date, PRIMARY KEY ("objetivoId", fecha));
     `);
     const fuente = { query: async (sql: string, params?: unknown[]) => (await db.query(sql.replace(/now\(\)/gi, `('${ahora}'::timestamptz)`), params)).rows } as unknown as DataSource;
     servicio = new ObjetivosService(fuente, { enviarMail } as unknown as MailService);
@@ -23,7 +25,7 @@ describe('Resumen diario de objetivos', () => {
   beforeEach(async () => {
     enviarMail.mockClear();
     ahora = '2026-11-02T11:59:00Z';
-    await db.exec(`TRUNCATE recordatorios_objetivos, objetivos, usuarios;
+    await db.exec(`TRUNCATE recordatorios_objetivos, objetivos, objetivos_recurrentes_cumplidos, objetivos_recurrentes, usuarios;
       INSERT INTO usuarios VALUES ('u1', 'uno@example.test', true), ('u2', 'dos@example.test', true);
       INSERT INTO objetivos (id, "usuarioId", titulo, fecha, completado) VALUES
         ('1','u1','Atrasado','2026-11-01',false), ('2','u1','Otro','2026-10-31',false),
@@ -46,5 +48,39 @@ describe('Resumen diario de objetivos', () => {
     ahora = '2026-11-03T12:00:00Z';
     await servicio.procesar();
     expect(enviarMail).toHaveBeenCalledTimes(4);
+  });
+  it('incluye los diarios incumplidos de ayer en el mismo correo sin acumular días anteriores', async () => {
+    await db.exec(`INSERT INTO objetivos_recurrentes (id, "usuarioId", titulo, "fechaInicio") VALUES
+      ('r1', 'u1', 'Leer todos los días', '2026-10-30'),
+      ('r2', 'u1', 'Repaso cumplido ayer', '2026-10-30'),
+      ('r3', 'u1', 'Empezado hoy', '2026-11-02'),
+      ('r4', 'u2', 'Privado recurrente', '2026-10-30');
+      INSERT INTO objetivos_recurrentes_cumplidos VALUES ('r2', '2026-11-01');`);
+    ahora = '2026-11-02T12:00:00Z';
+    await servicio.procesar();
+    expect(enviarMail).toHaveBeenCalledTimes(2);
+    const mensaje = enviarMail.mock.calls.find(c => c[0] === 'uno@example.test')![2] as string;
+    expect(mensaje).toContain('Atrasado');
+    expect(mensaje).toContain('Leer todos los días');
+    expect(mensaje).toContain('nueva oportunidad');
+    expect(mensaje).not.toMatch(/Repaso cumplido ayer|Empezado hoy|Privado recurrente/);
+    await servicio.procesar();
+    expect(enviarMail).toHaveBeenCalledTimes(2);
+    // Si se cumple hoy, mañana ya no se informa lo que faltó ayer.
+    await db.exec(`INSERT INTO objetivos_recurrentes_cumplidos VALUES ('r1', '2026-11-02'), ('r2', '2026-11-02'), ('r3', '2026-11-02')`);
+    ahora = '2026-11-03T12:00:00Z';
+    await servicio.procesar();
+    const manana = enviarMail.mock.calls.filter(c => c[0] === 'uno@example.test').at(-1)![2] as string;
+    expect(manana).not.toContain('Leer todos los días');
+  });
+  it('envía un solo resumen cuando solo faltó un objetivo de todos los días', async () => {
+    await db.exec(`DELETE FROM objetivos;
+      INSERT INTO objetivos_recurrentes (id, "usuarioId", titulo, "fechaInicio") VALUES ('r1', 'u1', 'Caminar', '2026-11-01')`);
+    ahora = '2026-11-02T12:00:00Z';
+    await servicio.procesar();
+    expect(enviarMail).toHaveBeenCalledTimes(1);
+    expect(enviarMail.mock.calls[0][2]).toContain('Caminar');
+    await servicio.procesar();
+    expect(enviarMail).toHaveBeenCalledTimes(1);
   });
 });

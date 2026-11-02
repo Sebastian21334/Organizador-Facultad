@@ -1,0 +1,88 @@
+<section class="objetivos">
+  <header class="encabezado">
+    <p class="eyebrow">UN DÍA A LA VEZ</p>
+    <h1>Objetivos diarios</h1>
+    <p>Elegí en qué querés avanzar. Lo que quede pendiente seguirá acá.</p>
+  </header>
+
+  <div class="resumen-superior">
+    <div class="semana-contenedor">
+      <div class="semana-controles">
+        <button type="button" class="semana-flecha" (click)="moverSemana(-1)" aria-label="Semana anterior">‹</button>
+        <span>Tu semana</span>
+        <button type="button" class="semana-flecha" (click)="moverSemana(1)" aria-label="Semana siguiente">›</button>
+      </div>
+      <div class="semana" aria-label="Elegir día">
+        @for (dia of dias(); track dia.fecha) {
+          <button type="button" class="dia" [class.dia--seleccionado]="dia.fecha === seleccionado()" [class.dia--completo]="estadoDia(dia.fecha) === '✓'" [attr.aria-pressed]="dia.fecha === seleccionado()" [attr.aria-label]="fechaLarga(dia.fecha) + (dia.fecha === hoy ? ', hoy' : '')" (click)="seleccionar(dia.fecha)">
+            <strong>{{ dia.nombre }}</strong><span>{{ dia.numero }}</span><span class="dia-estado" aria-hidden="true">{{ estadoDia(dia.fecha) }}</span>
+          </button>
+        }
+      </div>
+    </div>
+    <div class="progreso" aria-live="polite">
+      <div class="anillo" [style.--avance]="(delDia().length ? completados() / delDia().length * 100 : 0) + '%'"><span>{{ completados() }}/{{ delDia().length }}</span></div>
+      <div><h2>{{ seleccionado() === hoy ? 'Hoy' : 'Día seleccionado' }}, {{ fechaLarga(seleccionado()) }}</h2>
+        @if (cargando()) { <p>Cargando progreso…</p> }
+        @else if (errorCarga()) { <p>Progreso no disponible</p> }
+        @else { <p><span class="marca">✓</span> {{ completados() }} {{ completados() === 1 ? 'objetivo completado' : 'objetivos completados' }}</p><small>{{ delDia().length ? 'Cada paso cuenta.' : 'Un nuevo día para avanzar.' }}</small> }
+      </div>
+      <span class="adorno" aria-hidden="true">✳</span>
+    </div>
+  </div>
+
+  @if (error()) { <p class="error" role="alert">{{ error() }}</p> }
+  <div class="contenido">
+    <section class="panel lista" aria-labelledby="lista-titulo">
+      <div class="lista-cabecera"><div><h2 id="lista-titulo">{{ seleccionado() === hoy ? 'Tus objetivos de hoy' : 'Tus objetivos del día' }}</h2><p>{{ fechaLarga(seleccionado()) }}</p></div>
+        <label class="filtro"><span class="sr-only">Filtrar por materia</span><select [ngModel]="filtroMateria()" (ngModelChange)="filtroMateria.set($event)"><option value="">Todas las materias</option>@for (materia of materias(); track materia.id) { <option [value]="materia.id">{{ materia.nombre }}</option> }</select></label>
+      </div>
+      @if (cargando()) { <p class="vacio">Cargando objetivos…</p> }
+      @else if (errorCarga()) { <p class="vacio" role="alert">No se pudieron cargar los objetivos.</p><button type="button" class="reintentar" (click)="cargar()">Reintentar</button> }
+      @else {
+        @for (objetivo of visibles(delDia()); track objetivo.id) {
+          <div class="fila">
+            <label class="check"><input type="checkbox" [checked]="objetivo.completado" (change)="cambiar(objetivo, $event)"><span class="objetivo-texto"><strong>{{ objetivo.titulo }}</strong>@if (tarea(objetivo.tareaId); as tareaAsociada) { <small class="etiqueta">{{ tareaAsociada.materia?.nombre || tareaAsociada.titulo }}</small> }</span></label>
+            <span class="estado" [class.estado--hecho]="objetivo.completado">{{ objetivo.completado ? '✓  Completado' : '○  Pendiente' }}</span>
+            <button type="button" class="eliminar" (click)="eliminar(objetivo)" [attr.aria-label]="'Eliminar ' + objetivo.titulo" title="Eliminar objetivo">×</button>
+          </div>
+        } @empty { <p class="vacio">{{ delDia().length ? 'No hay objetivos para esta materia.' : 'Todavía no agregaste objetivos para este día.' }}</p> }
+        @if (anterioresVisibles().length) {
+          <div class="atrasados"><h3>Pendientes de días anteriores</h3><p>Siguen acá hasta que los completes.</p>
+            @for (objetivo of anterioresVisibles(); track objetivo.id) {
+                <div class="fila"><label class="check"><input type="checkbox" [checked]="objetivo.completado" (change)="cambiar(objetivo, $event)"><span class="objetivo-texto"><strong>{{ objetivo.titulo }}</strong><small class="etiqueta">{{ fechaLarga(objetivo.fecha) }} @if (tarea(objetivo.tareaId); as asociada) { · {{ asociada.materia?.nombre || asociada.titulo }} }</small></span></label><span class="estado">○ Pendiente</span><button type="button" class="eliminar" (click)="eliminar(objetivo)" [attr.aria-label]="'Eliminar ' + objetivo.titulo" title="Eliminar objetivo">×</button></div>
+            }
+          </div>
+        }
+      }
+    </section>
+
+    <div class="columna">
+      <form (ngSubmit)="crear()" class="panel formulario">
+        <div class="formulario-cabecera"><span class="icono" aria-hidden="true">◎</span><div><h2>Nuevo objetivo</h2><p>Agregá un objetivo para hoy o para otro día.</p></div></div>
+        <label for="titulo">¿Qué querés lograr?</label>
+        <input id="titulo" name="titulo" [(ngModel)]="titulo" maxlength="200" required placeholder="Por ejemplo: repasar el tema 3">
+        <div class="campos">
+          <div><label for="fecha">Día</label><input id="fecha" name="fecha" type="date" [(ngModel)]="fecha" (ngModelChange)="cambiarFecha($event)" required></div>
+          <div><label for="tarea">Asociar a una tarea <span>(opcional)</span></label><select id="tarea" name="tarea" [(ngModel)]="tareaId"><option value="">Sin tarea asociada</option>@for (tarea of tareasDisponibles(); track tarea.id) { <option [value]="tarea.id">{{ tarea.titulo }}</option> }</select></div>
+        </div>
+        <button type="submit" class="agregar button-primary" [disabled]="guardando()"><span aria-hidden="true">⊕</span> {{ guardando() ? 'Guardando…' : 'Agregar objetivo' }}</button>
+      </form>
+      <aside class="aviso"><span class="aviso-icono" aria-hidden="true">✧</span><div><h2>Tus objetivos</h2><p>Cada día a las 9:00 (hora argentina) recibirás un correo con los objetivos pendientes y los objetivos de todos los días que te hayan faltado ayer.</p></div><span class="aviso-adorno" aria-hidden="true">❧</span></aside>
+    </div>
+  </div>
+  <section class="panel recurrentes" aria-labelledby="recurrentes-titulo">
+    <div class="recurrentes-cabecera"><span class="icono" aria-hidden="true">↻</span><div><p class="eyebrow">UN PEQUEÑO PASO CADA DÍA</p><h2 id="recurrentes-titulo">Objetivos de todos los días</h2><p>Se renuevan cada día. Si ayer no cumpliste alguno, te lo recordamos sin acumularlo como pendiente.</p></div></div>
+    <form class="recurrente-form" (ngSubmit)="crearRecurrente()"><label class="sr-only" for="titulo-recurrente">Nuevo objetivo de todos los días</label><input id="titulo-recurrente" name="tituloRecurrente" [(ngModel)]="tituloRecurrente" maxlength="200" required placeholder="Por ejemplo: leer 20 minutos"><button type="submit" class="button-primary" [disabled]="recurrenteGuardando()">{{ recurrenteGuardando() ? 'Guardando…' : 'Agregar objetivo diario' }}</button></form>
+    <p class="recurrente-fecha">{{ seleccionado() === hoy ? 'Hoy' : fechaLarga(seleccionado()) }}</p>
+    @if (recurrentesCargando()) { <p class="vacio">Cargando objetivos…</p> }
+    @else if (recurrentesError()) { <p class="vacio" role="alert">No se pudieron cargar los objetivos de todos los días.</p><button type="button" class="reintentar" (click)="cargarRecurrentes()">Reintentar</button> }
+    @else {
+      @for (objetivo of recurrentes(); track objetivo.id) {
+        <div class="fila"><label class="check"><input type="checkbox" [checked]="objetivo.fechasCompletadas.includes(seleccionado())" [disabled]="seleccionado() < objetivo.fechaInicio || seleccionado() > hoy" (change)="marcarRecurrente(objetivo, $event)"><span class="objetivo-texto"><strong>{{ objetivo.titulo }}</strong><small class="etiqueta">Todos los días</small></span></label><span class="estado" [class.estado--hecho]="objetivo.fechasCompletadas.includes(seleccionado())">{{ objetivo.fechasCompletadas.includes(seleccionado()) ? '✓  Completado' : '○  Pendiente' }}</span><button type="button" class="eliminar" (click)="eliminarRecurrente(objetivo)" [attr.aria-label]="'Eliminar objetivo diario ' + objetivo.titulo" title="Eliminar objetivo diario">×</button></div>
+      } @empty { <p class="vacio">Todavía no agregaste objetivos de todos los días.</p> }
+      @if (recurrentes().length && seleccionado() > hoy) { <p class="recurrente-ayuda">Podrás marcarlos cuando llegue ese día.</p> }
+      @if (recurrentes().length && seleccionado() < hoy) { <p class="recurrente-ayuda">Solo podés marcar los días desde que creaste cada objetivo.</p> }
+    }
+  </section>
+</section>

@@ -21,8 +21,12 @@ export class ObjetivosService implements OnModuleInit, OnModuleDestroy {
         FROM usuarios u
         WHERE u."emailVerificado" = true
           AND (now() AT TIME ZONE 'America/Argentina/Buenos_Aires')::time >= time '09:00'
-          AND EXISTS (SELECT 1 FROM objetivos o WHERE o."usuarioId" = u.id AND NOT o.completado
+          AND (EXISTS (SELECT 1 FROM objetivos o WHERE o."usuarioId" = u.id AND NOT o.completado
             AND o.fecha < (now() AT TIME ZONE 'America/Argentina/Buenos_Aires')::date)
+          OR EXISTS (SELECT 1 FROM objetivos_recurrentes r WHERE r."usuarioId" = u.id
+            AND r."fechaInicio" < (now() AT TIME ZONE 'America/Argentina/Buenos_Aires')::date
+            AND NOT EXISTS (SELECT 1 FROM objetivos_recurrentes_cumplidos c WHERE c."objetivoId" = r.id
+              AND c.fecha = (now() AT TIME ZONE 'America/Argentina/Buenos_Aires')::date - 1)))
       `);
       for (const usuario of usuarios) {
         const reclamo: { usuarioId: string }[] = await this.db.query(`
@@ -34,7 +38,15 @@ export class ObjetivosService implements OnModuleInit, OnModuleDestroy {
         if (!reclamo.length) continue;
         try {
           const objetivos: { titulo: string; fecha: string }[] = await this.db.query(`SELECT titulo, fecha::text FROM objetivos WHERE "usuarioId" = $1 AND NOT completado AND fecha < $2 ORDER BY fecha, "creadoEn", id`, [usuario.id, usuario.fecha]);
-          if (objetivos.length) await this.mail.enviarMail(usuario.email, 'Tus objetivos pendientes', `Estos son tus objetivos pendientes:\n\n${objetivos.map(o => `• ${o.fecha}: ${o.titulo}`).join('\n')}\n\nEntrá a Tempo para revisarlos.`);
+          const recurrentes: { titulo: string }[] = await this.db.query(`SELECT r.titulo FROM objetivos_recurrentes r
+            WHERE r."usuarioId" = $1 AND r."fechaInicio" < $2::date
+              AND NOT EXISTS (SELECT 1 FROM objetivos_recurrentes_cumplidos c WHERE c."objetivoId" = r.id AND c.fecha = $2::date - 1)
+            ORDER BY r."creadoEn", r.id`, [usuario.id, usuario.fecha]);
+          const partes = [
+            objetivos.length ? `Estos son tus objetivos pendientes:\n${objetivos.map(o => `• ${o.fecha}: ${o.titulo}`).join('\n')}` : '',
+            recurrentes.length ? `Ayer te faltaron estos objetivos de todos los días:\n${recurrentes.map(o => `• ${o.titulo}`).join('\n')}\nCada día es una nueva oportunidad para seguir avanzando.` : '',
+          ].filter(Boolean);
+          if (partes.length) await this.mail.enviarMail(usuario.email, 'Tus objetivos · Tempo', `${partes.join('\n\n')}\n\nEntrá a Tempo para revisarlos.`);
           await this.db.query('UPDATE recordatorios_objetivos SET enviado = true WHERE "usuarioId" = $1 AND fecha = $2', [usuario.id, usuario.fecha]);
         } catch { this.logger.warn('No se pudo enviar el resumen de objetivos; se reintentará.'); }
       }

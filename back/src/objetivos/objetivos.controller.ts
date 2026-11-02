@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import type { SolicitudAutenticada } from '../auth/types/solicitud-autenticada';
 import { Objetivo } from './objetivo.entity';
-import { Tarea } from '../tareas/entities/tarea.entity';
+import { EstadoTarea, Tarea } from '../tareas/entities/tarea.entity';
 
 class CrearObjetivoDto {
   @IsString() @MinLength(1) @MaxLength(200) titulo!: string;
@@ -26,7 +26,11 @@ export class ObjetivosController {
   async crear(@Body() dto: CrearObjetivoDto, @Req() req: SolicitudAutenticada) {
     const titulo = dto.titulo.trim();
     if (!titulo) throw new BadRequestException('Ingresá un objetivo');
-    if (dto.tareaId && !(await this.tareas.findOneBy({ id: dto.tareaId, usuarioId: req.user.userId }))) throw new NotFoundException('Tarea no encontrada');
+    if (dto.tareaId) {
+      const tarea = await this.tareas.findOneBy({ id: dto.tareaId, usuarioId: req.user.userId });
+      if (!tarea) throw new NotFoundException('Tarea no encontrada');
+      if (tarea.estado === EstadoTarea.HECHA) throw new BadRequestException('Solo podés asociar tareas que no estén completadas');
+    }
     return this.objetivos.save(this.objetivos.create({ titulo, fecha: dto.fecha, tareaId: dto.tareaId ?? null, usuarioId: req.user.userId }));
   }
   @Patch(':id')
