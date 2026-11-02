@@ -27,6 +27,7 @@ interface Objetivo { id: string; titulo: string; fecha: string; completado: bool
         <h2 id="lista-titulo">Tus objetivos</h2>
         <p class="nota">Cada día a las 9:00 (hora argentina) recibirás un correo con los objetivos de días anteriores que sigan pendientes.</p>
         @if (cargando()) { <p>Cargando objetivos…</p> }
+        @else if (errorCarga()) { <p role="alert">No se pudieron cargar los objetivos.</p><button type="button" (click)="cargar()">Reintentar</button> }
         @else if (!objetivos().length) { <p>Todavía no agregaste objetivos.</p> }
         @else {
           @for (objetivo of objetivos(); track objetivo.id) {
@@ -48,13 +49,14 @@ export class ObjetivosComponent {
   readonly objetivos = signal<Objetivo[]>([]);
   readonly tareas = signal<Tarea[]>([]);
   readonly cargando = signal(true);
+  readonly errorCarga = signal(false);
   readonly guardando = signal(false);
   readonly error = signal('');
   titulo = '';
   fecha = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Argentina/Buenos_Aires', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
   tareaId = '';
   constructor() { this.cargar(); this.tareasService.listar().subscribe({ next: t => this.tareas.set(t), error: () => this.error.set('No se pudieron cargar las tareas para asociar.') }); }
-  cargar(): void { this.http.get<Objetivo[]>('/objetivos').subscribe({ next: o => { this.objetivos.set(o); this.cargando.set(false); }, error: () => { this.error.set('No se pudieron cargar los objetivos.'); this.cargando.set(false); } }); }
+  cargar(): void { this.cargando.set(true); this.errorCarga.set(false); this.http.get<Objetivo[]>('/objetivos').subscribe({ next: o => { this.objetivos.set(o); this.cargando.set(false); }, error: () => { this.errorCarga.set(true); this.cargando.set(false); } }); }
   crear(): void {
     if (!this.titulo.trim() || !this.fecha || this.guardando()) return;
     this.error.set(''); this.guardando.set(true);
