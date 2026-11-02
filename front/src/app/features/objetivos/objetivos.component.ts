@@ -3,6 +3,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { TareasService } from '../tareas/tareas.service';
 import { EstadoTarea, Tarea } from '../../core/models';
+import { ConfirmDialogService } from '../../shared/components/confirm-dialog.service';
 
 interface Objetivo { id: string; titulo: string; fecha: string; completado: boolean; tareaId: string | null; }
 interface ObjetivoRecurrente { id: string; titulo: string; fechaInicio: string; fechasCompletadas: string[]; }
@@ -28,6 +29,7 @@ function sumarDias(fecha: string, cantidad: number): string {
 export class ObjetivosComponent {
   private readonly http = inject(HttpClient);
   private readonly tareasService = inject(TareasService);
+  private readonly confirmDialog = inject(ConfirmDialogService);
   readonly hoy = fechaArgentina();
   readonly seleccionado = signal(this.hoy);
   readonly objetivos = signal<Objetivo[]>([]);
@@ -82,8 +84,8 @@ export class ObjetivosComponent {
     input.disabled = true;
     this.http.patch(`/objetivos/recurrentes/${objetivo.id}`, { fecha, completado }).subscribe({ next: () => { this.recurrentes.update(lista => lista.map(o => o.id === objetivo.id ? { ...o, fechasCompletadas: completado ? [...o.fechasCompletadas, fecha] : o.fechasCompletadas.filter(d => d !== fecha) } : o)); input.disabled = false; }, error: () => { input.checked = !completado; input.disabled = false; this.error.set('No se pudo actualizar el objetivo de todos los días.'); } });
   }
-  eliminarRecurrente(objetivo: ObjetivoRecurrente): void {
-    if (!confirm('¿Eliminar este objetivo de todos los días y su historial?')) return;
+  async eliminarRecurrente(objetivo: ObjetivoRecurrente): Promise<void> {
+    if (!(await this.confirmDialog.confirm({ titulo: 'Eliminar objetivo diario', mensaje: 'Se eliminarán este objetivo de todos los días y su historial. ¿Querés continuar?', textoConfirmar: 'Eliminar', peligroso: true }))) return;
     this.http.delete(`/objetivos/recurrentes/${objetivo.id}`).subscribe({ next: () => this.recurrentes.update(lista => lista.filter(o => o.id !== objetivo.id)), error: () => this.error.set('No se pudo eliminar el objetivo de todos los días.') });
   }
   cargarTareas(): void {
@@ -108,8 +110,8 @@ export class ObjetivosComponent {
     const input = event.target as HTMLInputElement;
     this.http.patch<Objetivo>(`/objetivos/${objetivo.id}`, { completado: input.checked }).subscribe({ next: actualizado => this.objetivos.update(lista => lista.map(o => o.id === actualizado.id ? actualizado : o)), error: () => { input.checked = objetivo.completado; this.error.set('No se pudo actualizar el objetivo.'); } });
   }
-  eliminar(objetivo: Objetivo): void {
-    if (!confirm('¿Eliminar este objetivo?')) return;
+  async eliminar(objetivo: Objetivo): Promise<void> {
+    if (!(await this.confirmDialog.confirm({ titulo: 'Eliminar objetivo', mensaje: '¿Querés eliminar este objetivo?', textoConfirmar: 'Eliminar', peligroso: true }))) return;
     this.http.delete(`/objetivos/${objetivo.id}`).subscribe({ next: () => this.objetivos.update(lista => lista.filter(o => o.id !== objetivo.id)), error: () => this.error.set('No se pudo eliminar el objetivo.') });
   }
   tarea(id: string | null): Tarea | undefined { return this.tareas().find(t => t.id === id); }

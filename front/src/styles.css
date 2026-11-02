@@ -682,3 +682,51 @@ html.dark .app-content .calendario-page .calendar-actions :is(.new-task, .view-t
 @media (max-width: 768px) {
   .app-content :is(input, select, textarea) { font-size: 1rem; }
 }
+
+/* Los controles conservan la semántica y el teclado propios del navegador. */
+html body .app-content select:not([multiple]):not([size]) {
+  appearance: none;
+  min-height: 2.8rem;
+  padding: .65rem 2.6rem .65rem .85rem;
+  border: 1px solid var(--border);
+  border-radius: .75rem;
+  background-color: var(--card-strong);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23837368' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right .8rem center;
+  color: var(--ink);
+  cursor: pointer;
+}
+html.dark body .app-content select:not([multiple]):not([size]) {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23b7c9df' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") !important;
+}
+html body .app-content select:disabled { cursor: not-allowed; opacity: .6; }
+html body .app-content select:not(:disabled):hover { border-color: var(--accent-border); }
+@supports (appearance: base-select) and selector(::picker(select)) {
+  html body .app-content select:not([multiple]):not([size]),
+  html body .app-content select:not([multiple]):not([size])::picker(select) { appearance: base-select; }
+  html body .app-content select:not([multiple]):not([size]) { background-image: none; padding-right: .85rem; }
+  html.dark body .app-content select:not([multiple]):not([size]) { background-image: none !important; }
+  html body .app-content select::picker-icon { color: var(--muted); transition: transform 180ms ease; }
+  html body .app-content select:open::picker-icon { transform: rotate(180deg); }
+  html body .app-content select::picker(select) {
+    border: 1px solid var(--border);
+    border-radius: .85rem;
+    background: var(--card-strong);
+    color: var(--ink);
+    padding: .35rem;
+    margin-top: .35rem;
+    box-shadow: var(--shadow-hover);
+  }
+  html body .app-content select option {
+    padding: .65rem .75rem;
+    border-radius: .5rem;
+    color: var(--ink);
+    background: var(--card-strong);
+    font-family: var(--font-body);
+  }
+  html body .app-content select option:hover,
+  html body .app-content select option:focus { background: var(--accent-light); }
+  html body .app-content select option:checked { color: var(--accent); background: var(--accent-soft); font-weight: 700; }
+  html body .app-content select option::checkmark { color: var(--accent); margin-right: .5rem; }
+}
