@@ -3,6 +3,12 @@ import { authGuard, landingGuard, publicOnlyGuard } from './core/guards/auth.gua
 
 export const routes: Routes = [
   {
+    path: 'objetivos',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/objetivos/objetivos.component').then(m => m.ObjetivosComponent),
+    title: 'Objetivos diarios',
+  },
+  {
     path: 'instalar',
     loadComponent: () => import('./features/instalar/instalar.component').then(m => m.InstalarComponent),
     title: 'Instalar app · Tempo',

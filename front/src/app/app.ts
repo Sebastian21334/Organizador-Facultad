@@ -65,6 +65,7 @@ export class App {
     { path: '/inicio', label: 'Inicio', icon: LucideCompass },
     { path: '/calendario', label: 'Calendario', icon: LucideCalendar },
     { path: '/tareas', label: 'Tareas', icon: LucideCheckSquare },
+    { path: '/objetivos', label: 'Objetivos diarios', icon: LucideCheckSquare },
     { path: '/materias', label: 'Materias', icon: LucideBookOpen },
     { path: '/mensajes', label: 'Mensajes', icon: LucideMessageCircle },
     { path: '/perfil', label: 'Perfil', icon: LucideUserCircle },

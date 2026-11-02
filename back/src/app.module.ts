@@ -14,6 +14,7 @@ import { PushModule } from './push/push.module';
 import { APP_GUARD } from '@nestjs/core';
 import { SeguridadGuard } from './auth/guards/seguridad.guard';
 import { databaseSsl, validateEnvironment } from './security.config';
+import { ObjetivosModule } from './objetivos/objetivos.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { databaseSsl, validateEnvironment } from './security.config';
     UsuariosModule,
     ContactoModule,
     PushModule,
+    ObjetivosModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: SeguridadGuard }],
